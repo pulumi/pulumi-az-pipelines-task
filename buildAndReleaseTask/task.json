@@ -1,0 +1,36 @@
+{
+    "id": "d207100d-0225-409b-ad86-f9b9912502c7",
+    "name": "PulumiAzRmTask",
+    "friendlyName": "Pulumi Azure RM Task",
+    "description": "Pulumi task extension for running Pulumi apps.",
+    "helpMarkDown": "",
+    "category": "Utility",
+    "author": "Praneet Loke",
+    "version": {
+        "Major": 0,
+        "Minor": 1,
+        "Patch": 0
+    },
+    "instanceNameFormat": "Echo $(samplestring)",
+    "inputs": [
+        {
+            "name": "serviceconnection",
+            "type": "pickList",
+            "label": "Azure RM Service Connection",
+            "defaultValue": "",
+            "required": false,
+            "helpMarkDown": "The service connection that Pulumi will use to perform resource deployments."
+        }
+    ],
+    "execution": {
+        "Node": {
+            "target": "index.js"
+        }
+    },
+    "messages": {
+        "InvalidScriptArguments0": "Invalid script arguments '{0}'. Line breaks are not allowed.",
+        "JS_ExitCode": "Script exited with code '%s'.",
+        "JS_Stderr": "Script wrote one or more lines to the standard error stream.",
+        "NotFoundInCache": "Pulumi v0.17.5 not found in the local tool cache. Will download and install it."
+    }
+}

@@ -1,0 +1,7 @@
+# Files
+*.log
+.taskkey
+*.js
+
+# Folders
+node_modules/
