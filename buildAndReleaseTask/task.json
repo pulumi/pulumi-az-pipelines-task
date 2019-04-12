@@ -31,6 +31,7 @@
         "InvalidScriptArguments0": "Invalid script arguments '{0}'. Line breaks are not allowed.",
         "JS_ExitCode": "Script exited with code '%s'.",
         "JS_Stderr": "Script wrote one or more lines to the standard error stream.",
-        "NotFoundInCache": "Pulumi v0.17.5 not found in the local tool cache. Will download and install it."
+        "NotFoundInCache": "Pulumi not found in the local tool cache. Will download and install it.",
+        "ResultCodeNotZero": "Script exited with a non-zero exit code."
     }
 }

@@ -9,14 +9,23 @@ import * as path from "path";
 
 // tslint:disable-next-line:no-var-requires
 const uuidV4 = require("uuid/v4");
+const pulumiVersion = "latest";
 
 async function run() {
     tl.setResourcePath(path.join(__dirname, "task.json"));
 
-    const toolPath = toolLib.findLocalTool("pulumi", "0.17.5");
+    let toolPath = toolLib.findLocalTool("pulumi", pulumiVersion);
     if (!toolPath) {
         tl.debug(tl.loc("NotFoundInCache"));
-        await installPulumi();
+        try {
+            await installPulumi();
+        } catch (err) {
+            tl.setResult(tl.TaskResult.Failed, err);
+            return;
+        }
+    } else {
+        // Prepend the tools path. Instructs the agent to prepend for future tasks.
+        toolLib.prependPath(`${toolPath}/bin`);
     }
 
     // Print the version.
@@ -26,22 +35,16 @@ async function run() {
 async function installPulumi() {
     const osPlat = tl.getPlatform();
     let resultCode: number;
-    // Listen for stderr.
-    let stderrFailure = false;
 
     switch (osPlat) {
     case tl.Platform.Linux:
     case tl.Platform.MacOS:
         const curlCmd = tl.tool(tl.which("curl")).arg("-fsSL").arg("https://get.pulumi.com");
-        curlCmd.on("stderr", (err) => {
-            if (!err) {
-                return;
-            }
-            stderrFailure = true;
-        });
-        resultCode = await curlCmd.pipeExecOutputToTool(tl.tool(tl.which("sh")).arg("--version").arg("0.17.5")).exec();
+        resultCode = await curlCmd.pipeExecOutputToTool(tl.tool(tl.which("sh"))).exec();
         break;
     case tl.Platform.Windows:
+        // Listen for stderr.
+        let stderrFailure = false;
         // For Windows, we'll generate an ephemeral PS script file with the necessary contents,
         // and run that as a command using PS.
         const tempDirectory = tl.getVariable("agent.tempDirectory");
@@ -98,23 +101,22 @@ async function installPulumi() {
             stderrFailure = true;
         });
         resultCode = await powershellCmd.exec(options);
+        // Fail on stderr.
+        if (stderrFailure) {
+            tl.setResult(tl.TaskResult.Failed, tl.loc("JS_Stderr"));
+            return;
+        }
         break;
     default:
         throw new Error(`Unexpected OS "${osPlat}"`);
     }
 
     if (resultCode !== 0) {
-        tl.setResult(tl.TaskResult.Failed, "");
+        tl.setResult(tl.TaskResult.Failed, tl.loc("ResultCodeNotZero"));
         return;
     }
 
-    // Fail on stderr.
-    if (stderrFailure) {
-        tl.setResult(tl.TaskResult.Failed, tl.loc("JS_Stderr"));
-        return;
-    }
-
-    await toolLib.cacheDir(tl.which("pulumi"), "pulumi", "0.17.5");
+    await toolLib.cacheDir(`${process.env.HOME}/.pulumi`, "pulumi", pulumiVersion);
 }
 
 run();
