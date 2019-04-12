@@ -1,20 +1,20 @@
 {
     "manifestVersion": 1,
     "id": "build-release-task",
-    "name": "Pulumi AzRM Task",
-    "version": "0.0.1",
-    "publisher": "Praneet Loke",
+    "name": "Pulumi Azure RM Task",
+    "version": "0.0.8",
+    "publisher": "PraneetLoke",
     "targets": [
         {
             "id": "Microsoft.VisualStudio.Services"
         }
-    ],    
+    ],
     "description": "Tools for building/releasing with Pulumi. Includes one build/release task.",
     "categories": [
         "Azure Pipelines"
     ],
     "icons": {
-        "default": "images/extension-icon.png"
+        "default": "images/pulumi_mark_flat_on_light.png"
     },
     "files": [
         {

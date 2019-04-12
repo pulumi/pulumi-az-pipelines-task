@@ -11,11 +11,15 @@ const pulumiVersion = "0.17.5";
 async function run() {
     tl.setResourcePath(path.join(__dirname, "task.json"));
 
+    console.log("Starting");
+
     let toolPath = toolLib.findLocalTool("pulumi", pulumiVersion);
     if (!toolPath) {
         tl.debug(tl.loc("NotFoundInCache"));
         try {
             await installPulumi();
+            // We just installed Pulumi, so prepend the installation path.
+            toolLib.prependPath(`${process.env.HOME}/.pulumi/bin`);
         } catch (err) {
             tl.setResult(tl.TaskResult.Failed, err);
             return;
@@ -25,8 +29,37 @@ async function run() {
         toolLib.prependPath(`${toolPath}/bin`);
     }
 
+    console.log("Installed");
     // Print the version.
-    await tl.exec(tl.which("pulumi"), "version");
+    toolPath = tl.which("pulumi");
+    console.log("toolPath is", toolPath);
+    if (!toolPath) {
+        tl.setResult(tl.TaskResult.Failed, tl.loc("PulumiNotFound"));
+        return;
+    }
+    console.log("Printing version");
+    await tl.exec(toolPath, "version");
+
+    // Login and then run the command.
+    console.log("Performing a login");
+    let exitCode = await tl.exec(toolPath, "login");
+    if (exitCode !== 0) {
+        tl.setResult(tl.TaskResult.Failed, tl.loc("PulumiLoginFailed"));
+        return;
+    }
+
+    // Get the command, and the args the user wants to pass to the Pulumi CLI.
+    const pulCommand = tl.getInput("pulCommand");
+    const pulCommandRunner = await tl.tool(toolPath).arg(pulCommand);
+    const pulArgs = tl.getDelimitedInput("pulArgs", " ");
+    pulArgs.forEach((arg: string) => {
+        pulCommandRunner.arg(arg);
+    });
+    exitCode = await pulCommandRunner.exec();
+    if (exitCode !== 0) {
+        tl.setResult(tl.TaskResult.Failed, tl.loc("PulumiLoginFailed"));
+        return;
+    }
 }
 
 async function installPulumi() {
