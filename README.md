@@ -1,5 +1,9 @@
 # Pulumi Azure RM Task for Azure Pipelines
 
+## Release status
+
+This lib is in alpha. **Do not make this repo public yet!**
+
 ## Prerequisites
 
 - Node (>= 8.x)
