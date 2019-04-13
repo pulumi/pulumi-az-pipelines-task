@@ -17,7 +17,11 @@ async function run() {
     if (!toolPath) {
         tl.debug(tl.loc("Debug_NotFoundInCache"));
         try {
-            await installPulumi();
+            const exitCode = await installPulumi();
+            if (exitCode !== 0) {
+                tl.setResult(tl.TaskResult.Failed, tl.loc("JS_ExitCode", exitCode));
+                return;
+            }
             // We just installed Pulumi, so prepend the installation path.
             toolLib.prependPath(path.join(process.env.HOME as string, ".pulumi", "bin"));
             tl.debug(tl.loc("Debug_AddedToPATH"));
@@ -78,7 +82,7 @@ async function run() {
     }
 }
 
-async function installPulumi() {
+async function installPulumi(): Promise<number> {
     const osPlat = tl.getPlatform();
     let exitCode: number;
 
@@ -95,11 +99,11 @@ async function installPulumi() {
     }
 
     if (exitCode !== 0) {
-        tl.setResult(tl.TaskResult.Failed, tl.loc("JS_ExitCode", exitCode));
-        return;
+        return exitCode;
     }
 
     await toolLib.cacheDir(path.join(process.env.HOME as string, ".pulumi"), "pulumi", pulumiVersion);
+    return 0;
 }
 
 // tslint:disable-next-line no-floating-promises

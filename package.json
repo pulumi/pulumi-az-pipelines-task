@@ -4,7 +4,8 @@
   "description": "Package the Pulumi Azure RM task.",
   "main": "index.js",
   "scripts": {
-    "package": "yarn --cwd buildAndReleaseTask/ run tsc && tfx extension create --manifest-globs vss-extension.json --rev-version"
+    "package": "yarn --cwd buildAndReleaseTask/ run tsc && tfx extension create --manifest-globs vss-extension.json --rev-version",
+    "start": "yarn --cwd buildAndReleaseTask/ run tsc && node buildAndReleaseTask/index.js"
   },
   "author": "Praneet Loke",
   "license": "ISC"

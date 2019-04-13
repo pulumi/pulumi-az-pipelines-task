@@ -33,7 +33,7 @@ export async function installUsingPowerShell(): Promise<number> {
     const contents: string[] = [];
     contents.push("$ErrorActionPreference = 'Stop'");
     // tslint:disable-next-line:max-line-length
-    contents.push("\"[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; iex ((New-Object System.Net.WebClient).DownloadString(\"https://get.pulumi.com/install.ps1\'))\" && SET \"PATH=%PATH%;%USERPROFILE%\.pulumi\bin\"");
+    contents.push("[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; iex ((New-Object System.Net.WebClient).DownloadString(\"https://get.pulumi.com/install.ps1\"))");
     const writeFileAsync = new Promise(((resolve, reject) => {
         fs.writeFile(
             filePath,
@@ -60,18 +60,18 @@ export async function installUsingPowerShell(): Promise<number> {
             .arg("-ExecutionPolicy")
             .arg("Bypass")
             .arg("-Command")
-            .arg(`. "${filePath.replace("'", "''")}'`);
+            .arg(`. "${filePath.replace("'", "''")}"`);
 
     powershellCmd.on("stderr", (err) => {
         if (!err) {
             return;
         }
+        tl.debug(`***Error: ${err}`);
         stderrFailure = true;
     });
     resultCode = await powershellCmd.exec(options);
     // Fail on stderr.
     if (stderrFailure) {
-        tl.setResult(tl.TaskResult.Failed, tl.loc("JS_Stderr"));
         return -1;
     }
 
