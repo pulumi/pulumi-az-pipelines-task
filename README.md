@@ -14,7 +14,9 @@ This lib is in alpha. **Do not make this repo public yet!**
 ## Local Development
 
 - Set the `AGENT_TOOLSDIRECTORY` env var to any directory for caching the pulumi tool.
-- Run `tsc && node index.js` from the `buildAndReleaseTask` directory.
+- You can run the tool either from the root directory or the `buildAndReleaseTask` directory.
+  - To run from the root folder, simply run `npm start`.
+  - To run from the `buildAndReleaseTask` folder, run `tsc && node index.js` from the `buildAndReleaseTask` directory.
 
 ## Package
 
