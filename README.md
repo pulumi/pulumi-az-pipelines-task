@@ -22,4 +22,4 @@ This lib is in alpha. **Do not make this repo public yet!**
 
 Ensure you have `tfx` cli installed by running `tfx version`. If it is not installed, then run `npm i -g tfx-cli`.
 
-`tfx extension create --manifest-globs vss-extension.json --rev-version`
+Run `npm run package` from the root directory.
