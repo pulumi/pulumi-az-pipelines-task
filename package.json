@@ -1,0 +1,11 @@
+{
+  "name": "pulumi-az-pipeline-task",
+  "version": "1.0.0",
+  "description": "Package the Pulumi Azure RM task.",
+  "main": "index.js",
+  "scripts": {
+    "package": "yarn --cwd buildAndReleaseTask/ run tsc && tfx extension create --manifest-globs vss-extension.json --rev-version"
+  },
+  "author": "Praneet Loke",
+  "license": "ISC"
+}

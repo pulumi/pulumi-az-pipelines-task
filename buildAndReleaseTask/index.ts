@@ -11,54 +11,70 @@ const pulumiVersion = "0.17.5";
 async function run() {
     tl.setResourcePath(path.join(__dirname, "task.json"));
 
-    console.log("Starting");
+    tl.debug(tl.loc("Debug_Starting"));
 
     let toolPath = toolLib.findLocalTool("pulumi", pulumiVersion);
     if (!toolPath) {
-        tl.debug(tl.loc("NotFoundInCache"));
+        tl.debug(tl.loc("Debug_NotFoundInCache"));
         try {
             await installPulumi();
             // We just installed Pulumi, so prepend the installation path.
-            toolLib.prependPath(`${process.env.HOME}/.pulumi/bin`);
+            toolLib.prependPath(path.join(process.env.HOME as string, ".pulumi", "bin"));
+            tl.debug(tl.loc("Debug_AddedToPATH"));
         } catch (err) {
             tl.setResult(tl.TaskResult.Failed, err);
             return;
         }
     } else {
         // Prepend the tools path. Instructs the agent to prepend for future tasks.
-        toolLib.prependPath(`${toolPath}/bin`);
+        toolLib.prependPath(path.join(toolPath, "bin"));
     }
 
-    console.log("Installed");
-    // Print the version.
-    toolPath = tl.which("pulumi");
-    console.log("toolPath is", toolPath);
-    if (!toolPath) {
-        tl.setResult(tl.TaskResult.Failed, tl.loc("PulumiNotFound"));
-        return;
-    }
-    console.log("Printing version");
-    await tl.exec(toolPath, "version");
+    try {
+        tl.debug(tl.loc("Debug_Installed"));
+        // Print the version.
+        toolPath = tl.which("pulumi");
+        tl.debug(tl.loc("Debug_PrintToolPath", toolPath));
+        if (!toolPath) {
+            tl.setResult(tl.TaskResult.Failed, tl.loc("PulumiNotFound"));
+            return;
+        }
+        tl.debug(tl.loc("Debug_PrintingVersion"));
+        await tl.exec(toolPath, "version");
 
-    // Login and then run the command.
-    console.log("Performing a login");
-    let exitCode = await tl.exec(toolPath, "login");
-    if (exitCode !== 0) {
-        tl.setResult(tl.TaskResult.Failed, tl.loc("PulumiLoginFailed"));
-        return;
-    }
+        // Login and then run the command.
+        tl.debug(tl.loc("Debug_Login"));
+        let exitCode = await tl.exec(toolPath, "login");
+        if (exitCode !== 0) {
+            tl.setResult(tl.TaskResult.Failed, tl.loc("PulumiLoginFailed"));
+            return;
+        }
 
-    // Get the command, and the args the user wants to pass to the Pulumi CLI.
-    const pulCommand = tl.getInput("pulCommand");
-    const pulCommandRunner = await tl.tool(toolPath).arg(pulCommand);
-    const pulArgs = tl.getDelimitedInput("pulArgs", " ");
-    pulArgs.forEach((arg: string) => {
-        pulCommandRunner.arg(arg);
-    });
-    exitCode = await pulCommandRunner.exec();
-    if (exitCode !== 0) {
-        tl.setResult(tl.TaskResult.Failed, tl.loc("PulumiLoginFailed"));
-        return;
+        // Get the working directory where the Pulumi commands must be run.
+        const pulCwd = tl.getInput("cwd") || ".";
+        // Select the stack.
+        const pulStack = tl.getInput("stack", true);
+        await tl.exec(toolPath, ["--cwd", pulCwd, "stack", "select", pulStack]);
+
+        // Get the command, and the args the user wants to pass to the Pulumi CLI.
+        const pulCommand = tl.getInput("command");
+        const pulCommandRunner =
+            await tl.tool(toolPath)
+                    .arg("--cwd")
+                    .arg(pulCwd)
+                    .arg(pulCommand);
+        const pulArgs = tl.getDelimitedInput("args", " ");
+        pulArgs.forEach((arg: string) => {
+            pulCommandRunner.arg(arg);
+        });
+        exitCode = await pulCommandRunner.exec();
+        if (exitCode !== 0) {
+            tl.setResult(tl.TaskResult.Failed,
+                tl.loc("PulumiCommandFailed", exitCode, `${ pulCommand } ${ pulArgs.join(" ") }`));
+            return;
+        }
+    } catch (err) {
+        tl.setResult(tl.TaskResult.Failed, err);
     }
 }
 
@@ -79,11 +95,12 @@ async function installPulumi() {
     }
 
     if (exitCode !== 0) {
-        tl.setResult(tl.TaskResult.Failed, tl.loc("ResultCodeNotZero"));
+        tl.setResult(tl.TaskResult.Failed, tl.loc("JS_ExitCode", exitCode));
         return;
     }
 
-    await toolLib.cacheDir(`${process.env.HOME}/.pulumi`, "pulumi", pulumiVersion);
+    await toolLib.cacheDir(path.join(process.env.HOME as string, ".pulumi"), "pulumi", pulumiVersion);
 }
 
+// tslint:disable-next-line no-floating-promises
 run();

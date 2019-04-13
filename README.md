@@ -1,5 +1,12 @@
 # Pulumi Azure RM Task for Azure Pipelines
 
+## Prerequisites
+
+- Node (>= 8.x)
+- Yarn (>= 1.13.0)
+- tslint (`npm i -g tslint`)
+- typescript compiler (`npm i -g typescript`)
+
 ## Local Development
 
 - Set the `AGENT_TOOLSDIRECTORY` env var to any directory for caching the pulumi tool.

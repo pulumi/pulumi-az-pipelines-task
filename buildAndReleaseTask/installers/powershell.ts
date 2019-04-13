@@ -6,7 +6,7 @@ import * as fs from "fs";
 import * as os from "os";
 import * as path from "path";
 
-const uuidV4 = require("uuid/v4");
+import uuidV4 from "uuid/v4";
 
 export async function installUsingPowerShell(): Promise<number> {
     let resultCode: number;

@@ -8,13 +8,13 @@
     "author": "Praneet Loke",
     "version": {
         "Major": 0,
-        "Minor": 8,
+        "Minor": 23,
         "Patch": 0
     },
     "instanceNameFormat": "Run pulumi $(pulCommand) $(pulArgs)",
     "inputs": [
         {
-            "name": "pulCommand",
+            "name": "command",
             "type": "string",
             "label": "Pulumi Command",
             "defaultValue": "preview",
@@ -22,12 +22,28 @@
             "required": "false"
         },
         {
-            "name": "pulArgs",
+            "name": "args",
             "type": "string",
             "label": "Pulumi Args",
             "defaultValue": "",
             "helpMarkDown": "Use space to separate multiple args. For a list of CLI commands and arguments, see [this](https://pulumi.io/reference/commands.html).",
             "required": "false"
+        },
+        {
+            "name": "cwd",
+            "type": "string",
+            "label": "Working directory",
+            "defaultValue": "",
+            "helpMarkDown": "The working directory to run the Pulumi commands. Use this if your Pulumi App is in a different directory.",
+            "required": "false"
+        },
+        {
+            "name": "stack",
+            "type": "string",
+            "label": "Stack name",
+            "defaultValue": "",
+            "helpMarkDown": "The Pulumi Stack against which to run the commands.",
+            "required": "true"
         }
     ],
     "execution": {
@@ -39,9 +55,15 @@
         "InvalidScriptArguments0": "Invalid script arguments '{0}'. Line breaks are not allowed.",
         "JS_ExitCode": "Script exited with code '%s'.",
         "JS_Stderr": "Script wrote one or more lines to the standard error stream.",
-        "NotFoundInCache": "Pulumi not found in the local tool cache. Will download and install it.",
-        "ResultCodeNotZero": "Script exited with a non-zero exit code.",
         "PulumiLoginFailed": "Pulumi CLI login command failed.",
-        "PulumiNotFound": "Pulumi CLI does not seem to be installed in your environment."
+        "PulumiNotFound": "Pulumi CLI does not seem to be installed in your environment.",
+        "PulumiCommandFailed": "Pulumi command exited with code '%s' while trying to run '%s'.",
+        "Debug_NotFoundInCache": "Pulumi not found in the local tool cache. Will download and install it.",
+        "Debug_Starting": "Starting",
+        "Debug_AddedToPATH": "Added Pulumi to PATH",
+        "Debug_Installed": "Installed",
+        "Debug_PrintToolPath": "toolPath is '%s'",
+        "Debug_Login": "Logging in to Pulumi CLI",
+        "Debug_PrintingVersion": "Printing version"
     }
 }

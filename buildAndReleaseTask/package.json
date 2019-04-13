@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "tslint -c tslint.json -p ."
+    "lint": "tslint -c tslint.json -p .",
+    "tsc": "npm run lint && tsc"
   },
   "author": "",
   "license": "ISC",
