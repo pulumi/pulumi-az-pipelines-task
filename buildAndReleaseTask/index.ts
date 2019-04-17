@@ -19,6 +19,7 @@ async function run() {
 
     tl.debug(tl.loc("Debug_ServiceEndpointName", connectedServiceName));
     const serviceEndpoint = getServiceEndpoint(connectedServiceName);
+    tl.debug(`Service endpoint retrieved with client ID ${serviceEndpoint.clientId}`);
 
     let toolPath = toolLib.findLocalTool("pulumi", pulumiVersion);
     if (!toolPath) {
@@ -62,7 +63,8 @@ async function run() {
         }
 
         // Get the working directory where the Pulumi commands must be run.
-        tl.debug(`Subscription ID ${ serviceEndpoint.subscriptionId }`);
+        const pathEnv = process.env["PATH"];
+        tl.debug(`Executing Pulumi commands with PATH ${ pathEnv }`);
         const pulCwd = tl.getInput("cwd") || ".";
         const pulExecOptions = {
             cwd: pulCwd,
@@ -71,7 +73,7 @@ async function run() {
                 ARM_CLIENT_SECRET: serviceEndpoint.servicePrincipalKey,
                 ARM_SUBSCRIPTION_ID: serviceEndpoint.subscriptionId,
                 ARM_TENANT_ID: serviceEndpoint.tenantId,
-                PATH: tl.execSync(tl.which("echo"), "$PATH").stdout,
+                PATH: pathEnv,
             },
             // Set defaults.
             errStream: process.stderr,
