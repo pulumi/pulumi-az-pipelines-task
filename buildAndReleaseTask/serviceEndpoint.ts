@@ -11,9 +11,9 @@ export interface IServiceEndpoint {
 
 export function getServiceEndpoint(connectedServiceName: string): IServiceEndpoint {
     const endpoint = {
-        clientId: tl.getEndpointAuthorizationParameter(connectedServiceName, "serviceprincipalid", true),
+        clientId: tl.getEndpointAuthorizationParameter(connectedServiceName, "serviceprincipalid", false),
         servicePrincipalKey: tl.getEndpointAuthorizationParameter(connectedServiceName, "serviceprincipalkey", false),
-        subscriptionId: tl.getEndpointDataParameter(connectedServiceName, "subscriptionid", true),
+        subscriptionId: tl.getEndpointDataParameter(connectedServiceName, "subscriptionid", false),
         tenantId: tl.getEndpointAuthorizationParameter(connectedServiceName, "tenantid", false),
     } as IServiceEndpoint;
 
