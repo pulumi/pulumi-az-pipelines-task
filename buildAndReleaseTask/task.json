@@ -4,15 +4,27 @@
     "friendlyName": "Pulumi Azure RM Task",
     "description": "Pulumi task extension for running Pulumi apps.",
     "helpMarkDown": "We are here to help. Join us on Slack at https://slack.pulumi.io.",
-    "category": "Utility",
+    "category": "Deploy",
+    "visibility": [
+        "Build",
+        "Release"
+    ],
     "author": "Praneet Loke",
     "version": {
         "Major": 0,
-        "Minor": 23,
+        "Minor": 32,
         "Patch": 0
     },
     "instanceNameFormat": "Run pulumi $(pulCommand) $(pulArgs)",
     "inputs": [
+        {
+            "name": "azureSubscription",
+            "type": "connectedService:AzureRM",
+            "label": "Azure subscription",
+            "defaultValue": "",
+            "required": true,
+            "helpMarkDown": "Select the Azure Resource Manager subscription for the deployment."
+        },
         {
             "name": "command",
             "type": "string",
@@ -64,6 +76,7 @@
         "Debug_Installed": "Installed",
         "Debug_PrintToolPath": "toolPath is '%s'",
         "Debug_Login": "Logging in to Pulumi CLI",
-        "Debug_PrintingVersion": "Printing version"
+        "Debug_PrintingVersion": "Printing version",
+        "Debug_ServiceEndpointName": "Using service endpoint '%s'"
     }
 }
