@@ -20,7 +20,7 @@
         {
             "name": "azureSubscription",
             "type": "connectedService:AzureRM",
-            "label": "Azure subscription",
+            "label": "Azure Subscription",
             "defaultValue": "",
             "required": true,
             "helpMarkDown": "Select the Azure Resource Manager subscription for the deployment."
@@ -29,9 +29,9 @@
             "name": "command",
             "type": "string",
             "label": "Pulumi Command",
-            "defaultValue": "preview",
+            "defaultValue": "",
             "helpMarkDown": "For a list of CLI commands and arguments, see [this](https://pulumi.io/reference/commands.html).",
-            "required": "false"
+            "required": "true"
         },
         {
             "name": "args",
@@ -44,7 +44,7 @@
         {
             "name": "cwd",
             "type": "string",
-            "label": "Working directory",
+            "label": "Working Directory",
             "defaultValue": "",
             "helpMarkDown": "The working directory to run the Pulumi commands. Use this if your Pulumi App is in a different directory.",
             "required": "false"
@@ -52,7 +52,7 @@
         {
             "name": "stack",
             "type": "string",
-            "label": "Stack name",
+            "label": "Stack Name",
             "defaultValue": "",
             "helpMarkDown": "The Pulumi Stack against which to run the commands.",
             "required": "true"

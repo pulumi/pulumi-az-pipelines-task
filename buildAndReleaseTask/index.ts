@@ -88,7 +88,7 @@ async function run() {
         await tl.exec(toolPath, ["stack", "select", pulStack], pulExecOptions);
 
         // Get the command, and the args the user wants to pass to the Pulumi CLI.
-        const pulCommand = tl.getInput("command");
+        const pulCommand = tl.getInput("command", true);
         const pulCommandRunner =
             await tl.tool(toolPath)
                     .arg(pulCommand);
