@@ -1,8 +1,8 @@
 {
     "id": "d207100d-0225-409b-ad86-f9b9912502c7",
     "name": "PulumiAzRmTask",
-    "friendlyName": "Pulumi Azure RM Task",
-    "description": "Pulumi task extension for running Pulumi apps.",
+    "friendlyName": "Pulumi Azure DevOps Task",
+    "description": "Task extension for running Pulumi apps.",
     "helpMarkDown": "We are here to help. Join us on Slack at https://slack.pulumi.io.",
     "category": "Deploy",
     "visibility": [
