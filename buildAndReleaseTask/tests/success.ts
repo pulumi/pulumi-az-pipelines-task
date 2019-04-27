@@ -1,9 +1,10 @@
 // Copyright 2016-2019, Pulumi Corporation.  All rights reserved.
 
-import * as tl from "azure-pipelines-task-lib";
+import * as tl from "azure-pipelines-task-lib/task";
 import * as ma from "azure-pipelines-task-lib/mock-answer";
 import * as tmrm from "azure-pipelines-task-lib/mock-run";
 import * as path from "path";
+
 import { IServiceEndpoint } from "serviceEndpoint";
 
 const taskPath = path.join(__dirname, "..", "index.js");
@@ -35,12 +36,6 @@ process.env["HOME"] = "/fake/home";
 
 // Provide answers for task mock.
 const mockAnswers: ma.TaskLibAnswers = {
-    getInput: {
-        azureSubscription: "fake-subscription-id",
-        command: "preview",
-        cwd: "dir/",
-        stack: "myOrg/project/dev",
-    },
     getPlatform: {
         "": tl.Platform.Linux,
     },
