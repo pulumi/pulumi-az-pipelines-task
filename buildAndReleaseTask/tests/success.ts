@@ -35,6 +35,12 @@ process.env["HOME"] = "/fake/home";
 
 // Provide answers for task mock.
 const mockAnswers: ma.TaskLibAnswers = {
+    getInput: {
+        azureSubscription: "fake-subscription-id",
+        command: "preview",
+        cwd: "dir/",
+        stack: "myOrg/project/dev",
+    },
     getPlatform: {
         "": tl.Platform.Linux,
     },
