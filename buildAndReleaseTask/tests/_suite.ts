@@ -4,10 +4,9 @@ import * as assert from "assert";
 import * as ttm from "azure-pipelines-task-lib/mock-test";
 import * as path from "path";
 
-describe("Sample task tests", () => {
+describe("Pulumi task tests", () => {
 
-    it("should succeed with simple inputs", function(done: MochaDone) {
-        this.timeout(1000);
+    it("should succeed with simple inputs", (done: MochaDone) => {
 
         const tp = path.join(__dirname, "success.js");
         const tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
