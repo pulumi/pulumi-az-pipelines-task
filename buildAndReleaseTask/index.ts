@@ -4,6 +4,7 @@ import * as tl from "azure-pipelines-task-lib/task";
 import * as tr from "azure-pipelines-task-lib/toolrunner";
 import * as toolLib from "azure-pipelines-tool-lib/tool";
 import * as path from "path";
+
 import { installUsingCurl } from "./installers/curl";
 import { installUsingPowerShell } from "./installers/powershell";
 import { getServiceEndpoint } from "./serviceEndpoint";

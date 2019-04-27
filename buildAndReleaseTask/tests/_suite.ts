@@ -12,10 +12,11 @@ describe("Pulumi task tests", () => {
         const tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
         tr.run();
-        console.log(tr.succeeded);
+
         assert.equal(tr.succeeded, true, "should have succeeded");
         assert.equal(tr.warningIssues.length, 0, "should have no warnings");
         assert.equal(tr.errorIssues.length, 0, "should have no errors");
+
         console.log(tr.stdout);
         assert.equal(tr.stdout.indexOf("Pulumi installed via curl") >= 0, true, "should install using curl");
         assert.equal(tr.stdout.indexOf("0.17.5") >= 0, true, "should execute `pulumi version` command");
