@@ -1,0 +1,17 @@
+{
+  "name": "tests",
+  "version": "1.0.0",
+  "description": "Pulumi Azure Pipelines Task tests",
+  "main": "_suite.js",
+  "scripts": {
+    "test": "yarn run lint && tsc && mocha _suite.js",
+    "lint": "tslint -c tslint.json -p ."
+  },
+  "author": "Pulumi",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/mocha": "^5.2.6",
+    "@types/node": "^11.13.8"
+  },
+  "dependencies": {}
+}

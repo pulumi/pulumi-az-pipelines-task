@@ -109,15 +109,15 @@ async function run() {
 }
 
 async function installPulumi(): Promise<number> {
-    const osPlat = tl.getPlatform();
+    const osPlat = tl.osType();
     let exitCode: number;
 
     switch (osPlat) {
-    case tl.Platform.Linux:
-    case tl.Platform.MacOS:
+    case "Linux":
+    case "MacOS":
         exitCode = await installUsingCurl();
         break;
-    case tl.Platform.Windows:
+    case "Windows_NT":
         exitCode = await installUsingPowerShell();
         break;
     default:

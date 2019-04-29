@@ -77,6 +77,7 @@
         "Debug_PrintToolPath": "toolPath is '%s'",
         "Debug_Login": "Logging in to Pulumi CLI",
         "Debug_PrintingVersion": "Printing version",
-        "Debug_ServiceEndpointName": "Using service endpoint '%s'"
+        "Debug_ServiceEndpointName": "Using service endpoint '%s'",
+        "Debug_TempDirectoryNotSet": "agent.tempdirectory not set. Using $HOME/temp."
     }
 }

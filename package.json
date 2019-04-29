@@ -9,5 +9,5 @@
     "test": "yarn --cwd buildAndReleaseTask/ test"
   },
   "author": "Praneet Loke",
-  "license": "ISC"
+  "license": "MIT"
 }

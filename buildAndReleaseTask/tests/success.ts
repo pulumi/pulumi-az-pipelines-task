@@ -1,14 +1,20 @@
 // Copyright 2016-2019, Pulumi Corporation.  All rights reserved.
 
-import * as tl from "azure-pipelines-task-lib/task";
 import * as ma from "azure-pipelines-task-lib/mock-answer";
 import * as tmrm from "azure-pipelines-task-lib/mock-run";
+import { ToolRunner } from "azure-pipelines-task-lib/toolrunner";
 import * as path from "path";
 
-import { IServiceEndpoint } from "serviceEndpoint";
+import { IServiceEndpoint } from "../serviceEndpoint";
 
 const taskPath = path.join(__dirname, "..", "index.js");
 const tmr: tmrm.TaskMockRunner = new tmrm.TaskMockRunner(taskPath);
+
+process.env["HOME"] = "/fake/home";
+
+tmr.setInput("command", "preview");
+tmr.setInput("cwd", "dir/");
+tmr.setInput("stack", "myOrg/project/dev");
 
 tmr.registerMock("./serviceEndpoint", {
     getServiceEndpoint: (_: string): IServiceEndpoint => {
@@ -25,37 +31,34 @@ tmr.registerMock("azure-pipelines-tool-lib/tool", {
     cacheDir: () => {
         return Promise.resolve("/cache");
     },
+    findLocalTool: (toolName: string, version: string) => {
+        console.log(`Requested tool ${ toolName } of version ${ version }`);
+        return undefined;
+    },
+    prependPath: (pathToTool: string) => {
+        console.log(`prepending path ${ pathToTool }`);
+    },
 });
 
-tmr.setInput("azureSubscription", "fake-subscription-id");
-tmr.setInput("command", "preview");
-tmr.setInput("cwd", "dir/");
-tmr.setInput("stack", "myOrg/project/dev");
-
-process.env["HOME"] = "/fake/home";
+tmr.registerMock("azure-pipelines-task-lib/toolrunner", {
+    exec: () => {
+        return Promise.resolve();
+    },
+    pipeExecOutputToTool: () => {
+        console.log("piping fake tool");
+        return new ToolRunner("/fake/tool");
+    },
+});
 
 // Provide answers for task mock.
 const mockAnswers: ma.TaskLibAnswers = {
-    getPlatform: {
-        "": tl.Platform.Linux,
-    },
-    which: {
-        curl: "/fake/path/to/curl",
-        sh: "/fake/path/to/sh",
-        pulumi: "/fake/path/to/pulumi",
+    checkPath: {
+        "/fake/path/to/pulumi": true,
     },
     exec: {
-        "/fake/path/to/curl -fsSL https://get.pulumi.com | sh": {
+        "/fake/path/to/curl -fsSL https://get.pulumi.com | /fake/path/to/sh": {
             code: 0,
             stdout: "Pulumi installed via curl",
-        },
-        "/fake/path/to/pulumi version": {
-            code: 0,
-            stdout: "0.17.5",
-        },
-        "/fake/path/to/pulumi stack select myOrg/project/dev": {
-            code: 0,
-            stdout: "stack selected",
         },
         "/fake/path/to/pulumi login": {
             code: 0,
@@ -65,6 +68,26 @@ const mockAnswers: ma.TaskLibAnswers = {
             code: 0,
             stdout: "fake pulumi preview",
         },
+        "/fake/path/to/pulumi stack select myOrg/project/dev": {
+            code: 0,
+            stdout: "stack selected",
+        },
+        "/fake/path/to/pulumi version": {
+            code: 0,
+            stdout: "0.17.5",
+        },
+    },
+    getPlatform: {
+        getPlatform: 2,
+    },
+    osType: {
+        osType: "Linux",
+    },
+    which: {
+        "/fake/path/to/pulumi": "/fake/path/to/pulumi",
+        "curl": "/fake/path/to/curl",
+        "pulumi": "/fake/path/to/pulumi",
+        "sh": "/fake/path/to/sh",
     },
 } as ma.TaskLibAnswers;
 

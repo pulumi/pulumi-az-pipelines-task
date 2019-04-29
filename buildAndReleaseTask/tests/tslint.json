@@ -1,11 +1,14 @@
 {
   "defaultSeverity": "error",
   "extends": [
-      "../"
+    "tslint:recommended"
   ],
   "jsRules": {},
   "rules": {
-      "no-console": false
+      "no-console": false,
+      "ordered-imports": true,
+      "no-string-literal": false,
+      "no-floating-promises": [ true, "Q.Promise" ]
   },
   "rulesDirectory": []
 }

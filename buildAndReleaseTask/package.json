@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "tslint -c tests/tslint.json -p . && tsc && mocha tests/_suite.js",
+    "test": "tsc && yarn --cwd tests/ run test",
     "lint": "tslint -c tslint.json -p .",
-    "tsc": "npm run lint && tsc"
+    "tsc": "yarn run lint && tsc"
   },
   "author": "",
   "license": "ISC",
