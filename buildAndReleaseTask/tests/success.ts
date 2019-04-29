@@ -9,6 +9,7 @@ import { IServiceEndpoint } from "../serviceEndpoint";
 
 const taskPath = path.join(__dirname, "..", "index.js");
 const tmr: tmrm.TaskMockRunner = new tmrm.TaskMockRunner(taskPath);
+const pulumiVersion = "0.17.5";
 
 process.env["HOME"] = "/fake/home";
 
@@ -24,6 +25,12 @@ tmr.registerMock("./serviceEndpoint", {
             subscriptionId: "fake-subscription-id",
             tenantId: "fake-tenant-id",
         };
+    },
+});
+
+tmr.registerMock("./version", {
+    getLatestPulumiVersion: (): Promise<string> => {
+        return Promise.resolve(pulumiVersion);
     },
 });
 
@@ -74,7 +81,7 @@ const mockAnswers: ma.TaskLibAnswers = {
         },
         "/fake/path/to/pulumi version": {
             code: 0,
-            stdout: "0.17.5",
+            stdout: pulumiVersion,
         },
     },
     getPlatform: {

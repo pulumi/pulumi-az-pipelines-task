@@ -8,13 +8,16 @@ import * as path from "path";
 import { installUsingCurl } from "./installers/curl";
 import { installUsingPowerShell } from "./installers/powershell";
 import { getServiceEndpoint } from "./serviceEndpoint";
+import { getLatestPulumiVersion } from "./version";
 
-const pulumiVersion = "0.17.5";
+let pulumiVersion: string;
 
 async function run() {
     tl.setResourcePath(path.join(__dirname, "task.json"));
 
     tl.debug(tl.loc("Debug_Starting"));
+
+    pulumiVersion = await getLatestPulumiVersion();
 
     const connectedServiceName = tl.getInput("azureSubscription", true);
 
