@@ -4,15 +4,17 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "tsc && yarn --cwd tests/ run test",
     "lint": "tslint -c tslint.json -p .",
-    "tsc": "npm run lint && tsc"
+    "tsc": "yarn run lint && tsc"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.18.0",
     "azure-pipelines-task-lib": "^2.8.0",
-    "azure-pipelines-tool-lib": "^0.12.0"
+    "azure-pipelines-tool-lib": "^0.12.0",
+    "typed-rest-client": "^1.2.0"
   },
   "devDependencies": {
     "@types/mocha": "^5.2.6",

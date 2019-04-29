@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "package": "yarn --cwd buildAndReleaseTask/ run tsc && tfx extension create --manifest-globs vss-extension.json --rev-version",
-    "start": "yarn --cwd buildAndReleaseTask/ run tsc && node buildAndReleaseTask/index.js"
+    "start": "yarn --cwd buildAndReleaseTask/ run tsc && node buildAndReleaseTask/index.js",
+    "test": "yarn --cwd buildAndReleaseTask/ test"
   },
   "author": "Praneet Loke",
-  "license": "ISC"
+  "license": "MIT"
 }

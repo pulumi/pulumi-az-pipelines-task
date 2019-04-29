@@ -3,7 +3,7 @@
     "name": "PulumiAzRmTask",
     "friendlyName": "Pulumi Azure DevOps Task",
     "description": "Task extension for running Pulumi apps.",
-    "helpMarkDown": "We are here to help. Join us on Slack at https://slack.pulumi.io.",
+    "helpMarkDown": "Join us on Slack at https://slack.pulumi.io.",
     "category": "Deploy",
     "visibility": [
         "Build",
@@ -12,7 +12,7 @@
     "author": "Praneet Loke",
     "version": {
         "Major": 0,
-        "Minor": 33,
+        "Minor": 40,
         "Patch": 0
     },
     "instanceNameFormat": "Run pulumi $(pulCommand) $(pulArgs)",
@@ -70,13 +70,17 @@
         "PulumiLoginFailed": "Pulumi CLI login command failed.",
         "PulumiNotFound": "Pulumi CLI does not seem to be installed in your environment.",
         "PulumiCommandFailed": "Pulumi command exited with code '%s' while trying to run '%s'.",
+        "PulumiStackSelectFailed": "Failed to select the stack '%s'.",
         "Debug_NotFoundInCache": "Pulumi not found in the local tool cache. Will download and install it.",
-        "Debug_Starting": "Starting",
-        "Debug_AddedToPATH": "Added Pulumi to PATH",
-        "Debug_Installed": "Installed",
-        "Debug_PrintToolPath": "toolPath is '%s'",
-        "Debug_Login": "Logging in to Pulumi CLI",
-        "Debug_PrintingVersion": "Printing version",
-        "Debug_ServiceEndpointName": "Using service endpoint '%s'"
+        "Debug_Starting": "Starting..",
+        "Debug_AddedToPATH": "Added Pulumi to PATH.",
+        "Debug_Installed": "Installed.",
+        "Debug_PrintToolPath": "toolPath is '%s'.",
+        "Debug_Login": "Logging in to Pulumi CLI.",
+        "Debug_PrintingVersion": "Printing version.",
+        "Debug_ServiceEndpointName": "Using service endpoint '%s'.",
+        "Debug_TempDirectoryNotSet": "agent.tempdirectory not set. Using $HOME/temp.",
+        "Debug_LatestPulumiVersion": "Latest pulumi version from https://pulumi.io/latest-version is '%s'.",
+        "Debug_CachingPulumiToHome": "Caching pulumi CLI to path '%s'."
     }
 }

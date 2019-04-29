@@ -9,5 +9,10 @@
         "no-string-literal": false,
         "no-floating-promises": [ true, "Q.Promise" ]
     },
-    "rulesDirectory": []
+    "rulesDirectory": [],
+    "linterOptions": {
+        "exclude": [
+            "tests/**/*.ts"
+        ]
+    }
 }

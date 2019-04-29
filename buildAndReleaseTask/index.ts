@@ -4,16 +4,20 @@ import * as tl from "azure-pipelines-task-lib/task";
 import * as tr from "azure-pipelines-task-lib/toolrunner";
 import * as toolLib from "azure-pipelines-tool-lib/tool";
 import * as path from "path";
+
 import { installUsingCurl } from "./installers/curl";
 import { installUsingPowerShell } from "./installers/powershell";
 import { getServiceEndpoint } from "./serviceEndpoint";
+import { getLatestPulumiVersion } from "./version";
 
-const pulumiVersion = "0.17.5";
+let pulumiVersion: string;
 
 async function run() {
     tl.setResourcePath(path.join(__dirname, "task.json"));
 
     tl.debug(tl.loc("Debug_Starting"));
+
+    pulumiVersion = await getLatestPulumiVersion();
 
     const connectedServiceName = tl.getInput("azureSubscription", true);
 
@@ -31,7 +35,7 @@ async function run() {
                 return;
             }
             // We just installed Pulumi, so prepend the installation path.
-            toolLib.prependPath(path.join(process.env.HOME as string, ".pulumi", "bin"));
+            toolLib.prependPath(path.join(getHomePath(), ".pulumi", "bin"));
             tl.debug(tl.loc("Debug_AddedToPATH"));
         } catch (err) {
             tl.setResult(tl.TaskResult.Failed, err);
@@ -85,7 +89,11 @@ async function run() {
         } as tr.IExecOptions;
         // Select the stack.
         const pulStack = tl.getInput("stack", true);
-        await tl.exec(toolPath, ["stack", "select", pulStack], pulExecOptions);
+        exitCode = await tl.exec(toolPath, ["stack", "select", pulStack], pulExecOptions);
+        if (exitCode !== 0) {
+            tl.setResult(tl.TaskResult.Failed, tl.loc("PulumiStackSelectFailed", pulStack));
+            return;
+        }
 
         // Get the command, and the args the user wants to pass to the Pulumi CLI.
         const pulCommand = tl.getInput("command", true);
@@ -108,15 +116,15 @@ async function run() {
 }
 
 async function installPulumi(): Promise<number> {
-    const osPlat = tl.getPlatform();
+    const osPlat = tl.osType();
     let exitCode: number;
 
     switch (osPlat) {
-    case tl.Platform.Linux:
-    case tl.Platform.MacOS:
+    case "Linux":
+    case "MacOS":
         exitCode = await installUsingCurl();
         break;
-    case tl.Platform.Windows:
+    case "Windows_NT":
         exitCode = await installUsingPowerShell();
         break;
     default:
@@ -127,8 +135,30 @@ async function installPulumi(): Promise<number> {
         return exitCode;
     }
 
-    await toolLib.cacheDir(path.join(process.env.HOME as string, ".pulumi"), "pulumi", pulumiVersion);
+    tl.debug(`process.env: ${ JSON.stringify(process.env) }`);
+    const cachePath = path.join(getHomePath(), ".pulumi");
+    tl.debug(tl.loc("Debug_CachingPulumiToHome", cachePath));
+    await toolLib.cacheDir(cachePath, "pulumi", pulumiVersion);
     return 0;
+}
+
+function getHomePath(): string {
+    const osPlat = tl.osType();
+    let homePath: string;
+
+    switch (osPlat) {
+    case "Linux":
+    case "MacOS":
+        homePath = process.env.HOME as string;
+        break;
+    case "Windows_NT":
+        homePath = process.env.USERPROFILE as string;
+        break;
+    default:
+        throw new Error(`Unexpected OS "${osPlat}"`);
+    }
+
+    return homePath;
 }
 
 // tslint:disable-next-line no-floating-promises

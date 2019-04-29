@@ -2,7 +2,7 @@
     "manifestVersion": 1,
     "id": "build-release-task",
     "name": "Pulumi Azure RM Task",
-    "version": "0.0.33",
+    "version": "0.0.40",
     "publisher": "PraneetLoke",
     "targets": [
         {

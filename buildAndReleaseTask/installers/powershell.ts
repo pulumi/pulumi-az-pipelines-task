@@ -14,8 +14,16 @@ export async function installUsingPowerShell(): Promise<number> {
     let stderrFailure = false;
     // For Windows, we'll generate an ephemeral PS script file with the necessary contents,
     // and run that as a command using PS.
-    const tempDirectory = tl.getVariable("agent.tempDirectory");
-    tl.checkPath(tempDirectory, `${tempDirectory} (agent.tempDirectory)`);
+    let tempDirectory = tl.getVariable("agent.tempDirectory");
+    if (!tempDirectory) {
+        tl.debug("Debug_TempDirectoryNotSet");
+        tempDirectory = `${ process.env["HOME"] }/temp`;
+    }
+    try {
+        tl.checkPath(tempDirectory, `${tempDirectory} (agent.tempDirectory)`);
+    } catch (err) {
+        tl.mkdirP(tempDirectory);
+    }
     const filePath = path.join(tempDirectory, uuidV4() + ".ps1");
     // Direct all output to STDOUT, otherwise the output may appear out
     // of order since Node buffers it's own STDOUT but not STDERR.
