@@ -1,0 +1,42 @@
+# Pulumi Azure Pipelines task extension
+# Run tests and create a new artifact
+# to be published in the Visual Studio Marketplace
+# under the pulumi publisher ID.
+
+trigger:
+- master
+
+pool:
+  vmImage: 'Ubuntu-16.04'
+
+steps:
+- task: NodeTool@0
+  inputs:
+    versionSpec: '10.x'
+  displayName: 'Install Node.js'
+
+- task: Npm@1
+  displayName: 'Restore node_modules for buildAndReleaseTask/'
+  inputs:
+    workingDir: buildAndReleaseTask/
+    verbose: true
+
+- task: Npm@1
+  displayName: 'Restore node_modules for buildAndReleaseTask/tests/'
+  inputs:
+    workingDir: buildAndReleaseTask/tests
+    verbose: true
+
+- task: Npm@1
+  displayName: 'Install mocha globally'
+  inputs:
+    command: 'custom'
+    customCommand: i -g mocha
+
+- task: Npm@1
+  displayName: 'Run tests'
+  inputs:
+    command: 'custom'
+    customCommand: run test
+  env:
+    INPUT_AZURESUBSCRIPTION: 'fake-subscription-id'

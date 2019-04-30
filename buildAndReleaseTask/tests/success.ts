@@ -9,10 +9,11 @@ import { IServiceEndpoint } from "../serviceEndpoint";
 
 const taskPath = path.join(__dirname, "..", "index.js");
 const tmr: tmrm.TaskMockRunner = new tmrm.TaskMockRunner(taskPath);
-const pulumiVersion = "0.17.5";
+const pulumiVersion = "0.17.8";
 
 process.env["HOME"] = "/fake/home";
 
+tmr.setInput("azureSubscription", "fake-subscription-id");
 tmr.setInput("command", "preview");
 tmr.setInput("cwd", "dir/");
 tmr.setInput("stack", "myOrg/project/dev");
