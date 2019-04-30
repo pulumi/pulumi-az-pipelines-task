@@ -1,8 +1,8 @@
-# Pulumi Azure RM Task for Azure Pipelines
+# Pulumi Azure task extension for Azure Pipelines
 
 ## Release status
 
-This lib is in alpha. **Do not make this repo public yet!**
+This lib is in private preview. **Do not make this repo public yet!**
 
 ## Prerequisites
 
@@ -14,14 +14,19 @@ This lib is in alpha. **Do not make this repo public yet!**
 ## Local Development
 
 - Set the `AGENT_TOOLSDIRECTORY` env var to any directory for caching the pulumi tool.
+- `npm install` in the `buildAndReleaseTask` and the `buildAndReleaseTask/tests` folders.
 - You can run the tool either from the root directory or the `buildAndReleaseTask` directory.
   - To run from the root folder, simply run `npm start`.
   - To run from the `buildAndReleaseTask` folder, run `tsc && node index.js` from the `buildAndReleaseTask` directory.
+
+## Tests
+
+`npm run test`
 
 ## Package
 
 > Learn more [here](https://docs.microsoft.com/en-us/azure/devops/extend/develop/add-build-task?view=azure-devops#step-4-package-your-extension).
 
-Ensure you have `tfx` cli installed by running `tfx version`. If it is not installed, then run `npm i -g tfx-cli`.
-
-Run `npm run package` from the root directory.
+- Ensure you have `tfx` cli installed by running `tfx version`. If it is not installed, then run `npm i -g tfx-cli`.
+- Install `vsts-bump` by running `npm i -g vsts-bump`.
+- Run `npm run package` from the root directory.

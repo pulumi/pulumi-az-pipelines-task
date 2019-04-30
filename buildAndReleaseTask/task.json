@@ -1,18 +1,18 @@
 {
-    "id": "d207100d-0225-409b-ad86-f9b9912502c7",
-    "name": "PulumiAzRmTask",
-    "friendlyName": "Pulumi Azure DevOps Task",
-    "description": "Task extension for running Pulumi apps.",
+    "id": "66148448-e174-4167-91a4-0ac63f4a10ca",
+    "name": "Pulumi",
+    "friendlyName": "Pulumi Azure Pipelines Task",
+    "description": "Azure Pipelines task extension for running Pulumi apps.",
     "helpMarkDown": "Join us on Slack at https://slack.pulumi.io.",
     "category": "Deploy",
     "visibility": [
         "Build",
         "Release"
     ],
-    "author": "Praneet Loke",
+    "author": "Pulumi",
     "version": {
         "Major": 0,
-        "Minor": 40,
+        "Minor": 1,
         "Patch": 0
     },
     "instanceNameFormat": "Run pulumi $(pulCommand) $(pulArgs)",
