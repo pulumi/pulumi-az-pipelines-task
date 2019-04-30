@@ -1,7 +1,7 @@
 {
   "name": "tests",
   "version": "1.0.0",
-  "description": "Pulumi Azure Pipelines Task tests",
+  "description": "Azure Pipelines task extension for running Pulumi apps.",
   "main": "_suite.js",
   "scripts": {
     "test": "tsc && mocha _suite.js",

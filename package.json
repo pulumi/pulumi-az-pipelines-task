@@ -1,13 +1,13 @@
 {
   "name": "pulumi-az-pipeline-task",
   "version": "1.0.0",
-  "description": "Package the Pulumi Azure RM task.",
+  "description": "Azure Pipelines task extension for running Pulumi apps.",
   "main": "index.js",
   "scripts": {
     "package": "yarn --cwd buildAndReleaseTask/ run tsc && tfx extension create --manifest-globs vss-extension.json --rev-version",
     "start": "yarn --cwd buildAndReleaseTask/ run tsc && node buildAndReleaseTask/index.js",
     "test": "yarn --cwd buildAndReleaseTask/ test"
   },
-  "author": "Praneet Loke",
+  "author": "Pulumi",
   "license": "MIT"
 }
