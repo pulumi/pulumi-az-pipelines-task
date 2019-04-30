@@ -1,6 +1,6 @@
 {
     "manifestVersion": 1,
-    "id": "build-release-task",
+    "id": "pulumi-azure-pipelines-task",
     "name": "Pulumi Azure Pipelines Task",
     "version": "0.1.0",
     "publisher": "pulumi",
