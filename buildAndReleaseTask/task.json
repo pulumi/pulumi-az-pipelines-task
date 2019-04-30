@@ -12,7 +12,7 @@
     "author": "Pulumi",
     "version": {
         "Major": 0,
-        "Minor": 0,
+        "Minor": 1,
         "Patch": 0
     },
     "instanceNameFormat": "Run pulumi $(pulCommand) $(pulArgs)",

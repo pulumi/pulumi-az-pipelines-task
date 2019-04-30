@@ -6,7 +6,8 @@
   "scripts": {
     "test": "tsc && yarn --cwd tests/ run test",
     "lint": "tslint -c tslint.json -p .",
-    "tsc": "yarn run lint && tsc"
+    "tsc": "yarn run lint && tsc",
+    "bump-version": "vsts-bump --indent 4 task.json"
   },
   "author": "Pulumi",
   "license": "MIT",

@@ -4,9 +4,10 @@
   "description": "Azure Pipelines task extension for running Pulumi apps.",
   "main": "index.js",
   "scripts": {
-    "package": "yarn --cwd buildAndReleaseTask/ run tsc && tfx extension create --manifest-globs vss-extension.json --rev-version",
+    "package": "yarn --cwd buildAndReleaseTask/ run tsc && yarn --cwd buildAndReleaseTask/ bump-version && yarn run tfx-create",
     "start": "yarn --cwd buildAndReleaseTask/ run tsc && node buildAndReleaseTask/index.js",
-    "test": "yarn --cwd buildAndReleaseTask/ test"
+    "test": "yarn --cwd buildAndReleaseTask/ test",
+    "tfx-create": "tfx extension create --manifest-globs vss-extension.json --rev-version"
   },
   "author": "Pulumi",
   "license": "MIT"
