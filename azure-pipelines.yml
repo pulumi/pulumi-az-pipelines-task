@@ -1,0 +1,32 @@
+# Pulumi Azure Pipelines task extension
+# Run tests and create a new artifact
+# to be published in the Visual Studio Marketplace
+# under the pulumi publisher ID.
+
+trigger:
+- master
+
+pool:
+  vmImage: 'Ubuntu-16.04'
+
+steps:
+- task: NodeTool@0
+  inputs:
+    versionSpec: '10.x'
+  displayName: 'Install Node.js'
+
+- task: Npm@1
+  inputs:
+    workingDir: buildAndReleaseTask/
+    verbose: true
+
+- task: Npm@1
+  inputs:
+    workingDir: buildAndReleaseTask/tests
+    verbose: true
+
+- task: Npm@1
+  inputs:
+    customCommand: test
+  env:
+    INPUT_AZURESUBSCRIPTION: 'fake-subscription-id'
