@@ -17,7 +17,7 @@ export async function installUsingPowerShell(): Promise<number> {
     let tempDirectory = tl.getVariable("agent.tempDirectory");
     if (!tempDirectory) {
         tl.debug("Debug_TempDirectoryNotSet");
-        tempDirectory = `${ process.env["HOME"] }/temp`;
+        tempDirectory = `${ process.env["HOME"] || process.env["USERPROFILE"] }/temp`;
     }
     try {
         tl.checkPath(tempDirectory, `${tempDirectory} (agent.tempDirectory)`);
