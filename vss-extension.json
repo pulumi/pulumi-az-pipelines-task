@@ -2,7 +2,7 @@
     "manifestVersion": 1,
     "id": "pulumi-azure-pipelines-task",
     "name": "Pulumi Azure Pipelines Task",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "publisher": "pulumi",
     "targets": [
         {
@@ -14,7 +14,7 @@
         "Azure Pipelines"
     ],
     "icons": {
-        "default": "images/pulumi_mark_flat_on_light_128x128.png"
+        "default": "images/pulumi_mark__on_dark_128x128.png"
     },
     "files": [
         {
