@@ -21,6 +21,26 @@
             "path": "buildAndReleaseTask"
         }
     ],
+    "links": {
+        "home": {
+            "uri": "https://www.pulumi.com"
+        },
+        "getstarted": {
+            "uri": "https://pulumi.io/quickstart/"
+        },
+        "learn": {
+            "uri": "https://www.pulumi.io"
+        },
+        "support": {
+            "uri": "https://slack.pulumi.io"
+        },
+        "repository": {
+            "uri": "https://github.com/pulumi/pulumi-az-pipelines-task"
+        },
+        "issues": {
+            "uri": "https://github.com/pulumi/pulumi-az-pipelines-task/issues"
+        }
+    },
     "contributions": [
         {
             "id": "custom-build-release-task",
@@ -32,5 +52,18 @@
                 "name": "buildAndReleaseTask"
             }
         }
-    ]
+    ],
+    "repository": {
+        "type": "git",
+        "uri": "https://github.com/pulumi/pulumi-az-pipelines-task"
+    },
+    "branding": {
+        "color": "#522768",
+        "theme": "dark"
+    },
+    "content": {
+        "details": {
+            "path": "overview.md"
+        }
+    }
 }
