@@ -16,17 +16,20 @@ steps:
   displayName: 'Install Node.js'
 
 - task: Npm@1
+  displayName: 'Restore node_modules for buildAndReleaseTask/'
   inputs:
     workingDir: buildAndReleaseTask/
     verbose: true
 
 - task: Npm@1
+  displayName: 'Restore node_modules for buildAndReleaseTask/tests/'
   inputs:
     workingDir: buildAndReleaseTask/tests
     verbose: true
 
 - task: Npm@1
+  displayName: 'Run tests'
   inputs:
-    customCommand: test
+    customCommand: run test
   env:
     INPUT_AZURESUBSCRIPTION: 'fake-subscription-id'
