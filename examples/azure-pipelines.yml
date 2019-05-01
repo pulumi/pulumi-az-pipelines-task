@@ -12,11 +12,11 @@ jobs:
       command: install
       workingDir: "./"
 
-  - task: PulumiAzRmTask@0
+  - task: Pulumi@0
     inputs:
       azureSubscription: 'your-service-connection-name'
       command: "up"
       args: "--yes --skip-preview"
       cwd: "./"
       # Replace this with your values.
-      stack: "<org-name>/<project-name>/<stack-name>"
+      stack: "<org-name>/<project-name>/dev"

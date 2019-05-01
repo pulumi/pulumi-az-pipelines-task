@@ -7,8 +7,8 @@ Then, do the following:
 - Then connect this folder with your git repo on DevOps.
 - Once connected, you can create a project and the stack in your Pulumi account by running:
   - `pulumi new --name <project-name> --generate-only`.
-  - Be sure to replace `<project-name>` and `<stack-name>` with your own values.
-  - `pulumi stack init <org-name>/<stack-name>`, where `<org-name>` is your username or the organization's username on Pulumi.
+  - Be sure to replace `<project-name>` with your own value.
+  - `pulumi stack init <org-name>/<project-name>/dev`, where `<org-name>` is your username or the organization's username on Pulumi.
     - The forward slash (/) between the org name and the stack name is required.
 - Commit and push up this repo to your DevOps project in the `master` branch.
 - After you push, a pipeline build will automatically start, which should fail. That's because you didn't set the Pulumi access token for the CLI yet.
