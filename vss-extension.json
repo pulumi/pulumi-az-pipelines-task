@@ -65,5 +65,8 @@
         "details": {
             "path": "overview.md"
         }
-    }
+    },
+    "galleryFlags": [
+        "Preview"
+    ]
 }
