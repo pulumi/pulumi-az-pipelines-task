@@ -50,11 +50,6 @@ stages:
   jobs:
   - job: tfxCreate
     steps:
-    - checkout: self
-      clean: all
-      # This allows us to create a new branch and push.
-      persistCredentials: "true"
-
     - task: TfxInstaller@1
       inputs:
         version: 'v0.6.x'
