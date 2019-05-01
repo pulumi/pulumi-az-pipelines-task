@@ -11,6 +11,16 @@ Alternatively, you can also use the classic wizard UI to setup a new Azure Pipel
 Don't know how to get started? We got you covered with an extensive library of easy examples to get you started within minutes.
 Read on to learn how you can get started quickly.
 
+## Prerequisites
+
+- You must have an active Azure subscription. Create a new subscription at https://azure.com.
+- You must also have an active Azure DevOps account and an organization. Create a new account at https://dev.azure.com.
+- Install this extension to your organization. To do this, you must be an admin of the organization.
+  - Once installed, you may have to have your admin make the extension available to you or your project.
+- Create a [service connection](https://docs.microsoft.com/en-us/azure/devops/pipelines/library/connect-to-azure?view=azure-devops) to your Azure Subscription in your DevOps project.
+  - **Note**: At this time, only a `Service Principal Authentication` based service connection can be used with this extension.
+  - The name of this service connection is what you will use in the Pulumi task for the input `azureSubscription` if you are using the YAML configuration.
+
 ## Quickstart
 
 The goal of the quickstart is to help you setup a "stack" on app.pulumi.com for your account. You can then setup CI in your Azure Pipelines to deploy infrastructure to it.
