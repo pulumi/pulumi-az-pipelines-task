@@ -67,7 +67,7 @@ stages:
         connectTo: 'VsTeam'
         connectedServiceName: 'Pulumi Marketplace'
         publisherId: 'pulumi'
-        extensionId: 'pulumi-azure-pipelines-task'
+        extensionId: 'build-and-release-task'
         versionAction: 'Patch'
         outputVariable: 'Extension.Version'
         extensionVersionOverride: 'Extension.VersionOverride'
