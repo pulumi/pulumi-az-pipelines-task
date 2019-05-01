@@ -58,6 +58,12 @@ stages:
     displayName: 'Create VSIX'
     steps:
     - task: Npm@1
+      displayName: 'Restore node_modules for buildAndReleaseTask/'
+      inputs:
+        workingDir: buildAndReleaseTask/
+        verbose: true
+
+    - task: Npm@1
       displayName: 'Compile TS to JS'
       inputs:
         workingDir: buildAndReleaseTask/
