@@ -2,7 +2,7 @@
     "manifestVersion": 1,
     "id": "build-and-release-task",
     "name": "Pulumi Azure Pipelines Task",
-    "version": "0.1.10",
+    "version": "0.1.11",
     "publisher": "pulumi",
     "targets": [
         {
@@ -14,8 +14,14 @@
         "Azure Pipelines"
     ],
     "icons": {
-        "default": "images/pulumi_mark__on_dark_128x128.png"
+        "default": "images/pulumi_mark_flat_on_light_128x128.png"
     },
+    "tags": [
+        "infrastructure as code",
+        "infrastructure as software",
+        "deploy azure resources using code",
+        "code based deployment"
+    ],
     "files": [
         {
             "path": "buildAndReleaseTask"
@@ -56,10 +62,6 @@
     "repository": {
         "type": "git",
         "uri": "https://github.com/pulumi/pulumi-az-pipelines-task"
-    },
-    "branding": {
-        "color": "#522768",
-        "theme": "dark"
     },
     "content": {
         "details": {
