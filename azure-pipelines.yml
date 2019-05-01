@@ -9,34 +9,88 @@ trigger:
 pool:
   vmImage: 'Ubuntu-16.04'
 
-steps:
-- task: NodeTool@0
-  inputs:
-    versionSpec: '10.x'
-  displayName: 'Install Node.js'
+stages:
+- stage: build
+  displayName: 'Build and test'
+  jobs:
+  - job: build
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '10.x'
+      displayName: 'Install Node.js'
 
-- task: Npm@1
-  displayName: 'Restore node_modules for buildAndReleaseTask/'
-  inputs:
-    workingDir: buildAndReleaseTask/
-    verbose: true
+    - task: Npm@1
+      displayName: 'Restore node_modules for buildAndReleaseTask/'
+      inputs:
+        workingDir: buildAndReleaseTask/
+        verbose: true
 
-- task: Npm@1
-  displayName: 'Restore node_modules for buildAndReleaseTask/tests/'
-  inputs:
-    workingDir: buildAndReleaseTask/tests
-    verbose: true
+    - task: Npm@1
+      displayName: 'Restore node_modules for buildAndReleaseTask/tests/'
+      inputs:
+        workingDir: buildAndReleaseTask/tests
+        verbose: true
 
-- task: Npm@1
-  displayName: 'Install mocha globally'
-  inputs:
-    command: 'custom'
-    customCommand: i -g mocha
+    - task: Npm@1
+      displayName: 'Install mocha globally'
+      inputs:
+        command: 'custom'
+        customCommand: i -g mocha
 
-- task: Npm@1
-  displayName: 'Run tests'
-  inputs:
-    command: 'custom'
-    customCommand: run test
-  env:
-    INPUT_AZURESUBSCRIPTION: 'fake-subscription-id'
+  - job: test
+    displayName: 'Tests'
+    steps:
+    - task: Npm@1
+      displayName: 'Run tests'
+      inputs:
+        command: 'custom'
+        customCommand: run test
+      env:
+        INPUT_AZURESUBSCRIPTION: 'fake-subscription-id'
+
+- stage: package
+  condition: |
+    or(
+        eq(variables['Build.Reason'],'IndividualCI'),
+        eq(variables['Build.Reason'], 'BatchedCI'),
+        eq(variables['ManualOverride'], 'true')
+      )
+  displayName: 'Package extension'
+  jobs:
+  - job: tfxCreate
+    steps:
+    - task: TfxInstaller@1
+      inputs:
+        version: 'v0.6.x'
+
+    - task: ExtensionVersion@1
+      displayName: 'Query extension version'
+      inputs:
+        connectTo: 'VsTeam'
+        connectedServiceName: 'Pulumi Marketplace'
+        publisherId: 'pulumi'
+        extensionId: 'pulumi-azure-pipelines-task'
+        versionAction: 'Patch'
+        outputVariable: 'Extension.Version'
+        extensionVersionOverride: 'Extension.VersionOverride'
+
+    - task: PackageVSTSExtension@1
+      displayName: 'Package extension'
+      inputs:
+        extensionVersion: '$(Extension.Version)'
+        updateTasksVersion: true
+        updateTasksVersionType: patch
+    
+    - script: |
+        git add vss-extension.json
+        git add **/task.json
+        git commit -am "[skip azp] Bump version to ${EXTENSION_VERSION}"
+        git push origin master
+
+    - task: PublishPipelineArtifact@0
+      displayName: 'Upload extension VSIX'
+      inputs:
+        artifactName: 'vsix'
+        targetPath: '$(Build.SourcesDirectory)/.vsix'
+
