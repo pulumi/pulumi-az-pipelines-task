@@ -37,9 +37,6 @@ stages:
         command: 'custom'
         customCommand: i -g mocha
 
-  - job: test
-    displayName: 'Tests'
-    steps:
     - task: Npm@1
       displayName: 'Run tests'
       inputs:
