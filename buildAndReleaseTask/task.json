@@ -13,7 +13,7 @@
     "version": {
         "Major": 0,
         "Minor": 1,
-        "Patch": 11
+        "Patch": 13
     },
     "instanceNameFormat": "Run pulumi $(pulCommand) $(pulArgs)",
     "inputs": [
@@ -71,6 +71,7 @@
         "PulumiNotFound": "Pulumi CLI does not seem to be installed in your environment.",
         "PulumiCommandFailed": "Pulumi command exited with code '%s' while trying to run '%s'.",
         "PulumiStackSelectFailed": "Failed to select the stack '%s'.",
+        "PulumiAccessTokenNotFailed": "Pulumi access token could not be determined. Set PULUMI_ACCESS_TOKEN as a secret env variable.",
         "Debug_NotFoundInCache": "Pulumi not found in the local tool cache. Will download and install it.",
         "Debug_Starting": "Starting..",
         "Debug_AddedToPATH": "Added Pulumi to PATH.",

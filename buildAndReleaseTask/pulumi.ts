@@ -31,6 +31,21 @@ async function runPulumiCmd(toolPath: string, pulExecOptions: tr.IExecOptions) {
     }
 }
 
+function getExecOptions(envMap: any, workingDirectory: string): tr.IExecOptions {
+    return {
+        cwd: workingDirectory,
+        env: envMap,
+
+        // Set defaults.
+        errStream: process.stderr,
+        failOnStdErr: false,
+        ignoreReturnCode: true,
+        outStream: process.stdout,
+        silent: false,
+        windowsVerbatimArguments: false,
+    } as tr.IExecOptions;
+}
+
 export async function runPulumi(serviceEndpoint: IServiceEndpoint) {
     try {
         // Print the version.
@@ -45,7 +60,23 @@ export async function runPulumi(serviceEndpoint: IServiceEndpoint) {
 
         // Login and then run the command.
         tl.debug(tl.loc("Debug_Login"));
-        const exitCode = await tl.exec(toolPath, "login");
+        const pulumiAccessToken =
+            tl.getVariable("pulumi.access.token") ||
+            // `getVariable` will automatically prepend the SECRET_ prefix if it finds
+            // it in the build environment's secret vault.
+            tl.getVariable("PULUMI_ACCESS_TOKEN") ||
+            tl.getVariable("SECRET_PULUMI_ACCESS_TOKEN");
+        if (!pulumiAccessToken) {
+            tl.setResult(tl.TaskResult.Failed, tl.loc("PulumiAccessTokenNotFailed"));
+            return;
+        }
+
+        const exitCode = await tl.tool(toolPath)
+            .arg("login")
+            .exec(
+                getExecOptions({
+                    PULUMI_ACCESS_TOKEN: pulumiAccessToken,
+                }, ""));
         if (exitCode !== 0) {
             tl.setResult(tl.TaskResult.Failed, tl.loc("PulumiLoginFailed"));
             return;
@@ -55,28 +86,13 @@ export async function runPulumi(serviceEndpoint: IServiceEndpoint) {
         const pathEnv = process.env["PATH"];
         tl.debug(`Executing Pulumi commands with PATH ${ pathEnv }`);
         const pulCwd = tl.getInput("cwd") || ".";
-        const pulumiAccessToken =
-            tl.getVariable("pulumi.access.token") ||
-            tl.getVariable("PULUMI_ACCESS_TOKEN") ||
-            tl.getVariable("SECRET_PULUMI_ACCESS_TOKEN");
-        const pulExecOptions = {
-            cwd: pulCwd,
-            env: {
-                ARM_CLIENT_ID: serviceEndpoint.clientId,
-                ARM_CLIENT_SECRET: serviceEndpoint.servicePrincipalKey,
-                ARM_SUBSCRIPTION_ID: serviceEndpoint.subscriptionId,
-                ARM_TENANT_ID: serviceEndpoint.tenantId,
-                PATH: pathEnv,
-                PULUMI_ACCESS_TOKEN: pulumiAccessToken,
-            },
-            // Set defaults.
-            errStream: process.stderr,
-            failOnStdErr: false,
-            ignoreReturnCode: true,
-            outStream: process.stdout,
-            silent: false,
-            windowsVerbatimArguments: false,
-        } as tr.IExecOptions;
+        const pulExecOptions = getExecOptions({
+            ARM_CLIENT_ID: serviceEndpoint.clientId,
+            ARM_CLIENT_SECRET: serviceEndpoint.servicePrincipalKey,
+            ARM_SUBSCRIPTION_ID: serviceEndpoint.subscriptionId,
+            ARM_TENANT_ID: serviceEndpoint.tenantId,
+            PATH: pathEnv,
+        }, pulCwd);
 
         // Select the stack.
         await selectStack(toolPath, pulExecOptions);

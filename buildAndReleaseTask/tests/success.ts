@@ -13,6 +13,7 @@ const pulumiVersion = "0.17.8";
 
 process.env["HOME"] = "/fake/home";
 
+tmr.setVariableName("PULUMI_ACCESS_TOKEN", "fake-access-token", true);
 tmr.setInput("azureSubscription", "fake-subscription-id");
 tmr.setInput("command", "preview");
 tmr.setInput("cwd", "dir/");
