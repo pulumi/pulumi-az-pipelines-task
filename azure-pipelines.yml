@@ -6,14 +6,13 @@
 trigger:
 - master
 
-pool:
-  vmImage: 'Ubuntu-16.04'
-
 stages:
 - stage: build
   displayName: 'Build and test'
   jobs:
   - job: build
+    pool:
+      vmImage: 'Ubuntu-16.04'
     steps:
     - task: NodeTool@0
       inputs:
