@@ -67,6 +67,7 @@
         }
     },
     "galleryFlags": [
+        "Public",
         "Preview"
     ]
 }
