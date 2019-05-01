@@ -47,6 +47,9 @@ stages:
 
     - task: Npm@1
       displayName: 'Run example - create infrastructure'
+      inputs:
+        command: 'custom'
+        customCommand: start
       env:
         # Since we are running the task in its unpackaged form, we should specify the inputs manually.
         # That means we must prefix them with INPUT_*, which is what the task agent itself does too.
@@ -82,6 +85,9 @@ stages:
 
     - task: Npm@1
       displayName: 'Run example - create infrastructure'
+      inputs:
+        command: 'custom'
+        customCommand: start
       env:
         INPUT_AZURESUBSCRIPTION: 'Pulumi'
         INPUT_CWD: 'examples/'
@@ -91,6 +97,9 @@ stages:
     
     - task: Npm@1
       displayName: 'Run example - destroy infrastructure'
+      inputs:
+        command: 'custom'
+        customCommand: start
       env:
         INPUT_AZURESUBSCRIPTION: 'Pulumi'
         INPUT_CWD: 'examples/'
