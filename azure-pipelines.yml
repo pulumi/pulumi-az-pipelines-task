@@ -76,5 +76,5 @@ stages:
       displayName: 'Upload extension VSIX'
       inputs:
         artifactName: 'vsix'
-        targetPath: '$(Build.SourcesDirectory)/.vsix'
+        targetPath: $(Extension.OutputPath)
 
