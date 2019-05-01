@@ -55,6 +55,7 @@ stages:
   displayName: 'Package extension'
   jobs:
   - job: tfxCreate
+    displayName: 'Create VSIX'
     steps:
     - task: TfxInstaller@1
       inputs:
