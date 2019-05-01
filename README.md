@@ -2,7 +2,7 @@
 
 ## Release status
 
-This lib is in private preview. **Do not make this repo public yet!**
+This project is in private preview. **Do not make this repo public yet!**
 
 ## Prerequisites
 
