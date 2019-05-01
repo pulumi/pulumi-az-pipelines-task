@@ -83,10 +83,11 @@ stages:
         updateTasksVersionType: patch
     
     - script: |
+        git checkout -b praneetloke/test
         git add vss-extension.json
         git add **/task.json
         git commit -am "[skip azp] Bump version to ${EXTENSION_VERSION}"
-        git push origin master
+        git push origin praneetloke/test
 
     - task: PublishPipelineArtifact@0
       displayName: 'Upload extension VSIX'
