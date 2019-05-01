@@ -55,6 +55,10 @@ export async function runPulumi(serviceEndpoint: IServiceEndpoint) {
         const pathEnv = process.env["PATH"];
         tl.debug(`Executing Pulumi commands with PATH ${ pathEnv }`);
         const pulCwd = tl.getInput("cwd") || ".";
+        const pulumiAccessToken =
+            tl.getVariable("pulumi.access.token") ||
+            tl.getVariable("PULUMI_ACCESS_TOKEN") ||
+            tl.getVariable("SECRET_PULUMI_ACCESS_TOKEN");
         const pulExecOptions = {
             cwd: pulCwd,
             env: {
@@ -63,6 +67,7 @@ export async function runPulumi(serviceEndpoint: IServiceEndpoint) {
                 ARM_SUBSCRIPTION_ID: serviceEndpoint.subscriptionId,
                 ARM_TENANT_ID: serviceEndpoint.tenantId,
                 PATH: pathEnv,
+                PULUMI_ACCESS_TOKEN: pulumiAccessToken,
             },
             // Set defaults.
             errStream: process.stderr,

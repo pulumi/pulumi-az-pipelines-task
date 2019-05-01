@@ -57,6 +57,13 @@ stages:
   - job: tfxCreate
     displayName: 'Create VSIX'
     steps:
+    - task: Npm@1
+      displayName: 'Compile TS to JS'
+      inputs:
+        workingDir: buildAndReleaseTask/
+        command: 'custom'
+        customCommand: run tsc
+
     - task: TfxInstaller@1
       inputs:
         version: 'v0.6.x'
