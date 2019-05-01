@@ -14,9 +14,9 @@ jobs:
 
   - task: Pulumi@0
     inputs:
-      azureSubscription: 'your-service-connection-name'
+      azureSubscription: '<your-service-connection-name>'
       command: "up"
       args: "--yes --skip-preview"
       cwd: "./"
-      # Replace this with your values.
-      stack: "<org-name>/<project-name>/dev"
+      # Replace this with your org's name.
+      stack: "<org-name>/pulumi-az-pipelines-task-example/dev"
