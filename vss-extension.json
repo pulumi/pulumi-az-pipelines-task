@@ -2,7 +2,7 @@
     "manifestVersion": 1,
     "id": "pulumi-azure-pipelines-task",
     "name": "Pulumi Azure Pipelines Task",
-    "version": "0.1.3",
+    "version": "0.1.9",
     "publisher": "pulumi",
     "targets": [
         {
