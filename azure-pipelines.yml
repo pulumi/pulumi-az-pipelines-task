@@ -45,18 +45,14 @@ stages:
       env:
         INPUT_AZURESUBSCRIPTION: 'fake-subscription-id'
 
-    - task: Npm@1
-      displayName: 'Run example - create infrastructure'
-      inputs:
-        command: 'custom'
-        customCommand: start
-      env:
+    - script: |
         # Since we are running the task in its unpackaged form, we should specify the inputs manually.
         # That means we must prefix them with INPUT_*, which is what the task agent itself does too.
-        INPUT_AZURESUBSCRIPTION: 'Pulumi'
-        INPUT_CWD: 'examples/'
-        INPUT_COMMAND: 'preview'
-        INPUT_STACK: $(example.stack)
+        export INPUT_AZURESUBSCRIPTION=Pulumi
+        export INPUT_CWD=examples/
+        export INPUT_COMMAND=preview
+        export INPUT_STACK=${EXAMPLE_STACK}
+        npm start
 
 - stage: package
   condition:
