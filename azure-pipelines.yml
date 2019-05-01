@@ -45,15 +45,6 @@ stages:
       env:
         INPUT_AZURESUBSCRIPTION: 'fake-subscription-id'
 
-    - script: |
-        # Since we are running the task in its unpackaged form, we should specify the inputs manually.
-        # That means we must prefix them with INPUT_*, which is what the task agent itself does too.
-        export INPUT_AZURESUBSCRIPTION=Pulumi
-        export INPUT_CWD=examples/
-        export INPUT_COMMAND=preview
-        export INPUT_STACK=${EXAMPLE_STACK}
-        npm start
-
 - stage: package
   condition:
     or(
@@ -78,30 +69,6 @@ stages:
         workingDir: buildAndReleaseTask/
         command: 'custom'
         customCommand: run tsc
-
-    - task: Npm@1
-      displayName: 'Run example - create infrastructure'
-      inputs:
-        command: 'custom'
-        customCommand: start
-      env:
-        INPUT_AZURESUBSCRIPTION: 'Pulumi'
-        INPUT_CWD: 'examples/'
-        INPUT_COMMAND: 'up'
-        INPUT_ARGS: '--yes --skip-preview'
-        INPUT_STACK: $(example.stack)
-    
-    - task: Npm@1
-      displayName: 'Run example - destroy infrastructure'
-      inputs:
-        command: 'custom'
-        customCommand: start
-      env:
-        INPUT_AZURESUBSCRIPTION: 'Pulumi'
-        INPUT_CWD: 'examples/'
-        INPUT_COMMAND: 'destroy'
-        INPUT_ARGS: '--yes --skip-preview'
-        INPUT_STACK: $(example.stack)
 
     - task: TfxInstaller@1
       inputs:
