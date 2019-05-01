@@ -50,12 +50,6 @@ stages:
         INPUT_AZURESUBSCRIPTION: 'fake-subscription-id'
 
 - stage: package
-  condition: |
-    or(
-        eq(variables['Build.Reason'],'IndividualCI'),
-        eq(variables['Build.Reason'], 'BatchedCI'),
-        eq(variables['ManualOverride'], 'true')
-      )
   displayName: 'Package extension'
   jobs:
   - job: tfxCreate
