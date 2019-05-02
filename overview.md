@@ -37,6 +37,10 @@ The goal of the quickstart is to help you setup a "stack" on app.pulumi.com for 
 - Having created the project, you can now use this task extension in your pipeline build to run it in your CI/CD setup. Search for "Pulumi" from the list of built-in tasks when authoring your pipeline build YAML or from the wizard UI.
   - If you cannot find the Pulumi task, contact your organization's administrator to install this extension by clicking the above **Get it free** button.
 
+### Pulumi Access Token
+
+A Pulumi access token is required so that the Pulumi task can log you into your account on app.pulumi.com. Since the task runs in a CI environment, you can specify the access token using a build variable `pulumi.access.token`, which the task will automatically map to the necessary environment variable `PULUMI_ACCESS_TOKEN` when it invokes the `pulumi login` command.
+
 ## Example Pulumi app
 
 Here's an example app that creates an App Service with a SQL DB and Application Insights. You can download this example from https://github.com/pulumi/examples/tree/master/azure-ts-appservice.
