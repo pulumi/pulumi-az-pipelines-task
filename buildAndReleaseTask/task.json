@@ -82,6 +82,7 @@
         "Debug_ServiceEndpointName": "Using service endpoint '%s'.",
         "Debug_TempDirectoryNotSet": "agent.tempdirectory not set. Using $HOME/temp.",
         "Debug_LatestPulumiVersion": "Latest pulumi version from https://pulumi.io/latest-version is '%s'.",
-        "Debug_CachingPulumiToHome": "Caching pulumi CLI to path '%s'."
+        "Debug_CachingPulumiToHome": "Caching pulumi CLI to path '%s'.",
+        "Debug_DetectedVersion": "PULUMI_VERSION variable detected in the environment as '%s'. Task will use this version from the local tool cache."
     }
 }

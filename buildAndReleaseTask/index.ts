@@ -8,7 +8,7 @@ import { installUsingCurl } from "./installers/curl";
 import { installUsingPowerShell } from "./installers/powershell";
 import { runPulumi } from "./pulumi";
 import { getServiceEndpoint } from "./serviceEndpoint";
-import { getLatestPulumiVersion } from "./version";
+import { ENV_PULUMI_VERSION, getLatestPulumiVersion } from "./version";
 
 let pulumiVersion: string;
 
@@ -17,7 +17,13 @@ async function run() {
 
     tl.debug(tl.loc("Debug_Starting"));
 
-    pulumiVersion = await getLatestPulumiVersion();
+    const versionVariable = tl.getVariable(ENV_PULUMI_VERSION);
+    if (versionVariable) {
+        pulumiVersion = versionVariable;
+        tl.debug(tl.loc("Debug_DetectedVersion", pulumiVersion));
+    } else {
+        pulumiVersion = await getLatestPulumiVersion();
+    }
 
     const connectedServiceName = tl.getInput("azureSubscription", true);
 
