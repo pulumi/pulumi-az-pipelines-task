@@ -13,5 +13,5 @@ export async function getLatestPulumiVersion(): Promise<string> {
     // The response contains a new-line character at the end, so let's replace it.
     const version = resp.data.replace("\n", "");
     tl.debug(tl.loc("Debug_LatestPulumiVersion", version));
-    return "0.17.5";
+    return version;
 }
