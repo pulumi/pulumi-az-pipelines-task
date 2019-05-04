@@ -31,6 +31,7 @@ tmr.registerMock("./serviceEndpoint", {
 });
 
 tmr.registerMock("./version", {
+    ENV_PULUMI_VERSION: "DOESNT-MATTER",
     getLatestPulumiVersion: (): Promise<string> => {
         return Promise.resolve(pulumiVersion);
     },
