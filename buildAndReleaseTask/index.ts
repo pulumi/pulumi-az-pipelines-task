@@ -19,8 +19,9 @@ async function run() {
 
     pulumiVersion = await getLatestPulumiVersion();
 
+    const expectedVersion = tl.getInput("pulumiVersion", false);
+    tl.debug(tl.loc("Debug_ExpectedPulumiVersion", expectedVersion));
     const connectedServiceName = tl.getInput("azureSubscription", true);
-
     tl.debug(tl.loc("Debug_ServiceEndpointName", connectedServiceName));
     const serviceEndpoint = getServiceEndpoint(connectedServiceName);
     tl.debug(`Service endpoint retrieved with client ID ${serviceEndpoint.clientId}`);
@@ -29,7 +30,7 @@ async function run() {
     if (!toolPath) {
         tl.debug(tl.loc("Debug_NotFoundInCache"));
         try {
-            const exitCode = await installPulumi();
+            const exitCode = await installPulumi(expectedVersion);
             if (exitCode !== 0) {
                 tl.setResult(tl.TaskResult.Failed, tl.loc("JS_ExitCode", exitCode));
                 return;
@@ -50,14 +51,14 @@ async function run() {
     await runPulumi(serviceEndpoint);
 }
 
-async function installPulumi(): Promise<number> {
+async function installPulumi(expectedVersion: string): Promise<number> {
     const osPlat = tl.osType();
     let exitCode: number;
 
     switch (osPlat) {
     case "Linux":
     case "MacOS":
-        exitCode = await installUsingCurl();
+        exitCode = await installUsingCurl(expectedVersion);
         break;
     case "Windows_NT":
         exitCode = await installUsingPowerShell();
