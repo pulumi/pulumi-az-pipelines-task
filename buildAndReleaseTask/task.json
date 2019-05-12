@@ -13,7 +13,7 @@
     "version": {
         "Major": 0,
         "Minor": 1,
-        "Patch": 16
+        "Patch": 17
     },
     "instanceNameFormat": "Run pulumi $(pulCommand) $(pulArgs)",
     "inputs": [
@@ -56,6 +56,14 @@
             "defaultValue": "",
             "helpMarkDown": "The Pulumi Stack against which to run the commands.",
             "required": "true"
+        },
+        {
+            "name": "pulumiVersion",
+            "type": "string",
+            "label": "Pulumi version",
+            "defaultValue": "latest",
+            "helpMarkDown": "The Pulumi version that should be used.",
+            "required": "false"
         }
     ],
     "execution": {
@@ -82,6 +90,7 @@
         "Debug_ServiceEndpointName": "Using service endpoint '%s'.",
         "Debug_TempDirectoryNotSet": "agent.tempdirectory not set. Using $HOME/temp.",
         "Debug_LatestPulumiVersion": "Latest pulumi version from https://pulumi.io/latest-version is '%s'.",
-        "Debug_CachingPulumiToHome": "Caching pulumi CLI to path '%s'."
+        "Debug_CachingPulumiToHome": "Caching pulumi CLI to path '%s'.",
+        "Debug_ExpectedPulumiVersion": "Requested Pulumi version is '%s'."
     }
 }
