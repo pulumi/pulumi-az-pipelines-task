@@ -18,6 +18,7 @@ tmr.setInput("azureSubscription", "fake-subscription-id");
 tmr.setInput("command", "preview");
 tmr.setInput("cwd", "dir/");
 tmr.setInput("stack", "myOrg/project/dev");
+tmr.setInput("expectedVersion", "0.17.9");
 
 tmr.registerMock("./serviceEndpoint", {
     getServiceEndpoint: (_: string): IServiceEndpoint => {
