@@ -11,6 +11,7 @@ import { getServiceEndpoint } from "./serviceEndpoint";
 import { getLatestPulumiVersion } from "./version";
 
 let pulumiVersion: string;
+let expectedVersion: string;
 
 async function run() {
     tl.setResourcePath(path.join(__dirname, "task.json"));
@@ -19,7 +20,7 @@ async function run() {
 
     pulumiVersion = await getLatestPulumiVersion();
 
-    const expectedVersion = tl.getInput("pulumiVersion", false);
+    expectedVersion = tl.getInput("expectedVersion", false);
     tl.debug(tl.loc("Debug_ExpectedPulumiVersion", expectedVersion));
     const connectedServiceName = tl.getInput("azureSubscription", true);
     tl.debug(tl.loc("Debug_ServiceEndpointName", connectedServiceName));
@@ -51,14 +52,14 @@ async function run() {
     await runPulumi(serviceEndpoint);
 }
 
-async function installPulumi(expectedVersion: string): Promise<number> {
+async function installPulumi(expectedPulumiVersion: string): Promise<number> {
     const osPlat = tl.osType();
     let exitCode: number;
 
     switch (osPlat) {
     case "Linux":
     case "MacOS":
-        exitCode = await installUsingCurl(expectedVersion);
+        exitCode = await installUsingCurl(expectedPulumiVersion);
         break;
     case "Windows_NT":
         exitCode = await installUsingPowerShell();
