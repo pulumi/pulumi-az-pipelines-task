@@ -32,6 +32,9 @@
             "defaultValue": "",
             "helpMarkDown": "For a list of CLI commands and arguments, see [this](https://pulumi.io/reference/commands.html).",
             "required": "true",
+            "properties": {
+                "EditableOptions": "True"
+            },
             "options": {
                 "new": "new",
                 "init": "init",
