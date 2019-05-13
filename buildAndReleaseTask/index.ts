@@ -4,8 +4,7 @@ import * as tl from "azure-pipelines-task-lib/task";
 import * as toolLib from "azure-pipelines-tool-lib/tool";
 import * as path from "path";
 
-import { installUsingCurl } from "./installers/curl";
-import { installUsingPowerShell } from "./installers/powershell";
+import { installPulumiWithToolLib } from "./installers/pulumi";
 import { runPulumi } from "./pulumi";
 import { getServiceEndpoint } from "./serviceEndpoint";
 import { getLatestPulumiVersion } from "./version";
@@ -36,9 +35,6 @@ async function run() {
                 tl.setResult(tl.TaskResult.Failed, tl.loc("JS_ExitCode", exitCode));
                 return;
             }
-            // We just installed Pulumi, so prepend the installation path.
-            toolLib.prependPath(path.join(getHomePath(), ".pulumi", "bin"));
-            tl.debug(tl.loc("Debug_AddedToPATH"));
         } catch (err) {
             tl.setResult(tl.TaskResult.Failed, err);
             return;
@@ -53,26 +49,10 @@ async function run() {
 }
 
 async function installPulumi(expectedPulumiVersion: string): Promise<number> {
-    const osPlat = tl.osType();
-    let exitCode: number;
 
-    switch (osPlat) {
-    case "Linux":
-    case "MacOS":
-        exitCode = await installUsingCurl(expectedPulumiVersion);
-        break;
-    case "Windows_NT":
-        exitCode = await installUsingPowerShell();
-        break;
-    default:
-        throw new Error(`Unexpected OS "${osPlat}"`);
-    }
+    await installPulumiWithToolLib(expectedPulumiVersion);
 
-    if (exitCode !== 0) {
-        return exitCode;
-    }
-
-    tl.debug(`process.env: ${ JSON.stringify(process.env) }`);
+    tl.debug(`process.env: ${JSON.stringify(process.env)}`);
     const cachePath = path.join(getHomePath(), ".pulumi");
     tl.debug(tl.loc("Debug_CachingPulumiToHome", cachePath));
     await toolLib.cacheDir(cachePath, "pulumi", pulumiVersion);
@@ -84,15 +64,15 @@ function getHomePath(): string {
     let homePath: string;
 
     switch (osPlat) {
-    case "Linux":
-    case "MacOS":
-        homePath = process.env.HOME as string;
-        break;
-    case "Windows_NT":
-        homePath = process.env.USERPROFILE as string;
-        break;
-    default:
-        throw new Error(`Unexpected OS "${osPlat}"`);
+        case "Linux":
+        case "MacOS":
+            homePath = process.env.HOME as string;
+            break;
+        case "Windows_NT":
+            homePath = process.env.USERPROFILE as string;
+            break;
+        default:
+            throw new Error(`Unexpected OS "${osPlat}"`);
     }
 
     return homePath;
