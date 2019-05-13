@@ -4,11 +4,17 @@ import * as tl from "azure-pipelines-task-lib/task";
 import * as lib from "azure-pipelines-tool-lib";
 import * as path from "path";
 
-export async function installPulumiWithToolLib(expectedVersion: string) {
+export async function installPulumiWithToolLib(expectedVersion: string, latestPulumiVersion: string) {
 
   let downloadUrl: string;
   const os: string = tl.osType();
-  tl.debug(tl.loc("OSDETECTED" + os));
+  tl.debug(tl.loc("OSDETECTED", os));
+
+  if (expectedVersion.toLowerCase() === "latest") {
+    expectedVersion = latestPulumiVersion;
+  }
+
+  tl.debug("Pulumi version to install is " + expectedVersion);
 
   try {
     // tslint:disable-next-line:max-line-length
