@@ -9,7 +9,7 @@ import { runPulumi } from "./pulumi";
 import { getServiceEndpoint } from "./serviceEndpoint";
 import { getLatestPulumiVersion } from "./version";
 
-let pulumiVersion: string;
+let latestPulumiVersion: string;
 let expectedVersion: string;
 
 async function run() {
@@ -17,7 +17,7 @@ async function run() {
 
     tl.debug(tl.loc("Debug_Starting"));
 
-    pulumiVersion = await getLatestPulumiVersion();
+    latestPulumiVersion = await getLatestPulumiVersion();
 
     expectedVersion = tl.getInput("expectedVersion", false);
     tl.debug(tl.loc("Debug_ExpectedPulumiVersion", expectedVersion));
@@ -26,15 +26,11 @@ async function run() {
     const serviceEndpoint = getServiceEndpoint(connectedServiceName);
     tl.debug(`Service endpoint retrieved with client ID ${serviceEndpoint.clientId}`);
 
-    const toolPath = toolLib.findLocalTool("pulumi", pulumiVersion);
+    const toolPath = toolLib.findLocalTool("pulumi", latestPulumiVersion);
     if (!toolPath) {
         tl.debug(tl.loc("Debug_NotFoundInCache"));
         try {
-            const exitCode = await installPulumi(expectedVersion);
-            if (exitCode !== 0) {
-                tl.setResult(tl.TaskResult.Failed, tl.loc("JS_ExitCode", exitCode));
-                return;
-            }
+            await installPulumi(expectedVersion, latestPulumiVersion);
         } catch (err) {
             tl.setResult(tl.TaskResult.Failed, err);
             return;
@@ -48,34 +44,15 @@ async function run() {
     await runPulumi(serviceEndpoint);
 }
 
-async function installPulumi(expectedPulumiVersion: string): Promise<number> {
+async function installPulumi(expectedPulumiVersion: string, lastPulumiVersion: string) {
 
-    await installPulumiWithToolLib(expectedPulumiVersion);
+    await installPulumiWithToolLib(expectedPulumiVersion, lastPulumiVersion);
 
-    tl.debug(`process.env: ${JSON.stringify(process.env)}`);
-    const cachePath = path.join(getHomePath(), ".pulumi");
-    tl.debug(tl.loc("Debug_CachingPulumiToHome", cachePath));
-    await toolLib.cacheDir(cachePath, "pulumi", pulumiVersion);
-    return 0;
-}
-
-function getHomePath(): string {
-    const osPlat = tl.osType();
-    let homePath: string;
-
-    switch (osPlat) {
-        case "Linux":
-        case "MacOS":
-            homePath = process.env.HOME as string;
-            break;
-        case "Windows_NT":
-            homePath = process.env.USERPROFILE as string;
-            break;
-        default:
-            throw new Error(`Unexpected OS "${osPlat}"`);
-    }
-
-    return homePath;
+    // tl.debug(`process.env: ${JSON.stringify(process.env)}`);
+    // const cachePath = path.join(getHomePath(), ".pulumi");
+    // tl.debug(tl.loc("Debug_CachingPulumiToHome", cachePath));
+    // await toolLib.cacheDir(cachePath, "pulumi", pulumiVersion);
+    // return 0;
 }
 
 // tslint:disable-next-line no-floating-promises
