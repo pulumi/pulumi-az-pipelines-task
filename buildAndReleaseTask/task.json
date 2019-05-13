@@ -27,11 +27,23 @@
         },
         {
             "name": "command",
-            "type": "string",
+            "type": "pickList",
             "label": "Pulumi Command",
             "defaultValue": "",
             "helpMarkDown": "For a list of CLI commands and arguments, see [this](https://pulumi.io/reference/commands.html).",
-            "required": "true"
+            "required": "true",
+            "properties": {
+                "EditableOptions": "True"
+            },
+            "options": {
+                "new": "new",
+                "init": "init",
+                "stack": "stack",
+                "config": "config",
+                "up": "up",
+                "preview": "preview",
+                "destroy": "destroy"
+            }
         },
         {
             "name": "args",
