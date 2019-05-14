@@ -48,11 +48,6 @@ async function installPulumi(expectedPulumiVersion: string, lastPulumiVersion: s
 
     await installPulumiWithToolLib(expectedPulumiVersion, lastPulumiVersion);
 
-    // tl.debug(`process.env: ${JSON.stringify(process.env)}`);
-    // const cachePath = path.join(getHomePath(), ".pulumi");
-    // tl.debug(tl.loc("Debug_CachingPulumiToHome", cachePath));
-    // await toolLib.cacheDir(cachePath, "pulumi", pulumiVersion);
-    // return 0;
 }
 
 // tslint:disable-next-line no-floating-promises
