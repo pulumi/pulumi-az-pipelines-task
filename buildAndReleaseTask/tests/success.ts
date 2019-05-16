@@ -60,16 +60,18 @@ tmr.registerMock("azure-pipelines-task-lib/toolrunner", {
     },
 });
 
+tmr.registerMock("./installers/pulumi", {
+    installPulumiWithToolLib: (expectedVersion: string, latestPulumiVersion: string) => {
+        console.log(`Pulumi version ${ expectedVersion } installed. Latest version was ${ latestPulumiVersion }`);
+    }
+})
+
 // Provide answers for task mock.
 const mockAnswers: ma.TaskLibAnswers = {
     checkPath: {
         "/fake/path/to/pulumi": true,
     },
     exec: {
-        "/fake/path/to/curl -fsSL https://get.pulumi.com | /fake/path/to/sh": {
-            code: 0,
-            stdout: "Pulumi installed via curl",
-        },
         "/fake/path/to/pulumi login": {
             code: 0,
             stdout: "fake logged in",
@@ -95,7 +97,6 @@ const mockAnswers: ma.TaskLibAnswers = {
     },
     which: {
         "/fake/path/to/pulumi": "/fake/path/to/pulumi",
-        "curl": "/fake/path/to/curl",
         "pulumi": "/fake/path/to/pulumi",
         "sh": "/fake/path/to/sh",
     },
