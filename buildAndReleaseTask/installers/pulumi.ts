@@ -19,7 +19,7 @@ export async function installPulumiWithToolLib(expectedVersion: string, latestPu
       downloadUrl = "https://get.pulumi.com/releases/sdk/pulumi-v" + expectedVersion + "-windows-x64.zip";
       const temp: string = await lib.downloadTool(downloadUrl);
       const extractTemp: string = await lib.extractZip(temp);
-      lib.prependPath(path.join(extractTemp, "pulumi"));
+      await lib.prependPath(path.join(extractTemp, "pulumi/bin"));
       tl.debug(tl.loc("Debug_Installed"));
       tl.debug(tl.loc("Debug_AddedToPATH"));
     } catch (err) {
