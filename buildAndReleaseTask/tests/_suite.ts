@@ -18,7 +18,6 @@ describe("Pulumi task tests", () => {
         assert.equal(tr.errorIssues.length, 0, "should have no errors");
 
         console.log(tr.stdout);
-        assert.equal(tr.stdout.indexOf("Pulumi installed via curl") >= 0, true, "should install using curl");
         assert.equal(tr.stdout.indexOf("0.17.8") >= 0, true, "should execute `pulumi version` command");
         assert.equal(tr.stdout.indexOf("stack selected") >= 0, true, "should select stack");
         assert.equal(tr.stdout.indexOf("fake logged in") >= 0, true, "should login");
