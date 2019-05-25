@@ -6,7 +6,6 @@ import * as path from "path";
 
 export async function installPulumiWithToolLib(expectedVersion: string, latestPulumiVersion: string) {
 
-  let downloadUrl: string;
   const os: string = tl.osType();
   tl.debug(tl.loc("OSDETECTED", os));
   if (expectedVersion.toLowerCase() === "latest") {
@@ -14,29 +13,44 @@ export async function installPulumiWithToolLib(expectedVersion: string, latestPu
   }
   tl.debug("Pulumi version to install is " + expectedVersion);
 
-  if (os.toLowerCase() === "windows_nt") {
-    try {
-      downloadUrl = "https://get.pulumi.com/releases/sdk/pulumi-v" + expectedVersion + "-windows-x64.zip";
-      const temp: string = await lib.downloadTool(downloadUrl);
-      const extractTemp: string = await lib.extractZip(temp);
-      await lib.prependPath(path.join(extractTemp, "pulumi/bin"));
-      tl.debug(tl.loc("Debug_Installed"));
-      tl.debug(tl.loc("Debug_AddedToPATH"));
-    } catch (err) {
-      tl.setResult(tl.TaskResult.Failed, tl.loc("PulumiInstallFailed", err.message));
-    }
+  switch (os.toLowerCase()) {
+    case "windows_nt":
+      await installPulumiWindows(expectedVersion);
+      break;
+    case "MacOS":
+    case "linux":
+      await installPulumiLinux(expectedVersion, os.toLowerCase());
+      break;
+    default:
+      throw new Error(`Unexpected OS "${os.toLowerCase()}"`);
   }
-  if (os.toLowerCase() === "linux") {
-    try {
-      // tslint:disable-next-line:max-line-length
-      downloadUrl = "https://get.pulumi.com/releases/sdk/pulumi-v" + expectedVersion + "-" + os.toLowerCase() + "-x64.tar.gz";
-      const temp: string = await lib.downloadTool(downloadUrl);
-      const extractTemp: string = await lib.extractTar(temp);
-      lib.prependPath(path.join(extractTemp, "pulumi"));
-      tl.debug(tl.loc("Debug_Installed"));
-      tl.debug(tl.loc("Debug_AddedToPATH"));
-    } catch (err) {
-      tl.setResult(tl.TaskResult.Failed, tl.loc("PulumiInstallFailed", err.message));
-    }
+}
+
+async function installPulumiWindows(version: string) {
+  try {
+    let downloadUrl: string;
+    downloadUrl = "https://get.pulumi.com/releases/sdk/pulumi-v" + version + "-windows-x64.zip";
+    const temp: string = await lib.downloadTool(downloadUrl);
+    const extractTemp: string = await lib.extractZip(temp);
+    await lib.prependPath(path.join(extractTemp, "pulumi/bin"));
+    tl.debug(tl.loc("Debug_Installed"));
+    tl.debug(tl.loc("Debug_AddedToPATH"));
+  } catch (err) {
+    tl.setResult(tl.TaskResult.Failed, tl.loc("PulumiInstallFailed", err.message));
+  }
+}
+
+async function installPulumiLinux(version: string, os: string) {
+  try {
+    let downloadUrl: string;
+    // tslint:disable-next-line:max-line-length
+    downloadUrl = "https://get.pulumi.com/releases/sdk/pulumi-v" + version + "-" + os + "-x64.tar.gz";
+    const temp: string = await lib.downloadTool(downloadUrl);
+    const extractTemp: string = await lib.extractTar(temp);
+    lib.prependPath(path.join(extractTemp, "pulumi"));
+    tl.debug(tl.loc("Debug_Installed"));
+    tl.debug(tl.loc("Debug_AddedToPATH"));
+  } catch (err) {
+    tl.setResult(tl.TaskResult.Failed, tl.loc("PulumiInstallFailed", err.message));
   }
 }
