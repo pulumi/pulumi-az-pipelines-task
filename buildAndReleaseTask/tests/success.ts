@@ -18,7 +18,7 @@ tmr.setInput("azureSubscription", "fake-subscription-id");
 tmr.setInput("command", "preview");
 tmr.setInput("cwd", "dir/");
 tmr.setInput("stack", "myOrg/project/dev");
-tmr.setInput("expectedVersion", "0.17.9");
+tmr.setInput("versionSpec", "0.17.9");
 
 tmr.registerMock("./serviceEndpoint", {
     getServiceEndpoint: (_: string): IServiceEndpoint => {
@@ -61,8 +61,8 @@ tmr.registerMock("azure-pipelines-task-lib/toolrunner", {
 });
 
 tmr.registerMock("./installers/pulumi", {
-    installPulumiWithToolLib: (expectedVersion: string, latestPulumiVersion: string) => {
-        console.log(`Pulumi version ${ expectedVersion } installed. Latest version was ${ latestPulumiVersion }`);
+    installPulumiWithToolLib: (versionSpec: string, latestPulumiVersion: string) => {
+        console.log(`Pulumi version ${ versionSpec } installed. Latest version was ${ latestPulumiVersion }`);
     }
 })
 

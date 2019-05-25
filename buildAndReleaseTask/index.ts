@@ -10,7 +10,7 @@ import { getServiceEndpoint } from "./serviceEndpoint";
 import { getLatestPulumiVersion } from "./version";
 
 let latestPulumiVersion: string;
-let expectedVersion: string;
+let versionSpec: string;
 
 async function run() {
     tl.setResourcePath(path.join(__dirname, "task.json"));
@@ -19,8 +19,8 @@ async function run() {
 
     latestPulumiVersion = await getLatestPulumiVersion();
 
-    expectedVersion = tl.getInput("expectedVersion", false);
-    tl.debug(tl.loc("Debug_ExpectedPulumiVersion", expectedVersion));
+    versionSpec = tl.getInput("versionSpec", false);
+    tl.debug(tl.loc("Debug_ExpectedPulumiVersion", versionSpec));
     const connectedServiceName = tl.getInput("azureSubscription", true);
     tl.debug(tl.loc("Debug_ServiceEndpointName", connectedServiceName));
     const serviceEndpoint = getServiceEndpoint(connectedServiceName);
@@ -30,7 +30,7 @@ async function run() {
     if (!toolPath) {
         tl.debug(tl.loc("Debug_NotFoundInCache"));
         try {
-            await installPulumiWithToolLib(expectedVersion, latestPulumiVersion);
+            await installPulumiWithToolLib(versionSpec, latestPulumiVersion);
         } catch (err) {
             tl.setResult(tl.TaskResult.Failed, err);
             return;

@@ -70,7 +70,7 @@
             "required": "true"
         },
         {
-            "name": "expectedVersion",
+            "name": "versionSpec",
             "type": "string",
             "label": "Pulumi version",
             "defaultValue": "latest",

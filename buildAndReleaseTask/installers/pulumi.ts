@@ -4,22 +4,22 @@ import * as tl from "azure-pipelines-task-lib/task";
 import * as lib from "azure-pipelines-tool-lib";
 import * as path from "path";
 
-export async function installPulumiWithToolLib(expectedVersion: string, latestPulumiVersion: string) {
+export async function installPulumiWithToolLib(versionSpec: string, latestPulumiVersion: string) {
 
   const os: string = tl.osType();
   tl.debug(tl.loc("OSDETECTED", os));
-  if (expectedVersion.toLowerCase() === "latest") {
-    expectedVersion = latestPulumiVersion;
+  if (versionSpec.toLowerCase() === "latest") {
+    versionSpec = latestPulumiVersion;
   }
-  tl.debug("Pulumi version to install is " + expectedVersion);
+  tl.debug("Pulumi version to install is " + versionSpec);
 
   switch (os.toLowerCase()) {
     case "windows_nt":
-      await installPulumiWindows(expectedVersion);
+      await installPulumiWindows(versionSpec);
       break;
     case "MacOS":
     case "linux":
-      await installPulumiLinux(expectedVersion, os.toLowerCase());
+      await installPulumiLinux(versionSpec, os.toLowerCase());
       break;
     default:
       throw new Error(`Unexpected OS "${os.toLowerCase()}"`);
