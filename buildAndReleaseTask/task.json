@@ -74,7 +74,7 @@
             "type": "string",
             "label": "Pulumi version",
             "defaultValue": "latest",
-            "helpMarkDown": "The Pulumi version that should be used.",
+            "helpMarkDown": "The Pulumi version that should be used. If you require a specific version then the format is '0.17.10' or if you just need the latest version then 'latest' can be used.",
             "required": "false"
         }
     ],
