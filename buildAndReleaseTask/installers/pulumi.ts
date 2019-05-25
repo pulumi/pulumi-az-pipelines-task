@@ -4,6 +4,12 @@ import * as tl from "azure-pipelines-task-lib/task";
 import * as lib from "azure-pipelines-tool-lib";
 import * as path from "path";
 
+/**
+ * Function installs Pulumi across Operating Systems using the Build agent's native SDK libraries
+ * @param versionSpec version number the user wants this function to install
+ * @param latestPulumiVersion latest version based on what getLatestPulumiVersion returned
+ */
+
 export async function installPulumiWithToolLib(versionSpec: string, latestPulumiVersion: string) {
 
   const os: string = tl.osType();
