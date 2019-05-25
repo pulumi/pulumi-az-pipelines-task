@@ -30,7 +30,7 @@ async function run() {
     if (!toolPath) {
         tl.debug(tl.loc("Debug_NotFoundInCache"));
         try {
-            await installPulumi(expectedVersion, latestPulumiVersion);
+            await installPulumiWithToolLib(expectedVersion, latestPulumiVersion);
         } catch (err) {
             tl.setResult(tl.TaskResult.Failed, err);
             return;
@@ -42,12 +42,6 @@ async function run() {
 
     tl.debug(tl.loc("Debug_Installed"));
     await runPulumi(serviceEndpoint);
-}
-
-async function installPulumi(expectedPulumiVersion: string, lastPulumiVersion: string) {
-
-    await installPulumiWithToolLib(expectedPulumiVersion, lastPulumiVersion);
-
 }
 
 // tslint:disable-next-line no-floating-promises
