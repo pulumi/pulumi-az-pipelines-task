@@ -68,6 +68,14 @@
             "defaultValue": "",
             "helpMarkDown": "The Pulumi Stack against which to run the commands.",
             "required": "true"
+        },
+        {
+            "name": "versionSpec",
+            "type": "string",
+            "label": "Pulumi version",
+            "defaultValue": "latest",
+            "helpMarkDown": "The Pulumi version that should be used. If you require a specific version then the format is '0.17.10' or if you just need the latest version then 'latest' can be used.",
+            "required": "false"
         }
     ],
     "execution": {
@@ -79,6 +87,8 @@
         "InvalidScriptArguments0": "Invalid script arguments '{0}'. Line breaks are not allowed.",
         "JS_ExitCode": "Script exited with code '%s'.",
         "JS_Stderr": "Script wrote one or more lines to the standard error stream.",
+        "OSDETECTED": "OS detected '%s'.",
+        "PulumiInstallFailed": "Pulumi installation failed with error '%s'.",
         "PulumiLoginFailed": "Pulumi CLI login command failed.",
         "PulumiNotFound": "Pulumi CLI does not seem to be installed in your environment.",
         "PulumiCommandFailed": "Pulumi command exited with code '%s' while trying to run '%s'.",
@@ -94,6 +104,7 @@
         "Debug_ServiceEndpointName": "Using service endpoint '%s'.",
         "Debug_TempDirectoryNotSet": "agent.tempdirectory not set. Using $HOME/temp.",
         "Debug_LatestPulumiVersion": "Latest pulumi version from https://pulumi.io/latest-version is '%s'.",
-        "Debug_CachingPulumiToHome": "Caching pulumi CLI to path '%s'."
+        "Debug_CachingPulumiToHome": "Caching pulumi CLI to path '%s'.",
+        "Debug_ExpectedPulumiVersion": "Requested Pulumi version is '%s'."
     }
 }

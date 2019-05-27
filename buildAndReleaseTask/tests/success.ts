@@ -18,6 +18,7 @@ tmr.setInput("azureSubscription", "fake-subscription-id");
 tmr.setInput("command", "preview");
 tmr.setInput("cwd", "dir/");
 tmr.setInput("stack", "myOrg/project/dev");
+tmr.setInput("versionSpec", "0.17.9");
 
 tmr.registerMock("./serviceEndpoint", {
     getServiceEndpoint: (_: string): IServiceEndpoint => {
@@ -59,16 +60,18 @@ tmr.registerMock("azure-pipelines-task-lib/toolrunner", {
     },
 });
 
+tmr.registerMock("./installers/pulumi", {
+    installPulumiWithToolLib: (versionSpec: string, latestPulumiVersion: string) => {
+        console.log(`Pulumi version ${ versionSpec } installed. Latest version was ${ latestPulumiVersion }`);
+    }
+})
+
 // Provide answers for task mock.
 const mockAnswers: ma.TaskLibAnswers = {
     checkPath: {
         "/fake/path/to/pulumi": true,
     },
     exec: {
-        "/fake/path/to/curl -fsSL https://get.pulumi.com | /fake/path/to/sh": {
-            code: 0,
-            stdout: "Pulumi installed via curl",
-        },
         "/fake/path/to/pulumi login": {
             code: 0,
             stdout: "fake logged in",
@@ -94,7 +97,6 @@ const mockAnswers: ma.TaskLibAnswers = {
     },
     which: {
         "/fake/path/to/pulumi": "/fake/path/to/pulumi",
-        "curl": "/fake/path/to/curl",
         "pulumi": "/fake/path/to/pulumi",
         "sh": "/fake/path/to/sh",
     },
