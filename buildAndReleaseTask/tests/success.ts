@@ -9,16 +9,25 @@ import { IServiceEndpoint } from "../serviceEndpoint";
 
 const taskPath = path.join(__dirname, "..", "index.js");
 const tmr: tmrm.TaskMockRunner = new tmrm.TaskMockRunner(taskPath);
-const pulumiVersion = "0.17.8";
+
+const fakeOS = "Linux";
+const latestPulumiVersion = "0.17.8";
+// If the user requested version is not `latest`, then this is the version
+// that the task should install.
+export const userRequestedVersion = "0.16.5";
+const expectedDownloadUrl =
+    `https://get.pulumi.com/releases/sdk/pulumi-v${userRequestedVersion}-${fakeOS.toLowerCase()}-x64.tar.gz`;
+const fakeDownloadedPath = "/fake/path/to/downloaded/file";
 
 process.env["HOME"] = "/fake/home";
 
 tmr.setVariableName("PULUMI_ACCESS_TOKEN", "fake-access-token", true);
+// Set the mock inputs for the task. These imitate actual user inputs.
 tmr.setInput("azureSubscription", "fake-subscription-id");
 tmr.setInput("command", "preview");
 tmr.setInput("cwd", "dir/");
 tmr.setInput("stack", "myOrg/project/dev");
-tmr.setInput("versionSpec", "0.17.9");
+tmr.setInput("versionSpec", userRequestedVersion);
 
 tmr.registerMock("./serviceEndpoint", {
     getServiceEndpoint: (_: string): IServiceEndpoint => {
@@ -33,7 +42,31 @@ tmr.registerMock("./serviceEndpoint", {
 
 tmr.registerMock("./version", {
     getLatestPulumiVersion: (): Promise<string> => {
-        return Promise.resolve(pulumiVersion);
+        return Promise.resolve(latestPulumiVersion);
+    },
+});
+
+tmr.registerMock("azure-pipelines-tool-lib", {
+    downloadTool: (url: string) => {
+        if (url !== expectedDownloadUrl) {
+            throw new Error(`Unexpected download url ${url}.`);
+        }
+        return Promise.resolve(fakeDownloadedPath);
+    },
+    extractTar: (downloadedPath: string) => {
+        if (downloadedPath !== fakeDownloadedPath) {
+            throw new Error(`Unexpected downloaded file path ${downloadedPath}`);
+        }
+        return Promise.resolve("/fake/path/to/extracted/contents");
+    },
+    extractZip: (downloadedPath: string) => {
+        if (downloadedPath !== fakeDownloadedPath) {
+            throw new Error(`Unexpected downloaded file path ${downloadedPath}`);
+        }
+        return Promise.resolve("/fake/path/to/extracted/contents");
+    },
+    prependPath: (pathToTool: string) => {
+        console.log(`prepending path ${ pathToTool }`);
     },
 });
 
@@ -45,9 +78,6 @@ tmr.registerMock("azure-pipelines-tool-lib/tool", {
         console.log(`Requested tool ${ toolName } of version ${ version }`);
         return undefined;
     },
-    prependPath: (pathToTool: string) => {
-        console.log(`prepending path ${ pathToTool }`);
-    },
 });
 
 tmr.registerMock("azure-pipelines-task-lib/toolrunner", {
@@ -58,13 +88,10 @@ tmr.registerMock("azure-pipelines-task-lib/toolrunner", {
         console.log("piping fake tool");
         return new ToolRunner("/fake/tool");
     },
+    prependPath: (pathToTool: string) => {
+        console.log(`prepending path ${ pathToTool }`);
+    },
 });
-
-tmr.registerMock("./installers/pulumi", {
-    installPulumiWithToolLib: (versionSpec: string, latestPulumiVersion: string) => {
-        console.log(`Pulumi version ${ versionSpec } installed. Latest version was ${ latestPulumiVersion }`);
-    }
-})
 
 // Provide answers for task mock.
 const mockAnswers: ma.TaskLibAnswers = {
@@ -86,19 +113,15 @@ const mockAnswers: ma.TaskLibAnswers = {
         },
         "/fake/path/to/pulumi version": {
             code: 0,
-            stdout: pulumiVersion,
+            stdout: userRequestedVersion,
         },
     },
-    getPlatform: {
-        getPlatform: 2,
-    },
     osType: {
-        osType: "Linux",
+        osType: fakeOS,
     },
     which: {
         "/fake/path/to/pulumi": "/fake/path/to/pulumi",
         "pulumi": "/fake/path/to/pulumi",
-        "sh": "/fake/path/to/sh",
     },
 } as ma.TaskLibAnswers;
 

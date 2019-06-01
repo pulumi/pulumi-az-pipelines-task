@@ -23,7 +23,22 @@ This project is in private preview. **Do not make this repo public yet!**
 
 ## Tests
 
+### macOS
+
+`INPUT_AZURESUBSCRIPTION=fake-subscription-id npm run test`
+
+### Windows
+
+In a PowerShell window, run:
+
+`$env:INPUT_AZURESUBSCRIPTION=fake-subscription-id`
 `npm run test`
+
+### Debug Traces
+
+If you wish to enable detailed traces, also set `TASK_TEST_TRACE=1` before running test.
+
+On Windows, you can do this using `$env:TASK_TEST_TRACE=1`.
 
 ## Package
 
