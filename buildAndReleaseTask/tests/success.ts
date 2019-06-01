@@ -12,7 +12,9 @@ const tmr: tmrm.TaskMockRunner = new tmrm.TaskMockRunner(taskPath);
 
 const fakeOS = "Linux";
 const latestPulumiVersion = "0.17.8";
-const userRequestedVersion = "0.16.5";
+// If the user requested version is not `latest`, then this is the version
+// that the task should install.
+export const userRequestedVersion = "0.16.5";
 const expectedDownloadUrl =
     `https://get.pulumi.com/releases/sdk/pulumi-v${userRequestedVersion}-${fakeOS.toLowerCase()}-x64.tar.gz`;
 const fakeDownloadedPath = "/fake/path/to/downloaded/file";

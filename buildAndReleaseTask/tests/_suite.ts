@@ -3,6 +3,7 @@
 import * as assert from "assert";
 import * as ttm from "azure-pipelines-task-lib/mock-test";
 import * as path from "path";
+import { userRequestedVersion } from "./success";
 
 describe("Pulumi task tests", () => {
 
@@ -18,7 +19,7 @@ describe("Pulumi task tests", () => {
         assert.equal(tr.errorIssues.length, 0, "should have no errors");
 
         console.log(tr.stdout);
-        assert.equal(tr.stdout.indexOf("0.17.8") >= 0, true, "should execute `pulumi version` command");
+        assert.equal(tr.stdout.indexOf(userRequestedVersion) >= 0, true, "should execute `pulumi version` command");
         assert.equal(tr.stdout.indexOf("stack selected") >= 0, true, "should select stack");
         assert.equal(tr.stdout.indexOf("fake logged in") >= 0, true, "should login");
         assert.equal(tr.stdout.indexOf("fake pulumi preview") >= 0, true, "should execute `pulumi preview` command");
