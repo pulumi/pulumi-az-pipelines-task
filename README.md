@@ -1,3 +1,5 @@
+[![Build Status](https://dev.azure.com/pulumi/Pulumi%20Azure%20Pipelines%20Task/_apis/build/status/pulumi.pulumi-az-pipelines-task?branchName=master)](https://dev.azure.com/pulumi/Pulumi%20Azure%20Pipelines%20Task/_build/latest?definitionId=1&branchName=master)
+
 # Pulumi Azure task extension for Azure Pipelines
 
 ## Release status
