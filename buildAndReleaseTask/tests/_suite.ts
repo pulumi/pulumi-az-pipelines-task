@@ -6,7 +6,7 @@ import * as path from "path";
 
 describe("Pulumi task tests", () => {
 
-    it("should succeed with simple inputs", (done: MochaDone) => {
+    it("should install the CLI and run command", (done: MochaDone) => {
 
         const tp = path.join(__dirname, "success.js");
         const tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
