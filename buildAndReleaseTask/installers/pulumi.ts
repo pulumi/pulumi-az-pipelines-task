@@ -5,7 +5,9 @@ import * as lib from "azure-pipelines-tool-lib";
 import * as path from "path";
 
 /**
- * Function installs Pulumi across Operating Systems using the Build agent's native SDK libraries. This Function does not check if the user input for versionSpec is greater than the latest available version and will result in an error if the user input was wrong.
+ * Function installs Pulumi across Operating Systems using the Build agent's native SDK libraries.
+ * This Function does not check if the user input for versionSpec is greater
+ * than the latest available version and will result in an error if the user input was wrong.
  * @param versionSpec version number the user wants this function to install
  * @param latestPulumiVersion latest version based on what getLatestPulumiVersion returned
  */
