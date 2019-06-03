@@ -4,6 +4,7 @@ import * as tl from "azure-pipelines-task-lib/task";
 import * as tr from "azure-pipelines-task-lib/toolrunner";
 
 import { IServiceEndpoint } from "serviceEndpoint";
+import { PULUMI_ACCESS_TOKEN, PULUMI_CONFIG_PASSPHRASE } from "vars";
 
 async function selectStack(toolPath: string, pulExecOptions: tr.IExecOptions) {
     const pulStack = tl.getInput("stack", true);
@@ -31,7 +32,7 @@ async function runPulumiCmd(toolPath: string, pulExecOptions: tr.IExecOptions) {
     }
 }
 
-function getExecOptions(envMap: any, workingDirectory: string): tr.IExecOptions {
+function getExecOptions(envMap: {[key: string]: string}, workingDirectory: string): tr.IExecOptions {
     return {
         cwd: workingDirectory,
         env: envMap,
@@ -71,12 +72,11 @@ export async function runPulumi(serviceEndpoint: IServiceEndpoint) {
             return;
         }
 
+        const loginCmdEnvVars: {[key: string]: string} = {};
+        loginCmdEnvVars[PULUMI_ACCESS_TOKEN] = pulumiAccessToken;
         const exitCode = await tl.tool(toolPath)
             .arg("login")
-            .exec(
-                getExecOptions({
-                    PULUMI_ACCESS_TOKEN: pulumiAccessToken,
-                }, ""));
+            .exec(getExecOptions(loginCmdEnvVars, ""));
         if (exitCode !== 0) {
             tl.setResult(tl.TaskResult.Failed, tl.loc("PulumiLoginFailed"));
             return;
@@ -86,13 +86,21 @@ export async function runPulumi(serviceEndpoint: IServiceEndpoint) {
         const pathEnv = process.env["PATH"];
         tl.debug(`Executing Pulumi commands with PATH ${ pathEnv }`);
         const pulCwd = tl.getInput("cwd") || ".";
-        const pulExecOptions = getExecOptions({
+
+        const envVars: {[key: string]: string} = {
             ARM_CLIENT_ID: serviceEndpoint.clientId,
             ARM_CLIENT_SECRET: serviceEndpoint.servicePrincipalKey,
             ARM_SUBSCRIPTION_ID: serviceEndpoint.subscriptionId,
             ARM_TENANT_ID: serviceEndpoint.tenantId,
-            PATH: pathEnv,
-        }, pulCwd);
+            PATH: pathEnv || "",
+        };
+        const pulumiConfigPassphrase =
+            tl.getVariable("pulumi.config.passphrase") ||
+            tl.getVariable("PULUMI_CONFIG_PASSPHRASE") ||
+            tl.getVariable("SECRET_PULUMI_CONFIG_PASSPHRASE") ||
+            "";
+        envVars[PULUMI_CONFIG_PASSPHRASE] = pulumiConfigPassphrase;
+        const pulExecOptions = getExecOptions(envVars, pulCwd);
 
         // Select the stack.
         await selectStack(toolPath, pulExecOptions);

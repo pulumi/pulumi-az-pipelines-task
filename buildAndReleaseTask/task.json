@@ -94,6 +94,7 @@
         "PulumiCommandFailed": "Pulumi command exited with code '%s' while trying to run '%s'.",
         "PulumiStackSelectFailed": "Failed to select the stack '%s'.",
         "PulumiAccessTokenNotFailed": "Pulumi access token could not be determined. Set PULUMI_ACCESS_TOKEN as a secret env variable.",
+        "DetectedVersion": "%s variable detected with value '%s'. Task will use this version from the local tool cache.",
         "Debug_NotFoundInCache": "Pulumi not found in the local tool cache. Will download and install it.",
         "Debug_Starting": "Starting..",
         "Debug_AddedToPATH": "Added Pulumi to PATH.",
@@ -105,6 +106,6 @@
         "Debug_TempDirectoryNotSet": "agent.tempdirectory not set. Using $HOME/temp.",
         "Debug_LatestPulumiVersion": "Latest pulumi version from https://pulumi.io/latest-version is '%s'.",
         "Debug_CachingPulumiToHome": "Caching pulumi CLI to path '%s'.",
-        "Debug_ExpectedPulumiVersion": "Requested Pulumi version is '%s'."
+        "Debug_ExpectedPulumiVersion": "Requested Pulumi version is '%s'.",
     }
 }

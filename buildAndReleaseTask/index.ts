@@ -9,6 +9,8 @@ import { runPulumi } from "./pulumi";
 import { getServiceEndpoint } from "./serviceEndpoint";
 import { getLatestPulumiVersion } from "./version";
 
+import { INSTALLED_PULUMI_VERSION } from "./vars";
+
 let latestPulumiVersion: string;
 
 async function run() {
@@ -16,10 +18,21 @@ async function run() {
 
     tl.debug(tl.loc("Debug_Starting"));
 
-    latestPulumiVersion = await getLatestPulumiVersion();
-
-    const versionSpec = tl.getInput("versionSpec", false);
+    let versionSpec = tl.getInput("versionSpec", false);
     tl.debug(tl.loc("Debug_ExpectedPulumiVersion", versionSpec));
+
+    // Check if another version is already installed and use that instead of the requested version.
+    // If there is no previously installed version, then fetch the latest version.
+    const installedPulumiVersion = tl.getVariable(INSTALLED_PULUMI_VERSION);
+    if (installedPulumiVersion) {
+        versionSpec = installedPulumiVersion;
+        // If a version spec was specified, let the user know we are ignoring the value.
+        if (versionSpec && versionSpec !== installedPulumiVersion) {
+            tl.warning(tl.loc("DetectedVersion", INSTALLED_PULUMI_VERSION, installedPulumiVersion));
+        }
+    } else {
+        latestPulumiVersion = await getLatestPulumiVersion();
+    }
 
     const connectedServiceName = tl.getInput("azureSubscription", true);
     tl.debug(tl.loc("Debug_ServiceEndpointName", connectedServiceName));
@@ -31,7 +44,10 @@ async function run() {
     if (!toolPath) {
         tl.debug(tl.loc("Debug_NotFoundInCache"));
         try {
-            await installPulumi(versionSpec, latestPulumiVersion);
+            const installedVersion = await installPulumi(versionSpec, latestPulumiVersion);
+            if (installedVersion) {
+                tl.setVariable(INSTALLED_PULUMI_VERSION, installedVersion);
+            }
         } catch (err) {
             tl.setResult(tl.TaskResult.Failed, err);
             return;

@@ -12,7 +12,7 @@ import * as path from "path";
  * @param latestPulumiVersion latest version based on what `getLatestPulumiVersion` returned.
  */
 
-export async function installPulumi(versionSpec: string, latestPulumiVersion: string) {
+export async function installPulumi(versionSpec: string, latestPulumiVersion: string): Promise<string> {
     const os = tl.osType();
     tl.debug(tl.loc("OSDETECTED", os));
 
@@ -32,6 +32,8 @@ export async function installPulumi(versionSpec: string, latestPulumiVersion: st
         default:
             throw new Error(`Unexpected OS "${os.toLowerCase()}"`);
     }
+
+    return versionSpec;
 }
 
 async function installPulumiWindows(version: string) {
