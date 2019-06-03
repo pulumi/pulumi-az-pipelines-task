@@ -3,8 +3,8 @@
 import * as tl from "azure-pipelines-task-lib/task";
 import * as tr from "azure-pipelines-task-lib/toolrunner";
 
-import { IServiceEndpoint } from "serviceEndpoint";
-import { PULUMI_ACCESS_TOKEN, PULUMI_CONFIG_PASSPHRASE } from "vars";
+import { IServiceEndpoint } from "./serviceEndpoint";
+import { PULUMI_ACCESS_TOKEN, PULUMI_CONFIG_PASSPHRASE } from "./vars";
 
 async function selectStack(toolPath: string, pulExecOptions: tr.IExecOptions) {
     const pulStack = tl.getInput("stack", true);
