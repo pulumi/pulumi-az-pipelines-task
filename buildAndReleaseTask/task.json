@@ -104,7 +104,7 @@
         "Debug_PrintingVersion": "Printing version.",
         "Debug_ServiceEndpointName": "Using service endpoint '%s'.",
         "Debug_TempDirectoryNotSet": "agent.tempdirectory not set. Using $HOME/temp.",
-        "Debug_LatestPulumiVersion": "Latest pulumi version from https://pulumi.io/latest-version is '%s'.",
+        "Debug_LatestPulumiVersion": "Latest pulumi version is '%s'.",
         "Debug_CachingPulumiToHome": "Caching pulumi CLI to path '%s'.",
         "Debug_ExpectedPulumiVersion": "Requested Pulumi version is '%s'."
     }
