@@ -4,7 +4,7 @@
 
 ## Release status
 
-This project is in private preview. **Do not make this repo public yet!**
+This task extension is publicly available for [free](https://marketplace.visualstudio.com/items?itemName=pulumi.build-and-release-task). You may add this extension to your DevOps organization directly from the Visual Studio Marketplace.
 
 ## Prerequisites
 
