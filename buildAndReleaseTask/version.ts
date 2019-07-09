@@ -4,7 +4,7 @@ import * as axios from "axios";
 import * as tl from "azure-pipelines-task-lib/task";
 
 export async function getLatestPulumiVersion(): Promise<string> {
-    const resp = await axios.default.get<string>("https://pulumi.io/latest-version", {
+    const resp = await axios.default.get<string>("https://www.pulumi.com/latest-version", {
         headers: {
             "Content-Type": "text/plain",
             "User-Agent": "pulumi-azure-pipelines-task",
