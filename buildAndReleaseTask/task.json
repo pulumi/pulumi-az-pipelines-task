@@ -11,9 +11,9 @@
     ],
     "author": "Pulumi",
     "version": {
-        "Major": 0,
-        "Minor": 1,
-        "Patch": 19
+        "Major": 1,
+        "Minor": 0,
+        "Patch": 0
     },
     "instanceNameFormat": "Run pulumi $(pulCommand) $(pulArgs)",
     "inputs": [
