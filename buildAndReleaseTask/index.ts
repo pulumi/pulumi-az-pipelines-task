@@ -34,11 +34,13 @@ async function run() {
         latestPulumiVersion = await getLatestPulumiVersion();
     }
 
-    const connectedServiceName = tl.getInput("azureSubscription", true);
+    const connectedServiceName = tl.getInput("azureSubscription", false);
     tl.debug(tl.loc("Debug_ServiceEndpointName", connectedServiceName));
 
     const serviceEndpoint = getServiceEndpoint(connectedServiceName);
-    tl.debug(`Service endpoint retrieved with client ID ${serviceEndpoint.clientId}`);
+    if (serviceEndpoint) {
+        tl.debug(`Service endpoint retrieved with client ID ${serviceEndpoint.clientId}`);
+    }
 
     const toolPath = toolLib.findLocalTool("pulumi", versionSpec || latestPulumiVersion);
     if (!toolPath) {

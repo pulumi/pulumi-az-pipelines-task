@@ -6,6 +6,8 @@ import * as tr from "azure-pipelines-task-lib/toolrunner";
 import { IServiceEndpoint } from "./serviceEndpoint";
 import { PULUMI_ACCESS_TOKEN, PULUMI_CONFIG_PASSPHRASE } from "./vars";
 
+interface IEnvMap { [key: string]: string; }
+
 async function selectStack(toolPath: string, pulExecOptions: tr.IExecOptions) {
     const pulStack = tl.getInput("stack", true);
     const exitCode = await tl.exec(toolPath, ["stack", "select", pulStack], pulExecOptions);
@@ -47,7 +49,76 @@ function getExecOptions(envMap: {[key: string]: string}, workingDirectory: strin
     } as tr.IExecOptions;
 }
 
-export async function runPulumi(serviceEndpoint: IServiceEndpoint) {
+/**
+ * If the `serviceEndpoint` param is not `undefined`, then
+ * this function returns a new env var map with the `ARM_*`
+ * env vars.
+ */
+function tryAddAzureEnvVarsFromServiceEndpoint(
+    envVars: IEnvMap, serviceEndpoint?: IServiceEndpoint): IEnvMap {
+        if (!serviceEndpoint) {
+            return envVars;
+        }
+
+        return {
+            ...envVars,
+            ARM_CLIENT_ID: serviceEndpoint.clientId,
+            ARM_CLIENT_SECRET: serviceEndpoint.servicePrincipalKey,
+            ARM_SUBSCRIPTION_ID: serviceEndpoint.subscriptionId,
+            ARM_TENANT_ID: serviceEndpoint.tenantId,
+        };
+}
+
+/**
+ * Tries to fetch the AWS Access Key ID and Secret Access Key from
+ * the build environment and returns a new env var map with the
+ * AWS env vars.
+ */
+function tryAddAwsEnvVars(envVars: IEnvMap): IEnvMap {
+    const vars = [
+        "AWS_ACCESS_KEY_ID",
+        "AWS_REGION",
+        "AWS_PROFILE",
+    ];
+    const secretVars = [
+        "AWS_SECRET_ACCESS_KEY",
+    ];
+
+    const awsVars: IEnvMap = {};
+    vars.forEach((varName: string) => {
+        let val = tl.getVariable(varName);
+        if (!val) {
+            // ADO will automatically prepend the VSTS_TASKVARIABLE prefix to non-secret
+            // build variables. So let's try to fetch the variable with that.
+            val = tl.getVariable(`VSTS_TASKVARIABLE_${varName}`);
+        }
+        if (!val) {
+            return;
+        }
+        awsVars[varName] = val;
+    });
+
+    secretVars.forEach((secretVar: string) => {
+        let val = tl.getVariable(secretVar);
+        if (!val) {
+            // `getVariable` will automatically prepend the SECRET_ prefix if it finds
+            // it in the build environment's secret vault, but we will also try to fetch
+            // it explicitly with the prefix.
+            val = tl.getVariable(`SECRET_${secretVar}`);
+        }
+        if (!val) {
+            return;
+        }
+        awsVars[secretVar] = val;
+    });
+
+    return {
+        ...envVars,
+        ...awsVars,
+    };
+}
+
+export async function runPulumi(serviceEndpoint?: IServiceEndpoint) {
     try {
         // Print the version.
         const toolPath = tl.which("pulumi");
@@ -87,13 +158,12 @@ export async function runPulumi(serviceEndpoint: IServiceEndpoint) {
         tl.debug(`Executing Pulumi commands with PATH ${ pathEnv }`);
         const pulCwd = tl.getInput("cwd") || ".";
 
-        const envVars: {[key: string]: string} = {
-            ARM_CLIENT_ID: serviceEndpoint.clientId,
-            ARM_CLIENT_SECRET: serviceEndpoint.servicePrincipalKey,
-            ARM_SUBSCRIPTION_ID: serviceEndpoint.subscriptionId,
-            ARM_TENANT_ID: serviceEndpoint.tenantId,
+        const envVars: IEnvMap = {
             PATH: pathEnv || "",
         };
+        tryAddAzureEnvVarsFromServiceEndpoint(envVars, serviceEndpoint);
+        tryAddAwsEnvVars(envVars);
+
         const pulumiConfigPassphrase =
             tl.getVariable("pulumi.config.passphrase") ||
             tl.getVariable("PULUMI_CONFIG_PASSPHRASE") ||
