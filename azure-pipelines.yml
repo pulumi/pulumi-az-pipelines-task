@@ -32,12 +32,6 @@ stages:
         verbose: true
 
     - task: Npm@1
-      displayName: 'Install mocha globally'
-      inputs:
-        command: 'custom'
-        customCommand: i -g mocha
-
-    - task: Npm@1
       displayName: 'Run unit tests'
       inputs:
         command: 'custom'

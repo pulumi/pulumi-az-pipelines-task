@@ -32,13 +32,13 @@
             "uri": "https://www.pulumi.com"
         },
         "getstarted": {
-            "uri": "https://pulumi.io/quickstart/"
+            "uri": "https://www.pulumi.com/docs/get-started/"
         },
         "learn": {
-            "uri": "https://www.pulumi.io"
+            "uri": "https://www.pulumi.com"
         },
         "support": {
-            "uri": "https://slack.pulumi.io"
+            "uri": "https://slack.pulumi.com"
         },
         "repository": {
             "uri": "https://github.com/pulumi/pulumi-az-pipelines-task"

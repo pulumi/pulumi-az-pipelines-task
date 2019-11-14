@@ -4,8 +4,6 @@ import * as ma from "azure-pipelines-task-lib/mock-answer";
 import * as tmrm from "azure-pipelines-task-lib/mock-run";
 import * as path from "path";
 
-import { IServiceEndpoint } from "../serviceEndpoint";
-
 const taskPath = path.join(__dirname, "..", "index.js");
 const tmr: tmrm.TaskMockRunner = new tmrm.TaskMockRunner(taskPath);
 
@@ -21,21 +19,20 @@ const fakeDownloadedPath = "/fake/path/to/downloaded/file";
 process.env["HOME"] = "/fake/home";
 
 tmr.setVariableName("PULUMI_ACCESS_TOKEN", "fake-access-token", true);
+tmr.setVariableName("AWS_ACCESS_KEY_ID", "fake-access-key-id", false);
+tmr.setVariableName("AWS_SECRET_ACCESS_KEY", "fake-secret-access-key", true);
+
 // Set the mock inputs for the task. These imitate actual user inputs.
-tmr.setInput("azureSubscription", "fake-subscription-id");
 tmr.setInput("command", "preview");
 tmr.setInput("cwd", "dir/");
 tmr.setInput("stack", "myOrg/project/dev");
 tmr.setInput("versionSpec", userRequestedVersion);
 
 tmr.registerMock("./serviceEndpoint", {
-    getServiceEndpoint: (_: string): IServiceEndpoint => {
-        return {
-            clientId: "fake-client-id",
-            servicePrincipalKey: "fake-sp-key",
-            subscriptionId: "fake-subscription-id",
-            tenantId: "fake-tenant-id",
-        };
+    getServiceEndpoint: (_: string) => {
+        // Returning undefined to test that our task extension isn't requiring
+        // an Azure Service Endpoint.
+        return undefined;
     },
 });
 
