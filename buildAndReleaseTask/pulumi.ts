@@ -19,9 +19,7 @@ async function selectStack(toolPath: string, pulExecOptions: tr.IExecOptions) {
 
 async function runPulumiCmd(toolPath: string, pulExecOptions: tr.IExecOptions) {
     const pulCommand = tl.getInput("command", true);
-    const pulCommandRunner =
-        await tl.tool(toolPath)
-                .arg(pulCommand);
+    const pulCommandRunner = tl.tool(toolPath).arg(pulCommand);
     const pulArgs = tl.getDelimitedInput("args", " ");
     pulArgs.forEach((arg: string) => {
         pulCommandRunner.arg(arg);
@@ -34,7 +32,7 @@ async function runPulumiCmd(toolPath: string, pulExecOptions: tr.IExecOptions) {
     }
 }
 
-function getExecOptions(envMap: {[key: string]: string}, workingDirectory: string): tr.IExecOptions {
+function getExecOptions(envMap: IEnvMap, workingDirectory: string): tr.IExecOptions {
     return {
         cwd: workingDirectory,
         env: envMap,
@@ -51,17 +49,15 @@ function getExecOptions(envMap: {[key: string]: string}, workingDirectory: strin
 
 /**
  * If the `serviceEndpoint` param is not `undefined`, then
- * this function returns a new env var map with the `ARM_*`
+ * this function returns an env var map with the `ARM_*`
  * env vars.
  */
-function tryAddAzureEnvVarsFromServiceEndpoint(
-    envVars: IEnvMap, serviceEndpoint?: IServiceEndpoint): IEnvMap {
+function tryGetAzureEnvVarsFromServiceEndpoint(serviceEndpoint?: IServiceEndpoint): IEnvMap {
         if (!serviceEndpoint) {
-            return envVars;
+            return {};
         }
 
         return {
-            ...envVars,
             ARM_CLIENT_ID: serviceEndpoint.clientId,
             ARM_CLIENT_SECRET: serviceEndpoint.servicePrincipalKey,
             ARM_SUBSCRIPTION_ID: serviceEndpoint.subscriptionId,
@@ -71,10 +67,11 @@ function tryAddAzureEnvVarsFromServiceEndpoint(
 
 /**
  * Tries to fetch the AWS Access Key ID and Secret Access Key from
- * the build environment and returns a new env var map with the
- * AWS env vars.
+ * the build environment and returns an env var map with the
+ * AWS_* env vars.
  */
-function tryAddAwsEnvVars(envVars: IEnvMap): IEnvMap {
+function tryGetAwsEnvVars(): IEnvMap {
+    const awsVars: IEnvMap = {};
     const vars = [
         "AWS_ACCESS_KEY_ID",
         "AWS_REGION",
@@ -84,7 +81,6 @@ function tryAddAwsEnvVars(envVars: IEnvMap): IEnvMap {
         "AWS_SECRET_ACCESS_KEY",
     ];
 
-    const awsVars: IEnvMap = {};
     vars.forEach((varName: string) => {
         let val = tl.getVariable(varName);
         if (!val) {
@@ -113,7 +109,6 @@ function tryAddAwsEnvVars(envVars: IEnvMap): IEnvMap {
     });
 
     return {
-        ...envVars,
         ...awsVars,
     };
 }
@@ -159,10 +154,10 @@ export async function runPulumi(serviceEndpoint?: IServiceEndpoint) {
         const pulCwd = tl.getInput("cwd") || ".";
 
         const envVars: IEnvMap = {
+            ...tryGetAzureEnvVarsFromServiceEndpoint(serviceEndpoint),
+            ...tryGetAwsEnvVars(),
             PATH: pathEnv || "",
         };
-        tryAddAzureEnvVarsFromServiceEndpoint(envVars, serviceEndpoint);
-        tryAddAwsEnvVars(envVars);
 
         const pulumiConfigPassphrase =
             tl.getVariable("pulumi.config.passphrase") ||
