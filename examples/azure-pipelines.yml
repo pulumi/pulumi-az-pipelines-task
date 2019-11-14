@@ -12,7 +12,7 @@ jobs:
       command: install
       workingDir: "./"
 
-  - task: Pulumi@0
+  - task: Pulumi@1
     inputs:
       azureSubscription: '<your-service-connection-name>'
       command: "up"
