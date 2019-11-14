@@ -3,7 +3,7 @@
 import * as tl from "azure-pipelines-task-lib/task";
 import * as tr from "azure-pipelines-task-lib/toolrunner";
 
-import { IServiceEndpoint } from "./serviceEndpoint";
+import { getServiceEndpoint } from "./serviceEndpoint";
 import { PULUMI_ACCESS_TOKEN, PULUMI_CONFIG_PASSPHRASE } from "./vars";
 
 interface IEnvMap { [key: string]: string; }
@@ -27,7 +27,7 @@ async function runPulumiCmd(toolPath: string, pulExecOptions: tr.IExecOptions) {
     const exitCode = await pulCommandRunner.exec(pulExecOptions);
     if (exitCode !== 0) {
         tl.setResult(tl.TaskResult.Failed,
-            tl.loc("PulumiCommandFailed", exitCode, `${ pulCommand } ${ pulArgs.join(" ") }`));
+            tl.loc("PulumiCommandFailed", exitCode, `${pulCommand} ${pulArgs.join(" ")}`));
         return;
     }
 }
@@ -52,17 +52,27 @@ function getExecOptions(envMap: IEnvMap, workingDirectory: string): tr.IExecOpti
  * this function returns an env var map with the `ARM_*`
  * env vars.
  */
-function tryGetAzureEnvVarsFromServiceEndpoint(serviceEndpoint?: IServiceEndpoint): IEnvMap {
-        if (!serviceEndpoint) {
-            return {};
-        }
+function tryGetAzureEnvVarsFromServiceEndpoint(): IEnvMap {
+    const connectedServiceName = tl.getInput("azureSubscription", false);
+    if (!connectedServiceName) {
+        return {};
+    }
+    tl.debug(tl.loc("Debug_ServiceEndpointName", connectedServiceName));
 
-        return {
-            ARM_CLIENT_ID: serviceEndpoint.clientId,
-            ARM_CLIENT_SECRET: serviceEndpoint.servicePrincipalKey,
-            ARM_SUBSCRIPTION_ID: serviceEndpoint.subscriptionId,
-            ARM_TENANT_ID: serviceEndpoint.tenantId,
-        };
+    const serviceEndpoint = getServiceEndpoint(connectedServiceName);
+    if (serviceEndpoint) {
+        tl.debug(`Service endpoint retrieved with client ID ${serviceEndpoint.clientId}`);
+    }
+    if (!serviceEndpoint) {
+        return {};
+    }
+
+    return {
+        ARM_CLIENT_ID: serviceEndpoint.clientId,
+        ARM_CLIENT_SECRET: serviceEndpoint.servicePrincipalKey,
+        ARM_SUBSCRIPTION_ID: serviceEndpoint.subscriptionId,
+        ARM_TENANT_ID: serviceEndpoint.tenantId,
+    };
 }
 
 /**
@@ -113,7 +123,7 @@ function tryGetAwsEnvVars(): IEnvMap {
     };
 }
 
-export async function runPulumi(serviceEndpoint?: IServiceEndpoint) {
+export async function runPulumi() {
     try {
         // Print the version.
         const toolPath = tl.which("pulumi");
@@ -138,7 +148,7 @@ export async function runPulumi(serviceEndpoint?: IServiceEndpoint) {
             return;
         }
 
-        const loginCmdEnvVars: {[key: string]: string} = {};
+        const loginCmdEnvVars: { [key: string]: string } = {};
         loginCmdEnvVars[PULUMI_ACCESS_TOKEN] = pulumiAccessToken;
         const exitCode = await tl.tool(toolPath)
             .arg("login")
@@ -150,11 +160,11 @@ export async function runPulumi(serviceEndpoint?: IServiceEndpoint) {
 
         // Get the working directory where the Pulumi commands must be run.
         const pathEnv = process.env["PATH"];
-        tl.debug(`Executing Pulumi commands with PATH ${ pathEnv }`);
+        tl.debug(`Executing Pulumi commands with PATH ${pathEnv}`);
         const pulCwd = tl.getInput("cwd") || ".";
 
         const envVars: IEnvMap = {
-            ...tryGetAzureEnvVarsFromServiceEndpoint(serviceEndpoint),
+            ...tryGetAzureEnvVarsFromServiceEndpoint(),
             ...tryGetAwsEnvVars(),
             PATH: pathEnv || "",
         };

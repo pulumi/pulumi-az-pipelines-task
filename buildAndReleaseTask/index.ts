@@ -6,7 +6,6 @@ import * as path from "path";
 
 import { installPulumi } from "./installers/pulumi";
 import { runPulumi } from "./pulumi";
-import { getServiceEndpoint } from "./serviceEndpoint";
 import { getLatestPulumiVersion } from "./version";
 
 import { INSTALLED_PULUMI_VERSION } from "./vars";
@@ -34,14 +33,6 @@ async function run() {
         latestPulumiVersion = await getLatestPulumiVersion();
     }
 
-    const connectedServiceName = tl.getInput("azureSubscription", false);
-    tl.debug(tl.loc("Debug_ServiceEndpointName", connectedServiceName));
-
-    const serviceEndpoint = getServiceEndpoint(connectedServiceName);
-    if (serviceEndpoint) {
-        tl.debug(`Service endpoint retrieved with client ID ${serviceEndpoint.clientId}`);
-    }
-
     const toolPath = toolLib.findLocalTool("pulumi", versionSpec || latestPulumiVersion);
     if (!toolPath) {
         tl.debug(tl.loc("Debug_NotFoundInCache"));
@@ -60,7 +51,7 @@ async function run() {
     }
 
     tl.debug(tl.loc("Debug_Installed"));
-    await runPulumi(serviceEndpoint);
+    await runPulumi();
 }
 
 // tslint:disable-next-line no-floating-promises
