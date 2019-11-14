@@ -68,11 +68,9 @@ stages:
       inputs:
         version: 'v0.7.x'
 
-  - job: 'test extension'
-    - task: 
-
   - job: tfxCreate
-    - task: ExtensionVersion@1
+    steps:
+    - task: QueryAzureDevOpsExtensionVersion@2
       displayName: 'Query extension version'
       inputs:
         connectTo: 'VsTeam'
@@ -83,7 +81,7 @@ stages:
         outputVariable: 'Extension.Version'
         extensionVersionOverride: 'Extension.VersionOverride'
 
-    - task: PackageVSTSExtension@1
+    - task: PackageAzureDevOpsExtension@2
       displayName: 'Package extension'
       inputs:
         extensionVersion: '$(Extension.Version)'
@@ -96,3 +94,43 @@ stages:
         artifactName: 'vsix'
         targetPath: $(Extension.OutputPath)
 
+  - job: testTfxCreate
+    displayName: 'Create and publish test VSIX'
+    steps:
+    - task: CmdLine@2
+      displayName: 'Update task name'
+      inputs:
+        script: 'sed -i ''s/"name": "Pulumi"/"name": "Test Pulumi"/g'' task.json'
+        workingDirectory: './buildAndReleaseTask/'
+        failOnStderr: true
+
+    - task: CmdLine@2
+      displayName: 'Update task id'
+      inputs:
+        script: 'sed -i ''s/"id": "66148448-e174-4167-91a4-0ac63f4a10ca"/"id": "f7c2cffd-7ad2-4db6-b699-205f9e99837c"/g'' task.json'
+        workingDirectory: './buildAndReleaseTask/'
+        failOnStderr: true
+
+    - task: QueryAzureDevOpsExtensionVersion@2
+      displayName: 'Query extension version'
+      inputs:
+        connectTo: 'VsTeam'
+        connectedServiceName: 'Pulumi Marketplace'
+        publisherId: 'pulumi'
+        extensionId: 'build-and-release-task'
+        versionAction: 'Patch'
+        outputVariable: 'TestExtension.Version'
+        extensionVersionOverride: 'TestExtension.VersionOverride'
+
+    - task: PublishAzureDevOpsExtension@2
+      displayName: 'Package and publish test VSIX'
+      inputs:
+        connectTo: 'VsTeam'
+        connectedServiceName: 'Pulumi Marketplace'
+        fileType: 'manifest'
+        publisherId: 'pulumi'
+        extensionId: 'build-and-release-task'
+        extensionVersion: 'TestExtension.Version'
+        extensionVisibility: 'private'
+        extensionPricing: 'free'
+        shareWith: 'pulumi'
