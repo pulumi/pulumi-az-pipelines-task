@@ -175,6 +175,12 @@ export async function runPulumi() {
             tl.getVariable("SECRET_PULUMI_CONFIG_PASSPHRASE") ||
             "";
         envVars[PULUMI_CONFIG_PASSPHRASE] = pulumiConfigPassphrase;
+        const dotnetCliHome =
+            tl.getVariable("dotnet.cli.home") ||
+            tl.getVariable("DOTNET_CLI_HOME") ||
+            tl.getVariable("Agent.TempDirectory") ||
+            "";
+        envVars["DOTNET_CLI_HOME"] = dotnetCliHome;
         const pulExecOptions = getExecOptions(envVars, pulCwd);
 
         // Select the stack.
