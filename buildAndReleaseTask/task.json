@@ -3,7 +3,7 @@
     "name": "Pulumi",
     "friendlyName": "Pulumi Azure Pipelines Task",
     "description": "Azure Pipelines task extension for running Pulumi apps.",
-    "helpMarkDown": "Join us on Slack at https://slack.pulumi.io.",
+    "helpMarkDown": "Join us on Slack at https://slack.pulumi.com.",
     "category": "Deploy",
     "visibility": [
         "Build",
@@ -30,7 +30,7 @@
             "type": "pickList",
             "label": "Pulumi Command",
             "defaultValue": "",
-            "helpMarkDown": "For a list of CLI commands and arguments, see [this](https://pulumi.io/reference/commands.html).",
+            "helpMarkDown": "For a list of CLI commands and arguments, see [this](https://www.pulumi.com/docs/reference/cli/).",
             "required": "true",
             "properties": {
                 "EditableOptions": "True"
@@ -50,7 +50,7 @@
             "type": "string",
             "label": "Pulumi Args",
             "defaultValue": "",
-            "helpMarkDown": "Use space to separate multiple args. For a list of CLI commands and arguments, see [this](https://pulumi.io/reference/commands.html).",
+            "helpMarkDown": "Use space to separate multiple args. For a list of CLI commands and arguments, see [this](https://www.pulumi.com/docs/reference/cli/).",
             "required": "false"
         },
         {
@@ -74,7 +74,7 @@
             "type": "string",
             "label": "Pulumi version",
             "defaultValue": "latest",
-            "helpMarkDown": "The Pulumi version that should be used. If you require a specific version then the format is '0.17.10' or if you just need the latest version then 'latest' can be used.",
+            "helpMarkDown": "The Pulumi version that should be used. If you require a specific version then the format is `1.5.0` or if you just need the latest version then `latest` can be used.",
             "required": "false"
         }
     ],
