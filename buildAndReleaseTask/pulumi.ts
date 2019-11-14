@@ -178,6 +178,7 @@ export async function runPulumi() {
         const dotnetCliHome =
             tl.getVariable("dotnet.cli.home") ||
             tl.getVariable("DOTNET_CLI_HOME") ||
+            tl.getVariable("Agent.TempDirectory") ||
             "";
         envVars["DOTNET_CLI_HOME"] = dotnetCliHome;
         const pulExecOptions = getExecOptions(envVars, pulCwd);
