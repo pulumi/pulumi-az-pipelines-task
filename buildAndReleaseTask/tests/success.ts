@@ -2,7 +2,6 @@
 
 import * as ma from "azure-pipelines-task-lib/mock-answer";
 import * as tmrm from "azure-pipelines-task-lib/mock-run";
-import { ToolRunner } from "azure-pipelines-task-lib/toolrunner";
 import * as path from "path";
 
 import { IServiceEndpoint } from "../serviceEndpoint";
@@ -11,7 +10,7 @@ const taskPath = path.join(__dirname, "..", "index.js");
 const tmr: tmrm.TaskMockRunner = new tmrm.TaskMockRunner(taskPath);
 
 const fakeOS = "Linux";
-const latestPulumiVersion = "0.17.8";
+const latestPulumiVersion = "1.5.1";
 // If the user requested version is not `latest`, then this is the version
 // that the task should install.
 export const userRequestedVersion = "0.16.5";
@@ -77,19 +76,6 @@ tmr.registerMock("azure-pipelines-tool-lib/tool", {
     findLocalTool: (toolName: string, version: string) => {
         console.log(`Requested tool ${ toolName } of version ${ version }`);
         return undefined;
-    },
-});
-
-tmr.registerMock("azure-pipelines-task-lib/toolrunner", {
-    exec: () => {
-        return Promise.resolve();
-    },
-    pipeExecOutputToTool: () => {
-        console.log("piping fake tool");
-        return new ToolRunner("/fake/tool");
-    },
-    prependPath: (pathToTool: string) => {
-        console.log(`prepending path ${ pathToTool }`);
     },
 });
 
