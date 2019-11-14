@@ -8,7 +8,6 @@ import { userRequestedVersion } from "./success";
 describe("Pulumi task tests", () => {
 
     it("should install the CLI and run command", (done: MochaDone) => {
-
         const tp = path.join(__dirname, "success.js");
         const tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
@@ -18,11 +17,25 @@ describe("Pulumi task tests", () => {
         assert.equal(tr.warningIssues.length, 0, "should have no warnings");
         assert.equal(tr.errorIssues.length, 0, "should have no errors");
 
+        console.log("***Printing test output***");
         console.log(tr.stdout);
         assert.equal(tr.stdout.indexOf(userRequestedVersion) >= 0, true, "should execute `pulumi version` command");
         assert.equal(tr.stdout.indexOf("stack selected") >= 0, true, "should select stack");
         assert.equal(tr.stdout.indexOf("fake logged in") >= 0, true, "should login");
         assert.equal(tr.stdout.indexOf("fake pulumi preview") >= 0, true, "should execute `pulumi preview` command");
+        done();
+    });
+
+    it("should run Pulumi with the expected env vars", (done: MochaDone) => {
+        const tp = path.join(__dirname, "envvars.js");
+        const tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
+
+        tr.run();
+
+        assert.equal(tr.succeeded, true, "should have succeeded");
+        assert.equal(tr.warningIssues.length, 0, "should have no warnings");
+        assert.equal(tr.errorIssues.length, 0, "should have no errors");
+
         done();
     });
 });
