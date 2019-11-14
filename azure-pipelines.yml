@@ -48,8 +48,8 @@ stages:
     )
   displayName: 'Package extension'
   jobs:
-  - job: tfxCreate
-    displayName: 'Create VSIX'
+  - job: restoreDeps
+    displayName: 'Restore dependencies'
     steps:
     - task: Npm@1
       displayName: 'Restore node_modules for buildAndReleaseTask/'
@@ -64,10 +64,14 @@ stages:
         command: 'custom'
         customCommand: run tsc
 
-    - task: TfxInstaller@1
+    - task: TfxInstaller@2
       inputs:
-        version: 'v0.6.x'
+        version: 'v0.7.x'
 
+  - job: 'test extension'
+    - task: 
+
+  - job: tfxCreate
     - task: ExtensionVersion@1
       displayName: 'Query extension version'
       inputs:

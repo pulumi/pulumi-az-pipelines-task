@@ -1,0 +1,22 @@
+# A minimal Azure Pipelines build configuration file.
+# This configuration has just a single stage,
+# so we can skip the `stages` directive.
+
+jobs:
+- job: infrastructure
+  pool:
+    vmImage: 'ubuntu-16.04'
+  steps:
+  - task: Npm@1
+    inputs:
+      command: install
+      workingDir: "./"
+
+  - task: Pulumi@1
+    inputs:
+      azureSubscription: '<your-service-connection-name>'
+      command: "preview"
+      cwd: "./"
+      # Replace this with your stack name, or define a build variable called `StackName`
+      # whose value is your stack name.
+      stack: "$(StackName)"
