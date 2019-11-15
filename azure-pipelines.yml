@@ -127,6 +127,7 @@ stages:
         extensionId: 'build-and-release-task'
         versionAction: 'Patch'
         outputVariable: 'TestExtension.Version'
+        extensionVersionOverride: 'TestExtension.VersionOverride'
 
     - task: PublishAzureDevOpsExtension@2
       displayName: 'Package and publish test VSIX'
