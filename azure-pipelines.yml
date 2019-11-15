@@ -81,7 +81,7 @@ stages:
         outputVariable: 'Extension.Version'
         extensionVersionOverride: 'Extension.VersionOverride'
 
-    - task: PackageAzureDevOpsExtension@2
+    - task: PackageVSTSExtension@1
       displayName: 'Package extension'
       inputs:
         extensionVersion: '$(Extension.Version)'
@@ -133,7 +133,7 @@ stages:
         connectedServiceName: 'Pulumi Marketplace'
         fileType: 'manifest'
         publisherId: 'pulumi'
-        extensionId: 'build-and-release-task'
+        extensionId: 'test-build-and-release-task'
         extensionVersion: '$(TestExtension.Version)'
         extensionVisibility: 'private'
         extensionPricing: 'free'
