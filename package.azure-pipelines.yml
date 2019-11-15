@@ -1,0 +1,50 @@
+# YAML-based pipelines don't suport Build Completion Triggers,
+# so we set this to none here. Instead, a Build Completion Trigger
+# is setup using the Azure Pipelines UI for this pipeline config.
+trigger: none
+
+jobs:
+- job: tfxCreate
+  dependsOn: restoreDeps
+  displayName: 'Create and package VSIX'
+  steps:
+  - task: Npm@1
+    displayName: 'Restore node_modules for buildAndReleaseTask/'
+    inputs:
+      workingDir: buildAndReleaseTask/
+      verbose: true
+
+  - task: Npm@1
+    displayName: 'Compile TS to JS'
+    inputs:
+      workingDir: buildAndReleaseTask/
+      command: 'custom'
+      customCommand: run tsc
+
+  - task: TfxInstaller@2
+    inputs:
+      version: 'v0.7.x'
+
+  - task: ExtensionVersion@1
+    displayName: 'Query extension version'
+    inputs:
+      connectTo: 'VsTeam'
+      connectedServiceName: 'Pulumi Marketplace'
+      publisherId: 'pulumi'
+      extensionId: 'build-and-release-task'
+      versionAction: 'Patch'
+      outputVariable: 'Extension.Version'
+      extensionVersionOverride: 'Extension.VersionOverride'
+
+  - task: PackageVSTSExtension@1
+    displayName: 'Package extension'
+    inputs:
+      extensionVersion: '$(Extension.Version)'
+      updateTasksVersion: true
+      updateTasksVersionType: patch
+
+  - task: PublishPipelineArtifact@0
+    displayName: 'Create pipeline artifact'
+    inputs:
+      artifactName: 'vsix'
+      targetPath: $(Extension.OutputPath)
