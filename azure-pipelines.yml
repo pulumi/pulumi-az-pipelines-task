@@ -65,6 +65,7 @@ stages:
         customCommand: run tsc
 
   - job: tfxCreate
+    displayName: 'Create and package VSIX'
     steps:
     - task: TfxInstaller@2
       inputs:
@@ -78,10 +79,9 @@ stages:
         publisherId: 'pulumi'
         extensionId: 'build-and-release-task'
         versionAction: 'Patch'
-        outputVariable: 'Extension.Version'
         extensionVersionOverride: 'Extension.VersionOverride'
 
-    - task: PackageVSTSExtension@1
+    - task: PackageAzureDevOpsExtension@2
       displayName: 'Package extension'
       inputs:
         extensionVersion: '$(Extension.Version)'
@@ -89,7 +89,7 @@ stages:
         updateTasksVersionType: patch
 
     - task: PublishPipelineArtifact@0
-      displayName: 'Upload extension VSIX'
+      displayName: 'Create pipeline artifact'
       inputs:
         artifactName: 'vsix'
         targetPath: $(Extension.OutputPath)
@@ -134,6 +134,7 @@ stages:
         fileType: 'manifest'
         publisherId: 'pulumi'
         extensionId: 'test-build-and-release-task'
+        extensionName: '(Test) Pulumi Azure Pipelines Task'
         extensionVersion: '$(TestExtension.Version)'
         extensionVisibility: 'private'
         extensionPricing: 'free'
