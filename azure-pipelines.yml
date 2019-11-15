@@ -64,12 +64,12 @@ stages:
         command: 'custom'
         customCommand: run tsc
 
+  - job: tfxCreate
+    steps:
     - task: TfxInstaller@2
       inputs:
         version: 'v0.7.x'
 
-  - job: tfxCreate
-    steps:
     - task: QueryAzureDevOpsExtensionVersion@2
       displayName: 'Query extension version'
       inputs:
@@ -97,17 +97,21 @@ stages:
   - job: testTfxCreate
     displayName: 'Create and publish test VSIX'
     steps:
+    - task: TfxInstaller@2
+      inputs:
+        version: 'v0.7.x'
+
     - task: CmdLine@2
       displayName: 'Update task name'
       inputs:
-        script: 'sed -i ''s/"name": "Pulumi"/"name": "Test Pulumi"/g'' task.json'
+        script: 'sed -i ''s/"Pulumi"/"Test Pulumi"/g'' task.json'
         workingDirectory: './buildAndReleaseTask/'
         failOnStderr: true
 
     - task: CmdLine@2
       displayName: 'Update task id'
       inputs:
-        script: 'sed -i ''s/"id": "66148448-e174-4167-91a4-0ac63f4a10ca"/"id": "f7c2cffd-7ad2-4db6-b699-205f9e99837c"/g'' task.json'
+        script: 'sed -i ''s/"66148448-e174-4167-91a4-0ac63f4a10ca"/"f7c2cffd-7ad2-4db6-b699-205f9e99837c"/g'' task.json'
         workingDirectory: './buildAndReleaseTask/'
         failOnStderr: true
 
@@ -130,7 +134,7 @@ stages:
         fileType: 'manifest'
         publisherId: 'pulumi'
         extensionId: 'build-and-release-task'
-        extensionVersion: 'TestExtension.Version'
+        extensionVersion: '$(TestExtension.Version)'
         extensionVisibility: 'private'
         extensionPricing: 'free'
         shareWith: 'pulumi'
