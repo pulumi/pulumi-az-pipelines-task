@@ -46,10 +46,11 @@ stages:
       eq(variables['Build.Reason'], 'BatchedCI'),
       eq(variables['ManualOverride'], 'true')
     )
-  displayName: 'Package extension'
+  displayName: 'Publish test extension'
   jobs:
-  - job: restoreDeps
-    displayName: 'Restore dependencies'
+  - job: testTfxCreate
+    dependsOn: restoreDeps
+    displayName: 'Create and publish test extension'
     steps:
     - task: Npm@1
       displayName: 'Restore node_modules for buildAndReleaseTask/'
@@ -64,42 +65,6 @@ stages:
         command: 'custom'
         customCommand: run tsc
 
-  - job: tfxCreate
-    dependsOn: restoreDeps
-    displayName: 'Create and package VSIX'
-    steps:
-    - task: TfxInstaller@2
-      inputs:
-        version: 'v0.7.x'
-
-    - task: ExtensionVersion@1
-      displayName: 'Query extension version'
-      inputs:
-        connectTo: 'VsTeam'
-        connectedServiceName: 'Pulumi Marketplace'
-        publisherId: 'pulumi'
-        extensionId: 'build-and-release-task'
-        versionAction: 'Patch'
-        outputVariable: 'Extension.Version'
-        extensionVersionOverride: 'Extension.VersionOverride'
-
-    - task: PackageVSTSExtension@1
-      displayName: 'Package extension'
-      inputs:
-        extensionVersion: '$(Extension.Version)'
-        updateTasksVersion: true
-        updateTasksVersionType: patch
-
-    - task: PublishPipelineArtifact@0
-      displayName: 'Create pipeline artifact'
-      inputs:
-        artifactName: 'vsix'
-        targetPath: $(Extension.OutputPath)
-
-  - job: testTfxCreate
-    dependsOn: restoreDeps
-    displayName: 'Create and publish test VSIX'
-    steps:
     - task: TfxInstaller@2
       inputs:
         version: 'v0.7.x'
