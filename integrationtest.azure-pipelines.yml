@@ -16,14 +16,14 @@ jobs:
 
   - task: Test Pulumi@1
     inputs:
-      command: "config"
-      args: "set aws:region us-west-2"
-      stack: "$(Example.AWS.StackName)"
+      command: 'config'
+      args: 'set aws:region us-west-2'
+      stack: '$(Example.AWS.StackName)'
 
   - task: Test Pulumi@1
     inputs:
-      command: "preview"
-      stack: "$(Example.AWS.StackName)"
+      command: 'preview'
+      stack: '$(Example.AWS.StackName)'
 
 - job: azure
   pool:
@@ -38,19 +38,19 @@ jobs:
   - task: Test Pulumi@1
     display: 'Set stack config azure:location'
     inputs:
-      command: "config"
-      args: "set azure:environment public"
-      stack: "$(Example.Azure.StackName)"
+      command: 'config'
+      args: 'set azure:environment public'
+      stack: '$(Example.Azure.StackName)'
 
   - task: Test Pulumi@1
     displayName: 'Set stack config azure:environment'
     inputs:
-      command: "config"
-      stack: "$(Example.Azure.StackName)"
+      command: 'config'
+      stack: '$(Example.Azure.StackName)'
 
   - task: Test Pulumi@1
     inputs:
       # Replace this with your service connection name.
       azureSubscription: '$(Example.Azure.ServiceConnectName)'
-      command: "preview"
-      stack: "$(Example.Azure.StackName)"
+      command: 'preview'
+      stack: '$(Example.Azure.StackName)'
