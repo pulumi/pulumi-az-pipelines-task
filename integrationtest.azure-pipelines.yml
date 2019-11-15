@@ -20,7 +20,7 @@ jobs:
   - task: Test Pulumi@1
     inputs:
       command: "preview"
-      cwd: "./"
+      cwd: "./examples/aws"
       # Replace this with your stack name, or define a build variable called `StackName`
       # whose value is your stack name.
       stack: "$(Example.AWS.StackName)"
@@ -30,7 +30,7 @@ jobs:
       # Replace this with your service connection name.
       azureSubscription: '$(Example.Azure.ServiceConnectName)'
       command: "preview"
-      cwd: "./"
+      cwd: "./examples/azure"
       # Replace this with your stack name, or define a build variable called `StackName`
       # whose value is your stack name.
       stack: "$(Example.Azure.StackName)"
