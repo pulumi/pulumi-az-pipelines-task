@@ -15,6 +15,7 @@ jobs:
       command: install
 
   - task: Test Pulumi@1
+    displayName: 'Set stack config aws:region'
     inputs:
       command: 'config'
       args: 'set aws:region us-west-2'
@@ -36,7 +37,7 @@ jobs:
       command: install
 
   - task: Test Pulumi@1
-    display: 'Set stack config azure:location'
+    displayName: 'Set stack config azure:location'
     inputs:
       command: 'config'
       args: 'set azure:environment public'
