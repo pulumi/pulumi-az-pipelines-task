@@ -14,7 +14,8 @@ jobs:
 
   - task: Pulumi@1
     inputs:
-      azureSubscription: '<your-service-connection-name>'
+      # Replace this with your service connection name.
+      azureSubscription: '$(ServiceConnectName)'
       command: "preview"
       cwd: "./"
       # Replace this with your stack name, or define a build variable called `StackName`
