@@ -1,36 +1,56 @@
-# A minimal Azure Pipelines build configuration file.
-# This configuration has just a single stage,
-# so we can skip the `stages` directive.
-
 # YAML-based pipelines don't suport Build Completion Triggers,
 # so we set this to none here. Instead, a Build Completion Trigger
 # is setup using the Azure Pipelines UI for this pipeline config.
 trigger: none
 
 jobs:
-- job: infrastructure
+- job: aws
   pool:
     vmImage: 'ubuntu-16.04'
   steps:
+  - bash: cd ./examples/aws
+
   - task: Npm@1
     inputs:
       command: install
-      workingDir: "./"
+
+  - task: Test Pulumi@1
+    inputs:
+      command: "config"
+      args: "set aws:region us-west-2"
+      stack: "$(Example.AWS.StackName)"
 
   - task: Test Pulumi@1
     inputs:
       command: "preview"
-      cwd: "./examples/aws"
-      # Replace this with your stack name, or define a build variable called `StackName`
-      # whose value is your stack name.
       stack: "$(Example.AWS.StackName)"
+
+- job: azure
+  pool:
+    vmImage: 'ubuntu-16.04'
+  steps:
+  - bash: cd ./examples/azure
+
+  - task: Npm@1
+    inputs:
+      command: install
+
+  - task: Test Pulumi@1
+    display: 'Set stack config azure:location'
+    inputs:
+      command: "config"
+      args: "set azure:environment public"
+      stack: "$(Example.Azure.StackName)"
+
+  - task: Test Pulumi@1
+    displayName: 'Set stack config azure:environment'
+    inputs:
+      command: "config"
+      stack: "$(Example.Azure.StackName)"
 
   - task: Test Pulumi@1
     inputs:
       # Replace this with your service connection name.
       azureSubscription: '$(Example.Azure.ServiceConnectName)'
       command: "preview"
-      cwd: "./examples/azure"
-      # Replace this with your stack name, or define a build variable called `StackName`
-      # whose value is your stack name.
       stack: "$(Example.Azure.StackName)"
