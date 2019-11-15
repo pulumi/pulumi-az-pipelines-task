@@ -137,7 +137,7 @@ stages:
         publisherId: 'pulumi'
         extensionId: 'test-build-and-release-task'
         extensionName: '(Test) Pulumi Azure Pipelines Task'
-        extensionVersion: '$(TestExtension.Version).$(Build.BuildNumber)'
+        extensionVersion: '$(TestExtension.Version).$(Build.BuildNumber)$(System.JobAttempt)'
         extensionVisibility: 'private'
         extensionPricing: 'free'
         shareWith: 'pulumi'
