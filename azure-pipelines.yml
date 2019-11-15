@@ -49,7 +49,6 @@ stages:
   displayName: 'Publish test extension'
   jobs:
   - job: testTfxCreate
-    dependsOn: restoreDeps
     displayName: 'Create and publish test extension'
     steps:
     - task: Npm@1
