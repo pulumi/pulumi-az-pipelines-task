@@ -118,17 +118,6 @@ stages:
         workingDirectory: './buildAndReleaseTask/'
         failOnStderr: true
 
-    - task: QueryAzureDevOpsExtensionVersion@2
-      displayName: 'Query extension version'
-      inputs:
-        connectTo: 'VsTeam'
-        connectedServiceName: 'Pulumi Marketplace'
-        publisherId: 'pulumi'
-        extensionId: 'build-and-release-task'
-        versionAction: 'Patch'
-        outputVariable: 'TestExtension.Version'
-        extensionVersionOverride: 'TestExtension.VersionOverride'
-
     - task: PublishAzureDevOpsExtension@2
       displayName: 'Package and publish test VSIX'
       inputs:
@@ -138,7 +127,7 @@ stages:
         publisherId: 'pulumi'
         extensionId: 'test-build-and-release-task'
         extensionName: '(Test) Pulumi Azure Pipelines Task'
-        extensionVersion: '$(TestExtension.Version)'
+        extensionVersion: '$(Build.BuildNumber)'
         extensionVisibility: 'private'
         extensionPricing: 'free'
         shareWith: 'pulumi'
