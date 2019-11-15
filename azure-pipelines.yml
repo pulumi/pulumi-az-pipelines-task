@@ -71,7 +71,7 @@ stages:
       inputs:
         version: 'v0.7.x'
 
-    - task: QueryAzureDevOpsExtensionVersion@2
+    - task: ExtensionVersion@1
       displayName: 'Query extension version'
       inputs:
         connectTo: 'VsTeam'
@@ -79,9 +79,10 @@ stages:
         publisherId: 'pulumi'
         extensionId: 'build-and-release-task'
         versionAction: 'Patch'
+        outputVariable: 'Extension.Version'
         extensionVersionOverride: 'Extension.VersionOverride'
 
-    - task: PackageAzureDevOpsExtension@2
+    - task: PackageVSTSExtension@1
       displayName: 'Package extension'
       inputs:
         extensionVersion: '$(Extension.Version)'
