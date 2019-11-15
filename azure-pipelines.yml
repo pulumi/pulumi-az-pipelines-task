@@ -124,6 +124,7 @@ stages:
         publisherId: 'pulumi'
         extensionId: 'build-and-release-task'
         versionAction: 'Patch'
+        outputVariable: 'TestExtension.Version'
 
     - task: PublishAzureDevOpsExtension@2
       displayName: 'Package and publish test VSIX'
@@ -134,7 +135,7 @@ stages:
         publisherId: 'pulumi'
         extensionId: 'test-build-and-release-task'
         extensionName: '(Test) Pulumi Azure Pipelines Task'
-        extensionVersion: '$(Extension.Version)'
+        extensionVersion: '$(TestExtension.Version)'
         extensionVisibility: 'private'
         extensionPricing: 'free'
         shareWith: 'pulumi'
