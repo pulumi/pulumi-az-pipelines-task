@@ -108,6 +108,6 @@ stages:
         connectTo: 'VsTeam'
         connectedServiceName: 'Pulumi Marketplace'
         fileType: 'vsix'
-        vsixFile: '$(TestExtension.OutputPath)\*.vsix'
+        vsixFile: '$(TestExtension.OutputPath)'
         updateTasksVersion: false
         shareWith: 'pulumi'
