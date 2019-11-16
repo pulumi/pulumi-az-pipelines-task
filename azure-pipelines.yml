@@ -103,11 +103,17 @@ stages:
         extensionVisibility: 'private'
         extensionPricing: 'free'
 
-    - task: PublishAzureDevOpsExtension@2
+    - task: PublishExtension@1
+      displayName: 'Publish Extension'
       inputs:
-        connectTo: 'VsTeam'
         connectedServiceName: 'Pulumi Marketplace'
-        fileType: 'vsix'
+        fileType: vsix
         vsixFile: '$(TestExtension.OutputPath)'
-        updateTasksVersion: false
-        shareWith: 'pulumi'
+        publisherId: pulumi
+
+    - task: PublishPipelineArtifact@1
+      displayName: 'Create pipeline artifact'
+      inputs:
+        targetPath: '$(TestExtension.OutputPath)'
+        artifact: 'testvsix'
+        publishLocation: 'pipeline'
