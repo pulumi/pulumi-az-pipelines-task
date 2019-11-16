@@ -106,10 +106,12 @@ stages:
     - task: PublishExtension@1
       displayName: 'Publish Extension'
       inputs:
+        connectTo: 'VsTeam'
         connectedServiceName: 'Pulumi Marketplace'
-        fileType: vsix
+        fileType: 'vsix'
         vsixFile: '$(TestExtension.OutputPath)'
-        publisherId: pulumi
+        publisherId: 'pulumi'
+        updateTasksVersion: false
 
     - task: PublishPipelineArtifact@1
       displayName: 'Create pipeline artifact'
