@@ -92,16 +92,22 @@ stages:
         outputVariable: 'TestExtension.Version'
         extensionVersionOverride: 'TestExtension.VersionOverride'
 
-    - task: PublishAzureDevOpsExtension@2
-      displayName: 'Package and publish test VSIX'
+    - task: PackageVSTSExtension@1
       inputs:
-        connectTo: 'VsTeam'
-        connectedServiceName: 'Pulumi Marketplace'
-        fileType: 'manifest'
+        outputVariable: 'TestExtension.OutputPath'
         publisherId: 'pulumi'
         extensionId: 'test-build-and-release-task'
         extensionName: '(Test) Pulumi Azure Pipelines Task'
         extensionVersion: '$(TestExtension.Version).$(Build.BuildId)'
+        updateTasksVersion: true
         extensionVisibility: 'private'
         extensionPricing: 'free'
+
+    - task: PublishAzureDevOpsExtension@2
+      inputs:
+        connectTo: 'VsTeam'
+        connectedServiceName: 'Pulumi Marketplace'
+        fileType: 'vsix'
+        vsixFile: '$(TestExtension.OutputPath)\*.vsix'
+        updateTasksVersion: false
         shareWith: 'pulumi'
