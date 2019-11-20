@@ -82,7 +82,6 @@ function tryGetEnvVars(): IEnvMap {
     const vars: IEnvMap = {};
     tl.getVariables().forEach((varInfo) => {
         vars[varInfo.name] = varInfo.value;
-        return vars;
     });
 
     return vars;
