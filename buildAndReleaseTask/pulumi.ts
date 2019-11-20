@@ -76,51 +76,16 @@ function tryGetAzureEnvVarsFromServiceEndpoint(): IEnvMap {
 }
 
 /**
- * Tries to fetch the AWS Access Key ID and Secret Access Key from
- * the build environment and returns an env var map with the
- * AWS_* env vars.
+ * Returns all variables available to this task.
  */
-function tryGetAwsEnvVars(): IEnvMap {
-    const awsVars: IEnvMap = {};
-    const vars = [
-        "AWS_ACCESS_KEY_ID",
-        "AWS_REGION",
-        "AWS_PROFILE",
-    ];
-    const secretVars = [
-        "AWS_SECRET_ACCESS_KEY",
-    ];
-
-    vars.forEach((varName: string) => {
-        let val = tl.getVariable(varName);
-        if (!val) {
-            // ADO will automatically prepend the VSTS_TASKVARIABLE prefix to non-secret
-            // build variables. So let's try to fetch the variable with that.
-            val = tl.getVariable(`VSTS_TASKVARIABLE_${varName}`);
-        }
-        if (!val) {
-            return;
-        }
-        awsVars[varName] = val;
+function tryGetEnvVars(): IEnvMap {
+    const vars: IEnvMap = {};
+    tl.getVariables().forEach((varInfo) => {
+        vars[varInfo.name] = varInfo.value;
+        return vars;
     });
 
-    secretVars.forEach((secretVar: string) => {
-        let val = tl.getVariable(secretVar);
-        if (!val) {
-            // `getVariable` will automatically prepend the SECRET_ prefix if it finds
-            // it in the build environment's secret vault, but we will also try to fetch
-            // it explicitly with the prefix.
-            val = tl.getVariable(`SECRET_${secretVar}`);
-        }
-        if (!val) {
-            return;
-        }
-        awsVars[secretVar] = val;
-    });
-
-    return {
-        ...awsVars,
-    };
+    return vars;
 }
 
 export async function runPulumi() {
@@ -165,7 +130,7 @@ export async function runPulumi() {
 
         const envVars: IEnvMap = {
             ...tryGetAzureEnvVarsFromServiceEndpoint(),
-            ...tryGetAwsEnvVars(),
+            ...tryGetEnvVars(),
             PATH: pathEnv || "",
         };
 
