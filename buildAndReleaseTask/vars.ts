@@ -17,3 +17,9 @@ export const PULUMI_ACCESS_TOKEN = "PULUMI_ACCESS_TOKEN";
  * See https://blog.pulumi.com/managing-secrets-with-pulumi to learn more about encrypted configuration properties.
  */
 export const PULUMI_CONFIG_PASSPHRASE = "PULUMI_CONFIG_PASSPHRASE";
+
+/**
+ * AZURE_STORAGE_ACCOUNT and AZURE_STORAGE_KEY is used to login and store state in Azure Storage
+ */
+export const AZURE_STORAGE_ACCOUNT = "AZURE_STORAGE_ACCOUNT"
+export const AZURE_STORAGE_KEY = "AZURE_STORAGE_KEY"

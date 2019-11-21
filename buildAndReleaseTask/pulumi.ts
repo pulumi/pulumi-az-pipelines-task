@@ -4,7 +4,7 @@ import * as tl from "azure-pipelines-task-lib/task";
 import * as tr from "azure-pipelines-task-lib/toolrunner";
 
 import { getServiceEndpoint } from "./serviceEndpoint";
-import { PULUMI_ACCESS_TOKEN, PULUMI_CONFIG_PASSPHRASE } from "./vars";
+import { PULUMI_ACCESS_TOKEN, PULUMI_CONFIG_PASSPHRASE, AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_KEY } from "./vars";
 
 interface IEnvMap { [key: string]: string; }
 
@@ -148,11 +148,36 @@ export async function runPulumi() {
             return;
         }
 
+        const azureStorageContainer = 
+            tl.getVariable("azure.storage.container") ||
+            tl.getVariable("AZURE_STORAGE_CONTAINER") ||
+            tl.getVariable("SECRET_AZURE_STORAGE_CONTAINER");
+
+        const azureStorageAccount = 
+            tl.getVariable("azure.storage.account") ||
+            tl.getVariable("AZURE_STORAGE_ACCOUNT") ||
+            tl.getVariable("SECRET_AZURE_STORAGE_ACCOUNT");
+
+        const azureStorageKey = 
+            tl.getVariable("azure.storage.key") ||
+            tl.getVariable("AZURE_STORAGE_KEY") ||
+            tl.getVariable("SECRET_AZURE_STORAGE_KEY");
+
         const loginCmdEnvVars: { [key: string]: string } = {};
-        loginCmdEnvVars[PULUMI_ACCESS_TOKEN] = pulumiAccessToken;
+        let useAzureStorage = !(!azureStorageContainer && !azureStorageAccount && !azureStorageKey);
+        var loginCommand = ["login"];
+
+        if (useAzureStorage) {
+            loginCmdEnvVars[AZURE_STORAGE_ACCOUNT] = pulumiAccessToken;
+            loginCmdEnvVars[AZURE_STORAGE_KEY] = pulumiAccessToken;
+            loginCommand = ["login","-c", "azblob://"+azureStorageContainer];
+        } else {
+            loginCmdEnvVars[PULUMI_ACCESS_TOKEN] = pulumiAccessToken;
+        }
+
         const exitCode = await tl.tool(toolPath)
-            .arg("login")
-            .exec(getExecOptions(loginCmdEnvVars, ""));
+        .arg(loginCommand)
+        .exec(getExecOptions(loginCmdEnvVars, ""));
         if (exitCode !== 0) {
             tl.setResult(tl.TaskResult.Failed, tl.loc("PulumiLoginFailed"));
             return;
