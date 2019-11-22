@@ -4,7 +4,7 @@ import * as tl from "azure-pipelines-task-lib/task";
 import * as tr from "azure-pipelines-task-lib/toolrunner";
 
 import { getServiceEndpoint } from "./serviceEndpoint";
-import { PULUMI_ACCESS_TOKEN, PULUMI_CONFIG_PASSPHRASE } from "./vars";
+import { PULUMI_ACCESS_TOKEN } from "./vars";
 
 interface IEnvMap { [key: string]: string; }
 
@@ -19,6 +19,9 @@ async function selectStack(toolPath: string, pulExecOptions: tr.IExecOptions) {
 
 async function runPulumiCmd(toolPath: string, pulExecOptions: tr.IExecOptions) {
     const pulCommand = tl.getInput("command", true);
+    if (!pulCommand) {
+        return;
+    }
     const pulCommandRunner = tl.tool(toolPath).arg(pulCommand);
     const pulArgs = tl.getDelimitedInput("args", " ");
     pulArgs.forEach((arg: string) => {
@@ -76,51 +79,15 @@ function tryGetAzureEnvVarsFromServiceEndpoint(): IEnvMap {
 }
 
 /**
- * Tries to fetch the AWS Access Key ID and Secret Access Key from
- * the build environment and returns an env var map with the
- * AWS_* env vars.
+ * Returns all variables available to this task.
  */
-function tryGetAwsEnvVars(): IEnvMap {
-    const awsVars: IEnvMap = {};
-    const vars = [
-        "AWS_ACCESS_KEY_ID",
-        "AWS_REGION",
-        "AWS_PROFILE",
-    ];
-    const secretVars = [
-        "AWS_SECRET_ACCESS_KEY",
-    ];
-
-    vars.forEach((varName: string) => {
-        let val = tl.getVariable(varName);
-        if (!val) {
-            // ADO will automatically prepend the VSTS_TASKVARIABLE prefix to non-secret
-            // build variables. So let's try to fetch the variable with that.
-            val = tl.getVariable(`VSTS_TASKVARIABLE_${varName}`);
-        }
-        if (!val) {
-            return;
-        }
-        awsVars[varName] = val;
+function tryGetEnvVars(): IEnvMap {
+    const vars: IEnvMap = {};
+    tl.getVariables().forEach((varInfo) => {
+        vars[varInfo.name] = varInfo.value;
     });
 
-    secretVars.forEach((secretVar: string) => {
-        let val = tl.getVariable(secretVar);
-        if (!val) {
-            // `getVariable` will automatically prepend the SECRET_ prefix if it finds
-            // it in the build environment's secret vault, but we will also try to fetch
-            // it explicitly with the prefix.
-            val = tl.getVariable(`SECRET_${secretVar}`);
-        }
-        if (!val) {
-            return;
-        }
-        awsVars[secretVar] = val;
-    });
-
-    return {
-        ...awsVars,
-    };
+    return vars;
 }
 
 export async function runPulumi() {
@@ -137,22 +104,24 @@ export async function runPulumi() {
 
         // Login and then run the command.
         tl.debug(tl.loc("Debug_Login"));
+        // For backward compatibility, also check for `pulumi.access.token`
+        // and manually set the access token env var for the login command.
         const pulumiAccessToken =
             tl.getVariable("pulumi.access.token") ||
-            // `getVariable` will automatically prepend the SECRET_ prefix if it finds
-            // it in the build environment's secret vault.
-            tl.getVariable("PULUMI_ACCESS_TOKEN") ||
-            tl.getVariable("SECRET_PULUMI_ACCESS_TOKEN");
+            tl.getVariable("PULUMI_ACCESS_TOKEN");
         if (!pulumiAccessToken) {
-            tl.setResult(tl.TaskResult.Failed, tl.loc("PulumiAccessTokenNotFailed"));
+            tl.setResult(tl.TaskResult.Failed, tl.loc("PulumiAccessTokenNotFound"));
             return;
         }
 
-        const loginCmdEnvVars: { [key: string]: string } = {};
-        loginCmdEnvVars[PULUMI_ACCESS_TOKEN] = pulumiAccessToken;
+        const agentEnvVars = tryGetEnvVars();
+        const loginEnvVars = {
+            ...agentEnvVars,
+        };
+        loginEnvVars[PULUMI_ACCESS_TOKEN] = pulumiAccessToken;
         const exitCode = await tl.tool(toolPath)
             .arg("login")
-            .exec(getExecOptions(loginCmdEnvVars, ""));
+            .exec(getExecOptions(loginEnvVars, ""));
         if (exitCode !== 0) {
             tl.setResult(tl.TaskResult.Failed, tl.loc("PulumiLoginFailed"));
             return;
@@ -165,16 +134,13 @@ export async function runPulumi() {
 
         const envVars: IEnvMap = {
             ...tryGetAzureEnvVarsFromServiceEndpoint(),
-            ...tryGetAwsEnvVars(),
+            ...agentEnvVars,
             PATH: pathEnv || "",
         };
 
-        const pulumiConfigPassphrase =
-            tl.getVariable("pulumi.config.passphrase") ||
-            tl.getVariable("PULUMI_CONFIG_PASSPHRASE") ||
-            tl.getVariable("SECRET_PULUMI_CONFIG_PASSPHRASE") ||
-            "";
-        envVars[PULUMI_CONFIG_PASSPHRASE] = pulumiConfigPassphrase;
+        // For DotNet projects, the dotnet CLI requires a home directory (sort of a temp directory).
+        // On Azure Pipelines, the user home env var is undefined, and the workaround is to
+        // set the DOTNET_CLI_HOME env var. This is not a Pulumi-specfic env var.
         const dotnetCliHome =
             tl.getVariable("dotnet.cli.home") ||
             tl.getVariable("DOTNET_CLI_HOME") ||

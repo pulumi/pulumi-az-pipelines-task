@@ -39,7 +39,9 @@ The goal of the quickstart is to help you setup a "stack" on app.pulumi.com for 
 
 ### Pulumi Access Token
 
-A Pulumi access token is required so that the Pulumi task can log you into your account on app.pulumi.com. Since the task runs in a CI environment, you can specify the access token using a build variable `pulumi.access.token`, which the task will automatically map to the necessary environment variable `PULUMI_ACCESS_TOKEN` when it invokes the `pulumi login` command.
+A Pulumi access token is required so that the Pulumi task can log you into your [account](https://app.pulumi.com/account/tokens) on https://app.pulumi.com. Since the task runs in a CI environment, you can specify the access token using a build variable `PULUMI_ACCESS_TOKEN` for logging into your account non-interactively.
+
+> The Pulumi Access Token is a sensitive value. Click on the padlock icon to mark it as a secret when you save it in your Pipeline variables or variable group.
 
 ## Example Pulumi app
 
@@ -172,3 +174,9 @@ The Pulumi platform is open-source as well. Visit our GitHub repo at https://git
 ### I installed the Pulumi task extension to my organization, but I still cannot find it.
 
 Try to uninstall the extension, and then re-install it. Most of the times this resolves the issue with discovery. If you are still experiencing issues, please open an issue [here](https://github.com/pulumi/pulumi-az-pipelines-task/issues).
+
+### How do I deploy to AWS, GCP and other cloud providers using Pulumi and this task extension?
+
+Pulumi supports several [cloud providers](https://www.pulumi.com/docs/intro/cloud-providers/), including [Kubernetes](https://www.pulumi.com/docs/intro/cloud-providers/kubernetes/). You can deploy to any cloud provider that Pulumi supports using this task extension, by simply setting the required environment variables as part of each cloud provider's setup, as your Pipeline's build variable.
+
+For example, in order to deploy to [AWS](https://www.pulumi.com/docs/intro/cloud-providers/aws/setup/#environment-variables), simply set the `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` env vars either as pipeline variables or in a variable group that is linked to your pipeline.
