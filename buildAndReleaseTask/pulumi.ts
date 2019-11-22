@@ -135,19 +135,6 @@ export async function runPulumi() {
         tl.debug(tl.loc("Debug_PrintingVersion"));
         await tl.exec(toolPath, "version");
 
-        // Login and then run the command.
-        tl.debug(tl.loc("Debug_Login"));
-        const pulumiAccessToken =
-            tl.getVariable("pulumi.access.token") ||
-            // `getVariable` will automatically prepend the SECRET_ prefix if it finds
-            // it in the build environment's secret vault.
-            tl.getVariable("PULUMI_ACCESS_TOKEN") ||
-            tl.getVariable("SECRET_PULUMI_ACCESS_TOKEN");
-        if (!pulumiAccessToken) {
-            tl.setResult(tl.TaskResult.Failed, tl.loc("PulumiAccessTokenNotFailed"));
-            return;
-        }
-
         const azureStorageContainer = 
             tl.getVariable("azure.storage.container") ||
             tl.getVariable("AZURE_STORAGE_CONTAINER") ||
@@ -165,8 +152,21 @@ export async function runPulumi() {
 
         const loginCmdEnvVars: { [key: string]: string } = {};
         let useAzureStorage = !(!azureStorageContainer && !azureStorageAccount && !azureStorageKey);
-        var loginCommand = ["login"];
 
+        // Login and then run the command.
+        tl.debug(tl.loc("Debug_Login"));
+        const pulumiAccessToken =
+            tl.getVariable("pulumi.access.token") ||
+            // `getVariable` will automatically prepend the SECRET_ prefix if it finds
+            // it in the build environment's secret vault.
+            tl.getVariable("PULUMI_ACCESS_TOKEN") ||
+            tl.getVariable("SECRET_PULUMI_ACCESS_TOKEN");
+        if (!useAzureStorage && !pulumiAccessToken) {
+            tl.setResult(tl.TaskResult.Failed, tl.loc("PulumiAccessTokenNotFailed"));
+            return;
+        }
+
+        var loginCommand = ["login"];
         if (useAzureStorage) {
             loginCmdEnvVars[AZURE_STORAGE_ACCOUNT] = pulumiAccessToken;
             loginCmdEnvVars[AZURE_STORAGE_KEY] = pulumiAccessToken;
