@@ -19,6 +19,9 @@ async function selectStack(toolPath: string, pulExecOptions: tr.IExecOptions) {
 
 async function runPulumiCmd(toolPath: string, pulExecOptions: tr.IExecOptions) {
     const pulCommand = tl.getInput("command", true);
+    if (!pulCommand) {
+        return;
+    }
     const pulCommandRunner = tl.tool(toolPath).arg(pulCommand);
     const pulArgs = tl.getDelimitedInput("args", " ");
     pulArgs.forEach((arg: string) => {
