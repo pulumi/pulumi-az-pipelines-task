@@ -10,9 +10,9 @@
   "author": "Pulumi",
   "license": "MIT",
   "devDependencies": {
-    "@types/mocha": "^5.2.6",
+    "@types/mocha": "^5.2.7",
     "@types/node": "^11.13.8",
-    "tslint": "^5.16.0",
+    "tslint": "^5.20.1",
     "typescript": "^3.4.5"
   },
   "dependencies": {

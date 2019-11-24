@@ -37,7 +37,7 @@ async function run() {
     if (!toolPath) {
         tl.debug(tl.loc("Debug_NotFoundInCache"));
         try {
-            const installedVersion = await installPulumi(versionSpec, latestPulumiVersion);
+            const installedVersion = await installPulumi(latestPulumiVersion, versionSpec);
             if (installedVersion) {
                 tl.setVariable(INSTALLED_PULUMI_VERSION, installedVersion);
             }

@@ -12,7 +12,7 @@ import * as path from "path";
  * @param latestPulumiVersion latest version based on what `getLatestPulumiVersion` returned.
  */
 
-export async function installPulumi(versionSpec: string, latestPulumiVersion: string): Promise<string> {
+export async function installPulumi(latestPulumiVersion: string, versionSpec?: string): Promise<string> {
     const os = tl.osType();
     tl.debug(tl.loc("OSDETECTED", os));
 
