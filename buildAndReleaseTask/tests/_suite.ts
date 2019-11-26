@@ -18,7 +18,6 @@ describe("Pulumi task tests", () => {
         assert.equal(tr.errorIssues.length, 0, "should have no errors");
 
         console.log("***Printing test output***");
-        //console.log(tr.stdout);
         assert.equal(tr.stdout.indexOf(userRequestedVersion) >= 0, true, "should execute `pulumi version` command");
         assert.equal(tr.stdout.indexOf("stack selected") >= 0, true, "should select stack");
         assert.equal(tr.stdout.indexOf("fake logged in") >= 0, true, "should login");
@@ -43,7 +42,6 @@ describe("Pulumi task tests", () => {
         const tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
         tr.run();
-        //console.log(tr.stdout);
         assert.equal(tr.stdout.indexOf("fake logged in using azure storage") >= 0, true, "should login using azure environment variables");
         assert.equal(tr.succeeded, true, "should have succeeded");
         assert.equal(tr.warningIssues.length, 0, "should have no warnings");
