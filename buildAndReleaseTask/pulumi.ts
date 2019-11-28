@@ -120,7 +120,7 @@ export async function runPulumi() {
             // it in the build environment's secret vault.
             tl.getVariable("PULUMI_ACCESS_TOKEN");
         if (!azureStorageContainer && !pulumiAccessToken) {
-            tl.setResult(tl.TaskResult.Failed, tl.loc("PulumiAccessTokenNotFound"));
+            tl.setResult(tl.TaskResult.Failed, tl.loc("PulumiLoginUndetermined"));
             return;
         }
 
