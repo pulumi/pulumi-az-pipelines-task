@@ -6,6 +6,7 @@ import * as tr from "azure-pipelines-task-lib/toolrunner";
 import { getServiceEndpoint } from "./serviceEndpoint";
 import { PULUMI_ACCESS_TOKEN } from "./vars";
 
+
 interface IEnvMap { [key: string]: string; }
 
 async function selectStack(toolPath: string, pulExecOptions: tr.IExecOptions) {
@@ -102,26 +103,37 @@ export async function runPulumi() {
         tl.debug(tl.loc("Debug_PrintingVersion"));
         await tl.exec(toolPath, "version");
 
+        const agentEnvVars = tryGetEnvVars();
+        const loginEnvVars = {
+            ...agentEnvVars,
+        };
+        
+        const azureStorageContainer = agentEnvVars["AZURE_STORAGE_CONTAINER"];
+
         // Login and then run the command.
         tl.debug(tl.loc("Debug_Login"));
         // For backward compatibility, also check for `pulumi.access.token`
         // and manually set the access token env var for the login command.
         const pulumiAccessToken =
             tl.getVariable("pulumi.access.token") ||
+            // `getVariable` will automatically prepend the SECRET_ prefix if it finds
+            // it in the build environment's secret vault.
             tl.getVariable("PULUMI_ACCESS_TOKEN");
-        if (!pulumiAccessToken) {
-            tl.setResult(tl.TaskResult.Failed, tl.loc("PulumiAccessTokenNotFound"));
+        if (!azureStorageContainer && !pulumiAccessToken) {
+            tl.setResult(tl.TaskResult.Failed, tl.loc("PulumiLoginUndetermined"));
             return;
         }
 
-        const agentEnvVars = tryGetEnvVars();
-        const loginEnvVars = {
-            ...agentEnvVars,
-        };
-        loginEnvVars[PULUMI_ACCESS_TOKEN] = pulumiAccessToken;
+        var loginCommand = ["login"];
+        if (azureStorageContainer) {
+            loginCommand = ["login","-c", "azblob://"+azureStorageContainer];
+        }  else if (pulumiAccessToken) {
+            loginEnvVars[PULUMI_ACCESS_TOKEN] = pulumiAccessToken;
+        }
+
         const exitCode = await tl.tool(toolPath)
-            .arg("login")
-            .exec(getExecOptions(loginEnvVars, ""));
+        .arg(loginCommand)
+        .exec(getExecOptions(loginEnvVars, ""));
         if (exitCode !== 0) {
             tl.setResult(tl.TaskResult.Failed, tl.loc("PulumiLoginFailed"));
             return;

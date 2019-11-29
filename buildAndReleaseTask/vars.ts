@@ -10,3 +10,4 @@ export const INSTALLED_PULUMI_VERSION = "INSTALLED_PULUMI_VERSION";
 
 // PULUMI_ACCESS_TOKEN is used by the Pulumi CLI to login into an account non-interactively.
 export const PULUMI_ACCESS_TOKEN = "PULUMI_ACCESS_TOKEN";
+
