@@ -93,7 +93,7 @@
         "PulumiNotFound": "Pulumi CLI does not seem to be installed in your environment.",
         "PulumiCommandFailed": "Pulumi command exited with code '%s' while trying to run '%s'.",
         "PulumiStackSelectFailed": "Failed to select the stack '%s'.",
-        "PulumiLoginUndetermined": "Couldn't determine which login method to use, please use PULUMI_ACCESS_TOKEN as a env variable if you want to use the pulumi portal, use AZURE_STORAGE_CONTAINER as env variable if you want to use Azure storage as you own custom backend.",
+        "PulumiLoginUndetermined": "Couldn't determine which login method to use. This task extension supports Pulumi Service backend and self-managed backend using Azure Storage. Learn more at https://www.pulumi.com/docs/intro/concepts/state.",
         "DetectedVersion": "%s variable detected with value '%s'. Task will use this version from the local tool cache.",
         "Debug_NotFoundInCache": "Pulumi not found in the local tool cache. Will download and install it.",
         "Debug_Starting": "Starting..",
