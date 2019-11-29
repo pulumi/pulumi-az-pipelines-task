@@ -6,7 +6,6 @@ import * as tr from "azure-pipelines-task-lib/toolrunner";
 import { getServiceEndpoint } from "./serviceEndpoint";
 import { PULUMI_ACCESS_TOKEN } from "./vars";
 
-
 interface IEnvMap { [key: string]: string; }
 
 async function selectStack(toolPath: string, pulExecOptions: tr.IExecOptions) {
@@ -107,7 +106,7 @@ export async function runPulumi() {
         const loginEnvVars = {
             ...agentEnvVars,
         };
-        
+
         const azureStorageContainer = agentEnvVars["AZURE_STORAGE_CONTAINER"];
 
         // Login and then run the command.
@@ -124,9 +123,9 @@ export async function runPulumi() {
             return;
         }
 
-        var loginCommand = ["login"];
+        let loginCommand = ["login"];
         if (azureStorageContainer) {
-            loginCommand = ["login","-c", "azblob://"+azureStorageContainer];
+            loginCommand = ["login", "-c", `azblob://${azureStorageContainer}`];
         }  else if (pulumiAccessToken) {
             loginEnvVars[PULUMI_ACCESS_TOKEN] = pulumiAccessToken;
         }
