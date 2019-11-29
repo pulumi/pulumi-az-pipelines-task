@@ -127,7 +127,7 @@ export async function runPulumi() {
         var loginCommand = ["login"];
         if (azureStorageContainer) {
             loginCommand = ["login","-c", "azblob://"+azureStorageContainer];
-        } else {
+        }  else if (pulumiAccessToken) {
             loginEnvVars[PULUMI_ACCESS_TOKEN] = pulumiAccessToken;
         }
 
