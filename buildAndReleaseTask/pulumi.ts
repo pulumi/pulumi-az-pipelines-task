@@ -103,7 +103,9 @@ export async function runPulumi() {
         await tl.exec(toolPath, "version");
 
         const agentEnvVars = tryGetEnvVars();
+        const azureServiceEndpointEnvVars = tryGetAzureEnvVarsFromServiceEndpoint();
         const loginEnvVars = {
+            ...azureServiceEndpointEnvVars,
             ...agentEnvVars,
         };
 
@@ -144,7 +146,7 @@ export async function runPulumi() {
         const pulCwd = tl.getInput("cwd") || ".";
 
         const envVars: IEnvMap = {
-            ...tryGetAzureEnvVarsFromServiceEndpoint(),
+            ...azureServiceEndpointEnvVars,
             ...agentEnvVars,
             PATH: pathEnv || "",
         };
