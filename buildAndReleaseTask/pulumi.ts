@@ -17,16 +17,21 @@ async function selectStack(toolPath: string, pulExecOptions: tr.IExecOptions) {
     }
 }
 
+function appendArgsToToolCmd(cmdRunner: tr.ToolRunner, args: string[]): tr.ToolRunner {
+    args.forEach((arg: string) => {
+        cmdRunner.arg(arg);
+    });
+    return cmdRunner;
+}
+
 async function runPulumiCmd(toolPath: string, pulExecOptions: tr.IExecOptions) {
     const pulCommand = tl.getInput("command", true);
     if (!pulCommand) {
         return;
     }
-    const pulCommandRunner = tl.tool(toolPath).arg(pulCommand);
     const pulArgs = tl.getDelimitedInput("args", " ");
-    pulArgs.forEach((arg: string) => {
-        pulCommandRunner.arg(arg);
-    });
+    let pulCommandRunner = tl.tool(toolPath).arg(pulCommand);
+    pulCommandRunner = appendArgsToToolCmd(pulCommandRunner, pulArgs);
     const exitCode = await pulCommandRunner.exec(pulExecOptions);
     if (exitCode !== 0) {
         tl.setResult(tl.TaskResult.Failed,
@@ -132,9 +137,10 @@ export async function runPulumi() {
             loginEnvVars[PULUMI_ACCESS_TOKEN] = pulumiAccessToken;
         }
 
-        const exitCode = await tl.tool(toolPath)
-        .arg(loginCommand)
-        .exec(getExecOptions(loginEnvVars, ""));
+        const loginArgs = tl.getDelimitedInput("loginArgs", " ");
+        let loginCmdRunner = tl.tool(toolPath).arg(loginCommand);
+        loginCmdRunner = appendArgsToToolCmd(loginCmdRunner, loginArgs);
+        const exitCode = await loginCmdRunner.exec(getExecOptions(loginEnvVars, ""));
         if (exitCode !== 0) {
             tl.setResult(tl.TaskResult.Failed, tl.loc("PulumiLoginFailed"));
             return;
