@@ -50,7 +50,7 @@
             "type": "string",
             "label": "Login Args",
             "defaultValue": "",
-            "helpMarkDown": "Specify the args to be passed to the `pulumi login` command. Use space to separate multiple args. For a list of CLI commands and arguments, see [this](https://www.pulumi.com/docs/reference/cli/).",
+            "helpMarkDown": "Specify the args to be passed to the `pulumi login` command. Use space to separate multiple args. Learn more [here](https://www.pulumi.com/docs/reference/cli/pulumi_login/).",
             "required": "false"
         },
         {
