@@ -88,8 +88,8 @@ function tryGetAzureEnvVarsFromServiceEndpoint(): IEnvMap {
  */
 function tryGetEnvVars(): IEnvMap {
     const vars: IEnvMap = {};
-    tl.getVariables().forEach((varInfo) => {
-        vars[varInfo.name] = varInfo.value;
+    tl.getVariables().forEach((vi) => {
+        vars[vi.name] = vi.value;
     });
 
     return vars;
@@ -146,6 +146,10 @@ export async function runPulumi() {
             return;
         }
 
+        /**
+         * `process.env` only contains "public" variables, i.e. system and agent variables that
+         * are not secret. Secret vars can only be retrieved using `tl.getVariable` or `tl.getVariables`.
+         */
         const processEnv = process.env as IEnvMap;
         tl.debug(`Executing Pulumi commands with process env ${JSON.stringify(processEnv)}`);
         const envVars: IEnvMap = {
@@ -154,9 +158,11 @@ export async function runPulumi() {
             ...processEnv,
         };
 
-        // For DotNet projects, the dotnet CLI requires a home directory (sort of a temp directory).
-        // On Azure Pipelines, the user home env var is undefined, and the workaround is to
-        // set the DOTNET_CLI_HOME env var. This is not a Pulumi-specfic env var.
+        /**
+         * For DotNet projects, the dotnet CLI requires a home directory (sort of a temp directory).
+         * On Azure Pipelines, the user home env var is undefined, and the workaround is to
+         * set the DOTNET_CLI_HOME env var. This is not a Pulumi-specfic env var.
+         */
         const dotnetCliHome =
             tl.getVariable("dotnet.cli.home") ||
             tl.getVariable("DOTNET_CLI_HOME") ||
