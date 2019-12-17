@@ -148,7 +148,8 @@ export async function runPulumi() {
 
         /**
          * `process.env` only contains "public" variables, i.e. system and agent variables that
-         * are not secret. Secret vars can only be retrieved using `tl.getVariable` or `tl.getVariables`.
+         * are not secret. Secret vars can only be retrieved using `tl.getVariable` or
+         * `tl.getVariables`.
          */
         const processEnv = process.env as IEnvMap;
         tl.debug(`Executing Pulumi commands with process env ${JSON.stringify(processEnv)}`);
