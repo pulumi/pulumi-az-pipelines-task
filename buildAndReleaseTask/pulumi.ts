@@ -146,15 +146,12 @@ export async function runPulumi() {
             return;
         }
 
-        // Get the working directory where the Pulumi commands must be run.
-        const pathEnv = process.env["PATH"];
-        tl.debug(`Executing Pulumi commands with PATH ${pathEnv}`);
-        const pulCwd = tl.getInput("cwd") || ".";
-
+        const processEnv = process.env as IEnvMap;
+        tl.debug(`Executing Pulumi commands with process env ${JSON.stringify(processEnv)}`);
         const envVars: IEnvMap = {
             ...azureServiceEndpointEnvVars,
             ...agentEnvVars,
-            PATH: pathEnv || "",
+            ...processEnv,
         };
 
         // For DotNet projects, the dotnet CLI requires a home directory (sort of a temp directory).
@@ -166,6 +163,8 @@ export async function runPulumi() {
             tl.getVariable("Agent.TempDirectory") ||
             "";
         envVars["DOTNET_CLI_HOME"] = dotnetCliHome;
+        // Get the working directory where the Pulumi commands must be run.
+        const pulCwd = tl.getInput("cwd") || ".";
         const pulExecOptions = getExecOptions(envVars, pulCwd);
 
         // Select the stack.
