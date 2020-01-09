@@ -115,7 +115,7 @@ export async function runPulumi() {
         };
 
         const azureStorageContainer = agentEnvVars["AZURE_STORAGE_CONTAINER"];
-
+        const loginArgs = tl.getDelimitedInput("loginArgs", " ");
         // Login and then run the command.
         tl.debug(tl.loc("Debug_Login"));
         // For backward compatibility, also check for `pulumi.access.token`
@@ -125,7 +125,7 @@ export async function runPulumi() {
             // `getVariable` will automatically prepend the SECRET_ prefix if it finds
             // it in the build environment's secret vault.
             tl.getVariable("PULUMI_ACCESS_TOKEN");
-        if (!azureStorageContainer && !pulumiAccessToken) {
+        if (!azureStorageContainer && !pulumiAccessToken && loginArgs.length === 0) {
             tl.setResult(tl.TaskResult.Failed, tl.loc("PulumiLoginUndetermined"));
             return;
         }
@@ -137,7 +137,6 @@ export async function runPulumi() {
             loginEnvVars[PULUMI_ACCESS_TOKEN] = pulumiAccessToken;
         }
 
-        const loginArgs = tl.getDelimitedInput("loginArgs", " ");
         let loginCmdRunner = tl.tool(toolPath).arg(loginCommand);
         loginCmdRunner = appendArgsToToolCmd(loginCmdRunner, loginArgs);
         const exitCode = await loginCmdRunner.exec(getExecOptions(loginEnvVars, ""));
