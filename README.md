@@ -54,12 +54,14 @@ Sometimes unit testing alone isn't sufficient and you may want to test your chan
 #### Updating the manifest files
 
 - In the `vss-extension.json` file, modify the value of the `name` property to something unique.
-- **IMPORTANT:** Change the value of the property `galleryFlags` to `Private` instead of `Public`.
   - Tip: Maybe give it a suffix or a prefix that clearly identifies it as your private build.
+- **IMPORTANT:** Change the value of the following properties:
+  - Set `galleryFlags` to `Private` instead of `Public`.
+  - Set `publisher` to _your_ publisher account name instead of `pulumi`.
 - Now in the `buildAndReleaseTask/task.json`, change the value of the `id` property to a unique value. You can get a new, unique value from https://www.guidgen.com.
 - Change the value of the `name` property to something unique in this file as well.
   - This is the name you will see in the Azure Pipelines build when you add it as a task.
-- **IMPORTANT:** Change the value of the `author` property to be _your_ new publisher account name.
+- **IMPORTANT:** Change the value of the `author` property to be _your_ publisher account name.
 
 #### Generate a private package
 
