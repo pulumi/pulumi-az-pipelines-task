@@ -40,6 +40,26 @@ If you wish to enable detailed traces, also set `TASK_TEST_TRACE=1` before runni
 
 On Windows, you can do this using `$env:TASK_TEST_TRACE=1`.
 
+### Testing in your own DevOps Organization
+
+Sometimes unit testing alone isn't sufficient and you may want to test your changes in a real Azure DevOps organization. To do so, however, you will need to change some values in the manifest files so that you can run `npm run package` to create a VSIX package that you can install privately into your own organization. Follow these steps:
+
+#### Prerequisites
+
+- Signup for a free [Azure DevOps organization](https://azure.microsoft.com/en-us/services/devops/).
+- Once you have created a new organization, you will need a Visual Studio Marketplace publisher account to install the extension into your newly-created organization. Click [here](https://marketplace.visualstudio.com/manage/createpublisher) to create a new publisher account.
+- Now that you have created your publisher account, you are now ready to make necessary changes to the manifest files to create a private package that you can publish using your new publisher account to your own organization.
+
+#### Updating the manifest files
+
+- In the `vss-extension.json` file, modify the value of the `name` property to something unique.
+- Change the value of the property `galleryFlags` to `Private` instead of `Public`.
+  - Tip: Maybe give it a suffix or a prefix that clearly identifies it as your private build.
+- Now in the `buildAndReleaseTask/task.json`, change the value of the `id` property to a unique value. You can get a new, unique value from https://www.guidgen.com.
+- Change the value of the `name` property to something unique in this file as well.
+  - This is the name you will see in the Azure Pipelines build when you add it as a task.
+- **IMPORTANT!** Change the value of the `author` property to be _your_ new publisher account username.
+
 ## Package
 
 > Learn more [here](https://docs.microsoft.com/en-us/azure/devops/extend/develop/add-build-task?view=azure-devops#step-4-package-your-extension).
