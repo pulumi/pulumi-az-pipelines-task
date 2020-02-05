@@ -5,7 +5,7 @@ import * as tmrm from "azure-pipelines-task-lib/mock-run";
 import * as path from "path";
 
 const taskPath = path.join(__dirname, "..", "index.js");
-const tmr: tmrm.TaskMockRunner = new tmrm.TaskMockRunner(taskPath);
+const tmr = new tmrm.TaskMockRunner(taskPath);
 
 const fakeOS = "Linux";
 const latestPulumiVersion = "1.5.1";
@@ -22,7 +22,7 @@ tmr.setVariableName("PULUMI_ACCESS_TOKEN", "fake-access-token", true);
 tmr.setVariableName("AWS_ACCESS_KEY_ID", "fake-access-key-id", false);
 tmr.setVariableName("AWS_SECRET_ACCESS_KEY", "fake-secret-access-key", true);
 
-// Set the mock inputs for the task. These imitate actual user inputs.
+// Set the mock inputs for the task.
 tmr.setInput("command", "preview");
 tmr.setInput("cwd", "dir/");
 tmr.setInput("stack", "myOrg/project/dev");

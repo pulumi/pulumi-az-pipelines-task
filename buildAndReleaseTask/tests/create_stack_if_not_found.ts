@@ -4,11 +4,14 @@ import * as ma from "azure-pipelines-task-lib/mock-answer";
 import * as tmrm from "azure-pipelines-task-lib/mock-run";
 import * as path from "path";
 
+import { IServiceEndpoint } from "../serviceEndpoint";
+
 const taskPath = path.join(__dirname, "..", "index.js");
 const tmr = new tmrm.TaskMockRunner(taskPath);
 
 const fakeOS = "Linux";
 const latestPulumiVersion = "1.5.1";
+const stackName = "nonExistentStack";
 // If the user requested version is not `latest`, then this is the version
 // that the task should install.
 export const userRequestedVersion = "0.16.5";
@@ -17,23 +20,24 @@ const expectedDownloadUrl =
 const fakeDownloadedPath = "/fake/path/to/downloaded/file";
 
 process.env["HOME"] = "/fake/home";
-tmr.setVariableName("AZURE_STORAGE_CONTAINER", "fake-azure-container", true);
-tmr.setVariableName("AZURE_STORAGE_ACCOUNT", "fake-azure-account", true);
-tmr.setVariableName("AZURE_STORAGE_KEY", "fake-azure-key", true);
-tmr.setVariableName("AWS_ACCESS_KEY_ID", "fake-access-key-id", false);
-tmr.setVariableName("AWS_SECRET_ACCESS_KEY", "fake-secret-access-key", true);
 
+tmr.setVariableName("PULUMI_ACCESS_TOKEN", "fake-access-token", true);
 // Set the mock inputs for the task.
+tmr.setInput("azureSubscription", "fake-subscription-id");
 tmr.setInput("command", "preview");
 tmr.setInput("cwd", "dir/");
-tmr.setInput("stack", "myOrg/project/dev");
+tmr.setInput("stack", stackName);
 tmr.setInput("versionSpec", userRequestedVersion);
+tmr.setInput("createStack", "true");
 
 tmr.registerMock("./serviceEndpoint", {
-    getServiceEndpoint: (_: string) => {
-        // Returning undefined to test that our task extension isn't requiring
-        // an Azure Service Endpoint.
-        return undefined;
+    getServiceEndpoint: (_: string): IServiceEndpoint => {
+        return {
+            clientId: "fake-client-id",
+            servicePrincipalKey: "fake-sp-key",
+            subscriptionId: "fake-subscription-id",
+            tenantId: "fake-tenant-id",
+        };
     },
 });
 
@@ -83,17 +87,13 @@ const mockAnswers: ma.TaskLibAnswers = {
         "/fake/path/to/pulumi": true,
     },
     exec: {
-        "/fake/path/to/pulumi login -c azblob://fake-azure-container": {
+        "/fake/path/to/pulumi login": {
             code: 0,
-            stdout: "fake logged in using azure storage",
+            stdout: "fake logged in",
         },
         "/fake/path/to/pulumi preview": {
             code: 0,
             stdout: "fake pulumi preview",
-        },
-        "/fake/path/to/pulumi stack select myOrg/project/dev": {
-            code: 0,
-            stdout: "stack selected",
         },
         "/fake/path/to/pulumi version": {
             code: 0,
@@ -108,6 +108,15 @@ const mockAnswers: ma.TaskLibAnswers = {
         "pulumi": "/fake/path/to/pulumi",
     },
 } as ma.TaskLibAnswers;
+
+mockAnswers.exec![`/fake/path/to/pulumi stack init ${stackName}`] = {
+    code: 0,
+    stdout: `Created stack '${stackName}'`,
+};
+mockAnswers.exec![`/fake/path/to/pulumi stack select ${stackName}`] = {
+    code: 1,
+    stderr: `no stack named '${stackName}' found`,
+};
 
 tmr.setAnswers(mockAnswers);
 
