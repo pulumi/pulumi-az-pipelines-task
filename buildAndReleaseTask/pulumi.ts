@@ -10,10 +10,36 @@ interface IEnvMap { [key: string]: string; }
 
 async function selectStack(toolPath: string, pulExecOptions: tr.IExecOptions) {
     const pulStack = tl.getInput("stack", true);
-    const exitCode = await tl.exec(toolPath, ["stack", "select", pulStack], pulExecOptions);
-    if (exitCode !== 0) {
+    const stackSelectRunner = tl.tool(toolPath);
+    let execErr = "";
+    // The toolrunner emits an event that contains the error message line from the tool
+    // that runs a command. Listen for that event and update the execution error message
+    // accordingly.
+    stackSelectRunner.on("errline", (errLine: string) => execErr = errLine);
+
+    const exitCode = await stackSelectRunner.arg(["stack", "select", pulStack!]).exec(pulExecOptions);
+    if (exitCode === 0) {
+        return;
+    }
+    // Check if the user requested to create the stack if it does not exist.
+    const createStack = tl.getBoolInput("createStack");
+    if (!createStack) {
         tl.setResult(tl.TaskResult.Failed, tl.loc("PulumiStackSelectFailed", pulStack));
         return;
+    }
+
+    // Check if the error was because the stack was not found.
+    const errMsg = `no stack named '${pulStack}' found`;
+    if (!execErr.includes(errMsg)) {
+        tl.setResult(tl.TaskResult.Failed, tl.loc("PulumiStackSelectFailed", pulStack));
+        return;
+    }
+
+    tl.debug(tl.loc("Debug_CreateStack", pulStack));
+    const stackInitRunner = tl.tool(toolPath);
+    const exitCode2 = await stackInitRunner.arg(["stack", "init", pulStack!]).exec(pulExecOptions);
+    if (exitCode2 !== 0) {
+        tl.setResult(tl.TaskResult.Failed, tl.loc("CreateStackFailed", pulStack));
     }
 }
 
