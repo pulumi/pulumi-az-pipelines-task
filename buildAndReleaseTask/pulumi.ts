@@ -8,8 +8,15 @@ import { PULUMI_ACCESS_TOKEN } from "./vars";
 
 interface IEnvMap { [key: string]: string; }
 
-async function selectStack(toolPath: string, pulExecOptions: tr.IExecOptions) {
-    const pulStack = tl.getInput("stack", true);
+interface IExecResult {
+    exitCode: number;
+    execErr?: string;
+}
+
+async function runSelectStack(
+    pulStack: string,
+    toolPath: string,
+    pulExecOptions: tr.IExecOptions): Promise<IExecResult> {
     const stackSelectRunner = tl.tool(toolPath);
     let execErr = "";
     // The toolrunner emits an event that contains the error message line from the tool
@@ -18,9 +25,21 @@ async function selectStack(toolPath: string, pulExecOptions: tr.IExecOptions) {
     stackSelectRunner.on("errline", (errLine: string) => execErr = errLine);
 
     const exitCode = await stackSelectRunner.arg(["stack", "select", pulStack!]).exec(pulExecOptions);
-    if (exitCode === 0) {
+    return { exitCode, execErr };
+}
+
+/**
+ * Selects the stack specified as input to this task. If the selection command
+ * fails, then creates the stack if the `createStack` task input is `true`,
+ * IFF the stack selection failure was due to the stack not being found.
+ */
+async function selectOrCreateStack(toolPath: string, pulExecOptions: tr.IExecOptions) {
+    const pulStack = tl.getInput("stack", true);
+    const selectStackExecResult = await runSelectStack(pulStack!, toolPath, pulExecOptions);
+    if (selectStackExecResult.exitCode === 0) {
         return;
     }
+
     // Check if the user requested to create the stack if it does not exist.
     const createStack = tl.getBoolInput("createStack");
     if (!createStack) {
@@ -30,15 +49,15 @@ async function selectStack(toolPath: string, pulExecOptions: tr.IExecOptions) {
 
     // Check if the error was because the stack was not found.
     const errMsg = `no stack named '${pulStack}' found`;
-    if (!execErr.includes(errMsg)) {
+    if (!selectStackExecResult.execErr!.includes(errMsg)) {
         tl.setResult(tl.TaskResult.Failed, tl.loc("PulumiStackSelectFailed", pulStack));
         return;
     }
 
     tl.debug(tl.loc("Debug_CreateStack", pulStack));
     const stackInitRunner = tl.tool(toolPath);
-    const exitCode2 = await stackInitRunner.arg(["stack", "init", pulStack!]).exec(pulExecOptions);
-    if (exitCode2 !== 0) {
+    const exitCode = await stackInitRunner.arg(["stack", "init", pulStack!]).exec(pulExecOptions);
+    if (exitCode !== 0) {
         tl.setResult(tl.TaskResult.Failed, tl.loc("CreateStackFailed", pulStack));
     }
 }
@@ -121,6 +140,17 @@ function tryGetEnvVars(): IEnvMap {
     return vars;
 }
 
+/**
+ * Runs the Pulumi command provided as input to this task.
+ * Before running the command itself, this function determines
+ * the login mechanism for this operation, i.e., detecting if
+ * `PULUMI_ACCESS_TOKEN` is specified or if the `loginArgs` input
+ * was provided by the user to use an alternate backend for the command.
+ *
+ * Pulumi commands are run against a specific stack and so,
+ * this function will try to select it, or create it based on
+ * the `createStack` user input.
+ */
 export async function runPulumi() {
     try {
         // Print the version.
@@ -200,7 +230,7 @@ export async function runPulumi() {
         const pulExecOptions = getExecOptions(envVars, pulCwd);
 
         // Select the stack.
-        await selectStack(toolPath, pulExecOptions);
+        await selectOrCreateStack(toolPath, pulExecOptions);
 
         // Get the command, and the args the user wants to pass to the Pulumi CLI.
         await runPulumiCmd(toolPath, pulExecOptions);
