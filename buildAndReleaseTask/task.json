@@ -15,9 +15,14 @@
         "Minor": 0,
         "Patch": 5
     },
+    "releaseNotes": "Added the Advanced Options category.",
+    "groups": [{
+        "name": "advanced",
+        "displayName": "Advanced Options",
+        "isExpanded": true
+    }],
     "instanceNameFormat": "Run pulumi $(pulCommand) $(pulArgs)",
-    "inputs": [
-        {
+    "inputs": [{
             "name": "azureSubscription",
             "type": "connectedService:AzureRM",
             "label": "Azure Subscription",
@@ -43,14 +48,6 @@
                 "preview": "preview",
                 "destroy": "destroy"
             }
-        },
-        {
-            "name": "createStack",
-            "type": "boolean",
-            "label": "Create the stack if it does not exist",
-            "defaultValue": "false",
-            "helpMarkDown": "Check this option if you would like this task to create the stack, only if it does not exist already.",
-            "required": "false"
         },
         {
             "name": "loginArgs",
@@ -90,6 +87,15 @@
             "label": "Pulumi version",
             "defaultValue": "latest",
             "helpMarkDown": "The Pulumi version that should be used. If you require a specific version then the format is `1.5.0` or if you just need the latest version then `latest` can be used.",
+            "required": "false"
+        },
+        {
+            "name": "createStack",
+            "type": "boolean",
+            "label": "Create the stack if it does not exist",
+            "defaultValue": "false",
+            "groupName": "advanced",
+            "helpMarkDown": "Check this option if you would like this task to create the Pulumi stack, only if it does not exist already.",
             "required": "false"
         }
     ],
