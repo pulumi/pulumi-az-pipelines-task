@@ -19,10 +19,9 @@ async function runSelectStack(
     pulExecOptions: tr.IExecOptions): Promise<IExecResult> {
     const stackSelectRunner = tl.tool(toolPath);
     let execErr = "";
-    // The toolrunner emits an event that contains the error message line from the tool
-    // that runs a command. Listen for that event and update the execution error message
-    // accordingly.
-    stackSelectRunner.on("errline", (errLine: string) => execErr = errLine);
+    // The toolrunner emits an event when there is an error written to the stderr.
+    // Listen for that event and update the execution error message accordingly.
+    stackSelectRunner.on("stderr", (errLine: string) => execErr = errLine);
 
     const exitCode = await stackSelectRunner.arg(["stack", "select", pulStack!]).exec(pulExecOptions);
     return { exitCode, execErr };
@@ -33,25 +32,25 @@ async function runSelectStack(
  * fails, then creates the stack if the `createStack` task input is `true`,
  * IFF the stack selection failure was due to the stack not being found.
  */
-async function selectOrCreateStack(toolPath: string, pulExecOptions: tr.IExecOptions) {
+async function selectOrCreateStack(toolPath: string, pulExecOptions: tr.IExecOptions): Promise<number> {
     const pulStack = tl.getInput("stack", true);
     const selectStackExecResult = await runSelectStack(pulStack!, toolPath, pulExecOptions);
     if (selectStackExecResult.exitCode === 0) {
-        return;
+        return 0;
     }
 
     // Check if the user requested to create the stack if it does not exist.
     const createStack = tl.getBoolInput("createStack");
     if (!createStack) {
         tl.setResult(tl.TaskResult.Failed, tl.loc("PulumiStackSelectFailed", pulStack));
-        return;
+        return selectStackExecResult.exitCode;
     }
 
     // Check if the error was because the stack was not found.
     const errMsg = `no stack named '${pulStack}' found`;
     if (!selectStackExecResult.execErr!.includes(errMsg)) {
         tl.setResult(tl.TaskResult.Failed, tl.loc("PulumiStackSelectFailed", pulStack));
-        return;
+        return selectStackExecResult.exitCode;
     }
 
     tl.debug(tl.loc("Debug_CreateStack", pulStack));
@@ -60,6 +59,7 @@ async function selectOrCreateStack(toolPath: string, pulExecOptions: tr.IExecOpt
     if (exitCode !== 0) {
         tl.setResult(tl.TaskResult.Failed, tl.loc("CreateStackFailed", pulStack));
     }
+    return exitCode;
 }
 
 function appendArgsToToolCmd(cmdRunner: tr.ToolRunner, args: string[]): tr.ToolRunner {
@@ -230,7 +230,10 @@ export async function runPulumi() {
         const pulExecOptions = getExecOptions(envVars, pulCwd);
 
         // Select the stack.
-        await selectOrCreateStack(toolPath, pulExecOptions);
+        const stackCmdExitCode = await selectOrCreateStack(toolPath, pulExecOptions);
+        if (stackCmdExitCode !== 0) {
+            return;
+        }
 
         // Get the command, and the args the user wants to pass to the Pulumi CLI.
         await runPulumiCmd(toolPath, pulExecOptions);
