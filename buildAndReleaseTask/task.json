@@ -15,9 +15,14 @@
         "Minor": 0,
         "Patch": 5
     },
+    "releaseNotes": "Added the Advanced Options category.",
+    "groups": [{
+        "name": "advanced",
+        "displayName": "Advanced Options",
+        "isExpanded": true
+    }],
     "instanceNameFormat": "Run pulumi $(pulCommand) $(pulArgs)",
-    "inputs": [
-        {
+    "inputs": [{
             "name": "azureSubscription",
             "type": "connectedService:AzureRM",
             "label": "Azure Subscription",
@@ -37,7 +42,6 @@
             },
             "options": {
                 "new": "new",
-                "init": "init",
                 "stack": "stack",
                 "config": "config",
                 "up": "up",
@@ -84,6 +88,15 @@
             "defaultValue": "latest",
             "helpMarkDown": "The Pulumi version that should be used. If you require a specific version then the format is `1.5.0` or if you just need the latest version then `latest` can be used.",
             "required": "false"
+        },
+        {
+            "name": "createStack",
+            "type": "boolean",
+            "label": "Create the stack if it does not exist",
+            "defaultValue": "false",
+            "groupName": "advanced",
+            "helpMarkDown": "Check this option if you would like this task to create the Pulumi stack, only if it does not exist already.",
+            "required": "false"
         }
     ],
     "execution": {
@@ -103,6 +116,7 @@
         "PulumiStackSelectFailed": "Failed to select the stack '%s'.",
         "PulumiLoginUndetermined": "Couldn't determine which login method to use. This task extension supports Pulumi Service backend and self-managed backends. Learn more at https://www.pulumi.com/docs/intro/concepts/state.",
         "DetectedVersion": "%s variable detected with value '%s'. Task will use this version from the local tool cache.",
+        "CreateStackFailed": "Failed to create the stack '%s'.",
         "Debug_NotFoundInCache": "Pulumi not found in the local tool cache. Will download and install it.",
         "Debug_Starting": "Starting..",
         "Debug_AddedToPATH": "Added Pulumi to PATH.",
@@ -114,6 +128,7 @@
         "Debug_TempDirectoryNotSet": "agent.tempdirectory not set. Using $HOME/temp.",
         "Debug_LatestPulumiVersion": "Latest pulumi version is '%s'.",
         "Debug_CachingPulumiToHome": "Caching pulumi CLI to path '%s'.",
-        "Debug_ExpectedPulumiVersion": "Requested Pulumi version is '%s'."
+        "Debug_ExpectedPulumiVersion": "Requested Pulumi version is '%s'.",
+        "Debug_CreateStack": "Stack '%s' was not found. Creating it..."
     }
 }

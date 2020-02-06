@@ -7,13 +7,13 @@ import * as path from "path";
 import { IServiceEndpoint } from "../serviceEndpoint";
 
 const taskPath = path.join(__dirname, "..", "index.js");
-const tmr: tmrm.TaskMockRunner = new tmrm.TaskMockRunner(taskPath);
+const tmr = new tmrm.TaskMockRunner(taskPath);
 
 const fakeOS = "Linux";
 const latestPulumiVersion = "1.5.1";
 // If the user requested version is not `latest`, then this is the version
 // that the task should install.
-export const userRequestedVersion = "0.16.5";
+const userRequestedVersion = "0.16.5";
 const expectedDownloadUrl =
     `https://get.pulumi.com/releases/sdk/pulumi-v${userRequestedVersion}-${fakeOS.toLowerCase()}-x64.tar.gz`;
 const fakeDownloadedPath = "/fake/path/to/downloaded/file";
@@ -21,7 +21,7 @@ const fakeDownloadedPath = "/fake/path/to/downloaded/file";
 process.env["HOME"] = "/fake/home";
 
 tmr.setVariableName("PULUMI_ACCESS_TOKEN", "fake-access-token", true);
-// Set the mock inputs for the task. These imitate actual user inputs.
+// Set the mock inputs for the task.
 tmr.setInput("azureSubscription", "fake-subscription-id");
 tmr.setInput("command", "preview");
 tmr.setInput("cwd", "dir/");
