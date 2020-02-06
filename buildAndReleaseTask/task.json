@@ -13,16 +13,19 @@
     "version": {
         "Major": 1,
         "Minor": 0,
-        "Patch": 5
+        "Patch": 6
     },
     "releaseNotes": "Added the Advanced Options category.",
-    "groups": [{
-        "name": "advanced",
-        "displayName": "Advanced Options",
-        "isExpanded": true
-    }],
+    "groups": [
+        {
+            "name": "advanced",
+            "displayName": "Advanced Options",
+            "isExpanded": true
+        }
+    ],
     "instanceNameFormat": "Run pulumi $(pulCommand) $(pulArgs)",
-    "inputs": [{
+    "inputs": [
+        {
             "name": "azureSubscription",
             "type": "connectedService:AzureRM",
             "label": "Azure Subscription",
