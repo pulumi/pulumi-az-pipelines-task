@@ -125,6 +125,14 @@ function tryGetAzureEnvVarsFromServiceEndpoint(): IEnvMap {
         ARM_CLIENT_SECRET: serviceEndpoint.servicePrincipalKey,
         ARM_SUBSCRIPTION_ID: serviceEndpoint.subscriptionId,
         ARM_TENANT_ID: serviceEndpoint.tenantId,
+
+        // Define the ARM credentials that the official Azure SDK for Go looks for.
+        // These env vars will be required for users using the KeyVault secrets provider or an
+        // Azure Storage-based backend for state persistence.
+        // https://docs.microsoft.com/en-us/azure/developer/go/azure-sdk-authorization#use-environment-based-authentication
+        AZURE_CLIENT_ID: serviceEndpoint.clientId,
+        AZURE_CLIENT_SECRET: serviceEndpoint.servicePrincipalKey,
+        AZURE_TENANT_ID: serviceEndpoint.tenantId,
     };
 }
 
@@ -152,6 +160,12 @@ function tryGetEnvVars(): IEnvMap {
  * the `createStack` user input.
  */
 export async function runPulumi() {
+    // `process.env` only contains "public" variables, i.e. system and agent variables that
+    // are not secret. Secret vars can only be retrieved using `tl.getVariable` or
+    // `tl.getVariables`.
+    const processEnv = process.env as IEnvMap;
+    tl.debug(`Executing Pulumi commands with process env ${JSON.stringify(processEnv)}`);
+
     try {
         // Print the version.
         const toolPath = tl.which("pulumi");
@@ -168,6 +182,7 @@ export async function runPulumi() {
         const loginEnvVars = {
             ...azureServiceEndpointEnvVars,
             ...agentEnvVars,
+            ...processEnv,
         };
 
         const azureStorageContainer = agentEnvVars["AZURE_STORAGE_CONTAINER"];
@@ -201,24 +216,15 @@ export async function runPulumi() {
             return;
         }
 
-        /**
-         * `process.env` only contains "public" variables, i.e. system and agent variables that
-         * are not secret. Secret vars can only be retrieved using `tl.getVariable` or
-         * `tl.getVariables`.
-         */
-        const processEnv = process.env as IEnvMap;
-        tl.debug(`Executing Pulumi commands with process env ${JSON.stringify(processEnv)}`);
         const envVars: IEnvMap = {
             ...azureServiceEndpointEnvVars,
             ...agentEnvVars,
             ...processEnv,
         };
 
-        /**
-         * For DotNet projects, the dotnet CLI requires a home directory (sort of a temp directory).
-         * On Azure Pipelines, the user home env var is undefined, and the workaround is to
-         * set the DOTNET_CLI_HOME env var. This is not a Pulumi-specfic env var.
-         */
+        // For DotNet projects, the dotnet CLI requires a home directory (sort of a temp directory).
+        // On Azure Pipelines, the user home env var is undefined, and the workaround is to
+        // set the DOTNET_CLI_HOME env var. This is not a Pulumi-specfic env var.
         const dotnetCliHome =
             tl.getVariable("dotnet.cli.home") ||
             tl.getVariable("DOTNET_CLI_HOME") ||
