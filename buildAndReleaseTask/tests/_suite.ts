@@ -12,7 +12,7 @@ function mustNotHaveErrorsOrWarnings(tr: ttm.MockTestRunner) {
 
 describe("Pulumi task tests", () => {
 
-    it("should install the CLI and run command", (done: MochaDone) => {
+    it("should install the CLI and run command", (done: Mocha.Done) => {
         const tp = path.join(__dirname, "success.js");
         const tr = new ttm.MockTestRunner(tp);
 
@@ -32,7 +32,7 @@ describe("Pulumi task tests", () => {
         done();
     });
 
-    it("should run Pulumi with the expected env vars", (done: MochaDone) => {
+    it("should run Pulumi with the expected env vars", (done: Mocha.Done) => {
         const tp = path.join(__dirname, "envvars.js");
         const tr = new ttm.MockTestRunner(tp);
 
@@ -42,7 +42,7 @@ describe("Pulumi task tests", () => {
         done();
     });
 
-    it("should run Pulumi with Azure Storage with the expected env vars", (done: MochaDone) => {
+    it("should run Pulumi with Azure Storage with the expected env vars", (done: Mocha.Done) => {
         const tp = path.join(__dirname, "envvars_storage.js");
         const tr = new ttm.MockTestRunner(tp);
 
@@ -56,7 +56,7 @@ describe("Pulumi task tests", () => {
         done();
     });
 
-    it("should create the stack if it does not exist", (done: MochaDone) => {
+    it("should create the stack if it does not exist", (done: Mocha.Done) => {
         const tp = path.join(__dirname, "create_stack_if_not_found.js");
         const tr = new ttm.MockTestRunner(tp);
 
