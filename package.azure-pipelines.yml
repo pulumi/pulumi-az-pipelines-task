@@ -24,7 +24,7 @@ jobs:
 
   - task: TfxInstaller@2
     inputs:
-      version: 'v0.7.x'
+      version: 'v0.8.x'
 
   - task: QueryAzureDevOpsExtensionVersion@3
     displayName: 'Query extension version'
