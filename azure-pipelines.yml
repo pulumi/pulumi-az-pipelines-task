@@ -92,7 +92,7 @@ stages:
         outputVariable: 'TestExtension.Version'
         extensionVersionOverride: 'TestExtension.VersionOverride'
 
-    - task: PackageVSTSExtension@1
+    - task: PackageAzureDevOpsExtension@3
       inputs:
         outputVariable: 'TestExtension.OutputPath'
         publisherId: 'pulumi'
@@ -103,7 +103,7 @@ stages:
         extensionVisibility: 'private'
         extensionPricing: 'free'
 
-    - task: PublishExtension@1
+    - task: PublishAzureDevOpsExtension@3
       displayName: 'Publish Extension'
       inputs:
         connectTo: 'VsTeam'

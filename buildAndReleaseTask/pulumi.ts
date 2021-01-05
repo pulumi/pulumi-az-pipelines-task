@@ -195,7 +195,7 @@ export async function runPulumi() {
             tl.getVariable("pulumi.access.token") ||
             // `getVariable` will automatically prepend the SECRET_ prefix if it finds
             // it in the build environment's secret vault.
-            tl.getVariable("PULUMI_ACCESS_TOKEN");
+            tl.getVariable(PULUMI_ACCESS_TOKEN);
         if (!azureStorageContainer && !pulumiAccessToken && loginArgs.length === 0) {
             tl.setResult(tl.TaskResult.Failed, tl.loc("PulumiLoginUndetermined"));
             return;
