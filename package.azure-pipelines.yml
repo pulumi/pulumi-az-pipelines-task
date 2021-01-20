@@ -24,9 +24,9 @@ jobs:
 
   - task: TfxInstaller@2
     inputs:
-      version: 'v0.7.x'
+      version: 'v0.8.x'
 
-  - task: ExtensionVersion@1
+  - task: QueryAzureDevOpsExtensionVersion@3
     displayName: 'Query extension version'
     inputs:
       connectTo: 'VsTeam'
@@ -37,7 +37,7 @@ jobs:
       outputVariable: 'Extension.Version'
       extensionVersionOverride: 'Extension.VersionOverride'
 
-  - task: PackageVSTSExtension@1
+  - task: PackageAzureDevOpsExtension@3
     displayName: 'Package extension'
     inputs:
       extensionVersion: '$(Extension.Version)'
