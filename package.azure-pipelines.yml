@@ -42,7 +42,6 @@ jobs:
     inputs:
       extensionVersion: '$(Extension.Version)'
       updateTasksVersion: true
-      updateTasksVersionType: patch
 
   - task: PublishPipelineArtifact@0
     displayName: 'Create pipeline artifact'
