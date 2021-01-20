@@ -12,7 +12,7 @@
   "author": "Pulumi",
   "license": "MIT",
   "dependencies": {
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "azure-pipelines-task-lib": "^2.11.3",
     "azure-pipelines-tool-lib": "^0.12.0",
     "typed-rest-client": "^1.7.3"
