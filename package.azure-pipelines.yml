@@ -40,7 +40,7 @@ jobs:
   - task: PackageAzureDevOpsExtension@3
     displayName: 'Package extension'
     inputs:
-      extensionVersion: $(Extension.Version)
+      extensionVersion: '1.0.8'
       updateTasksVersion: true
 
   - task: PublishPipelineArtifact@0
