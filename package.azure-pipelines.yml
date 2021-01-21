@@ -34,17 +34,18 @@ jobs:
       publisherId: 'pulumi'
       extensionId: 'build-and-release-task'
       versionAction: 'Patch'
-      outputVariable: 'Extension.Version'
-      extensionVersionOverride: 'Extension.VersionOverride'
+      outputVariable: 'PulumiExtension.Version'
+      extensionVersionOverride: 'PulumiExtension.VersionOverride'
 
   - task: PackageAzureDevOpsExtension@3
     displayName: 'Package extension'
     inputs:
-      extensionVersion: '$(Extension.Version)'
+      extensionVersion: '$(PulumiExtension.Version)'
       updateTasksVersion: true
+      outputVariable: 'PulumiExtension.OutputPath'
 
   - task: PublishPipelineArtifact@0
     displayName: 'Create pipeline artifact'
     inputs:
       artifactName: 'vsix'
-      targetPath: $(Extension.OutputPath)
+      targetPath: $(PulumiExtension.OutputPath)
