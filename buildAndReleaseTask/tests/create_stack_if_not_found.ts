@@ -11,7 +11,7 @@ const tmr = new tmrm.TaskMockRunner(taskPath);
 
 const fakeOS = "Linux";
 const latestPulumiVersion = "1.5.1";
-const stackName = "nonExistentStack";
+const stackName = "myorg/myproject/nonExistentStack";
 // If the user requested version is not `latest`, then this is the version
 // that the task should install.
 export const userRequestedVersion = "0.16.5";

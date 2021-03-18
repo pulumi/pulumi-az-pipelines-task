@@ -39,7 +39,7 @@
             "label": "Pulumi Command",
             "defaultValue": "",
             "helpMarkDown": "For a list of CLI commands and arguments, see [this](https://www.pulumi.com/docs/reference/cli/).",
-            "required": "true",
+            "required": "false",
             "properties": {
                 "EditableOptions": "True"
             },
@@ -132,6 +132,7 @@
         "Debug_LatestPulumiVersion": "Latest pulumi version is '%s'.",
         "Debug_CachingPulumiToHome": "Caching pulumi CLI to path '%s'.",
         "Debug_ExpectedPulumiVersion": "Requested Pulumi version is '%s'.",
-        "Debug_CreateStack": "Stack '%s' was not found. Creating it..."
+        "Debug_CreateStack": "Stack '%s' was not found. Creating it...",
+        "Debug_InstallOnly": "No Pulumi command to run. Exiting early."
     }
 }
