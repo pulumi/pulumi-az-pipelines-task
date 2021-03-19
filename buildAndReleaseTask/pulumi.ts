@@ -6,6 +6,8 @@ import * as tr from "azure-pipelines-task-lib/toolrunner";
 import { getServiceEndpoint } from "./serviceEndpoint";
 import { INSTALLED_PULUMI_VERSION, PULUMI_ACCESS_TOKEN } from "./vars";
 
+import { gt as semverGt } from "semver";
+
 interface IEnvMap { [key: string]: string; }
 
 interface IExecResult {
@@ -21,7 +23,7 @@ function cliVersionGreaterThan(version: string): boolean {
         return false;
     }
 
-    return installedCliVersion > version;
+    return semverGt(installedCliVersion, version);
 }
 
 async function runSelectStack(

@@ -10,6 +10,8 @@ const taskPath = path.join(__dirname, "..", "index.js");
 const tmr = new tmrm.TaskMockRunner(taskPath);
 
 const fakeOS = "Linux";
+// https://github.com/microsoft/azure-pipelines-task-lib/blob/master/node/task.ts#L51
+const fakePlatform = 2;
 const latestPulumiVersion = "1.5.1";
 // If the user requested version is not `latest`, then this is the version
 // that the task should install.
@@ -46,6 +48,9 @@ tmr.registerMock("./version", {
 });
 
 tmr.registerMock("azure-pipelines-tool-lib", {
+    cacheDir: () => {
+        return Promise.resolve("/cache");
+    },
     downloadTool: (url: string) => {
         if (url !== expectedDownloadUrl) {
             throw new Error(`Unexpected download url ${url}.`);
@@ -70,9 +75,6 @@ tmr.registerMock("azure-pipelines-tool-lib", {
 });
 
 tmr.registerMock("azure-pipelines-tool-lib/tool", {
-    cacheDir: () => {
-        return Promise.resolve("/cache");
-    },
     findLocalTool: (toolName: string, version: string) => {
         console.log(`Requested tool ${ toolName } of version ${ version }`);
         return undefined;
@@ -104,6 +106,9 @@ const mockAnswers: ma.TaskLibAnswers = {
     },
     osType: {
         osType: fakeOS,
+    },
+    getPlatform: {
+        getPlatform: fakePlatform,
     },
     which: {
         "/fake/path/to/pulumi": "/fake/path/to/pulumi",

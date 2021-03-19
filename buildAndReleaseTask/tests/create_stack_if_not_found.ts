@@ -10,11 +10,13 @@ const taskPath = path.join(__dirname, "..", "index.js");
 const tmr = new tmrm.TaskMockRunner(taskPath);
 
 const fakeOS = "Linux";
-const latestPulumiVersion = "1.5.1";
-const stackName = "myorg/myproject/nonExistentStack";
+// https://github.com/microsoft/azure-pipelines-task-lib/blob/master/node/task.ts#L51
+const fakePlatform = 2;
+const latestPulumiVersion = "2.23.0";
+const stackNameFqdn = "myorg/myproject/nonExistentStack";
 // If the user requested version is not `latest`, then this is the version
 // that the task should install.
-export const userRequestedVersion = "0.16.5";
+export const userRequestedVersion = "1.9.0";
 const expectedDownloadUrl =
     `https://get.pulumi.com/releases/sdk/pulumi-v${userRequestedVersion}-${fakeOS.toLowerCase()}-x64.tar.gz`;
 const fakeDownloadedPath = "/fake/path/to/downloaded/file";
@@ -26,7 +28,7 @@ tmr.setVariableName("PULUMI_ACCESS_TOKEN", "fake-access-token", true);
 tmr.setInput("azureSubscription", "fake-subscription-id");
 tmr.setInput("command", "preview");
 tmr.setInput("cwd", "dir/");
-tmr.setInput("stack", stackName);
+tmr.setInput("stack", stackNameFqdn);
 tmr.setInput("versionSpec", userRequestedVersion);
 tmr.setInput("createStack", "true");
 
@@ -48,6 +50,9 @@ tmr.registerMock("./version", {
 });
 
 tmr.registerMock("azure-pipelines-tool-lib", {
+    cacheDir: () => {
+        return Promise.resolve("/cache");
+    },
     downloadTool: (url: string) => {
         if (url !== expectedDownloadUrl) {
             throw new Error(`Unexpected download url ${url}.`);
@@ -72,9 +77,6 @@ tmr.registerMock("azure-pipelines-tool-lib", {
 });
 
 tmr.registerMock("azure-pipelines-tool-lib/tool", {
-    cacheDir: () => {
-        return Promise.resolve("/cache");
-    },
     findLocalTool: (toolName: string, version: string) => {
         console.log(`Requested tool ${ toolName } of version ${ version }`);
         return undefined;
@@ -103,17 +105,23 @@ const mockAnswers: ma.TaskLibAnswers = {
     osType: {
         osType: fakeOS,
     },
+    getPlatform: {
+        getPlatform: fakePlatform,
+    },
     which: {
         "/fake/path/to/pulumi": "/fake/path/to/pulumi",
         "pulumi": "/fake/path/to/pulumi",
     },
 } as ma.TaskLibAnswers;
 
-mockAnswers.exec![`/fake/path/to/pulumi stack init ${stackName}`] = {
+mockAnswers.exec![`/fake/path/to/pulumi stack init ${stackNameFqdn}`] = {
     code: 0,
-    stdout: `Created stack '${stackName}'`,
+    stdout: `Created stack '${stackNameFqdn}'`,
 };
-mockAnswers.exec![`/fake/path/to/pulumi stack select ${stackName}`] = {
+
+const parts = stackNameFqdn.split("/");
+const stackName = parts[parts.length - 1];
+mockAnswers.exec![`/fake/path/to/pulumi stack select ${stackNameFqdn}`] = {
     code: 1,
     stderr: `no stack named '${stackName}' found`,
 };
