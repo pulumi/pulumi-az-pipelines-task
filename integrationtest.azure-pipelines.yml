@@ -6,7 +6,7 @@ trigger: none
 jobs:
 - job: aws
   pool:
-    vmImage: 'ubuntu-16.04'
+    vmImage: 'ubuntu-latest'
   steps:
   - task: Npm@1
     inputs:
@@ -29,7 +29,7 @@ jobs:
 
 - job: azure
   pool:
-    vmImage: 'ubuntu-16.04'
+    vmImage: 'ubuntu-latest'
   steps:
   - task: Npm@1
     inputs:
