@@ -33,7 +33,8 @@ async function run() {
         latestPulumiVersion = await getLatestPulumiVersion();
     }
 
-    const toolPath = toolLib.findLocalTool("pulumi", versionSpec || latestPulumiVersion);
+    const searchVersion = versionSpec || latestPulumiVersion;
+    const toolPath = toolLib.findLocalTool("pulumi", searchVersion);
     if (!toolPath) {
         tl.debug(tl.loc("Debug_NotFoundInCache"));
         try {
@@ -46,11 +47,34 @@ async function run() {
             return;
         }
     } else {
-        // Prepend the tools path. Instructs the agent to prepend for future tasks.
-        toolLib.prependPath(path.join(toolPath, "bin"));
+        // Prepend the cached tool's path.
+        toolLib.prependPath(toolPath);
+        // Set the installed Pulumi version variable to indicate to future steps
+        // the version of the CLI to use.
+        tl.setVariable(INSTALLED_PULUMI_VERSION, searchVersion);
     }
 
     tl.debug(tl.loc("Debug_Installed"));
+
+    // Print the CLI version always so it is easy to debug issues.
+    const pulumi = tl.which("pulumi");
+    tl.debug(tl.loc("Debug_PrintToolPath", pulumi));
+    if (!pulumi) {
+        tl.setResult(tl.TaskResult.Failed, tl.loc("PulumiNotFound"));
+        return;
+    }
+    tl.debug(tl.loc("Debug_PrintingVersion"));
+    await tl.exec(pulumi, "version");
+
+    // The main Pulumi command to run is optional.
+    // If the user did not provide one, then we'll
+    // assume they just wanted to install the CLI.
+    const pulCommand = tl.getInput("command");
+    if (!pulCommand) {
+        tl.debug(tl.loc("Debug_InstallOnly"));
+        return;
+    }
+
     await runPulumi();
 }
 

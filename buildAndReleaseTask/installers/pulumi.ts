@@ -13,7 +13,7 @@ import * as path from "path";
  */
 
 export async function installPulumi(latestPulumiVersion: string, versionSpec?: string): Promise<string> {
-    const os = tl.osType();
+    const os = tl.getPlatform();
     tl.debug(tl.loc("OSDETECTED", os));
 
     if (!versionSpec || versionSpec.toLowerCase() === "latest") {
@@ -21,16 +21,18 @@ export async function installPulumi(latestPulumiVersion: string, versionSpec?: s
     }
     tl.debug(`Pulumi version to install is ${versionSpec}`);
 
-    switch (os.toLowerCase()) {
-        case "windows_nt":
+    switch (os) {
+        case tl.Platform.Windows:
             await installPulumiWindows(versionSpec);
             break;
-        case "macos":
-        case "linux":
-            await installPulumiLinux(versionSpec, os.toLowerCase());
+        case tl.Platform.MacOS:
+            await installPulumiOther(versionSpec, "darwin");
+            break;
+        case tl.Platform.Linux:
+            await installPulumiOther(versionSpec, "linux");
             break;
         default:
-            throw new Error(`Unexpected OS "${os.toLowerCase()}"`);
+            throw new Error(`Unexpected OS platform type "${os}"`);
     }
 
     return versionSpec;
@@ -42,15 +44,19 @@ async function installPulumiWindows(version: string) {
             `https://get.pulumi.com/releases/sdk/pulumi-v${version}-windows-x64.zip`;
         const temp = await lib.downloadTool(downloadUrl);
         const extractTemp = await lib.extractZip(temp);
-        await lib.prependPath(path.join(extractTemp, "pulumi/bin"));
+        // Windows archives have a sub-folder called "bin", so add that
+        // to the PATH.
+        const binPath = path.join(extractTemp, "pulumi", "bin");
+        lib.prependPath(binPath);
         tl.debug(tl.loc("Debug_Installed"));
         tl.debug(tl.loc("Debug_AddedToPATH"));
+        await lib.cacheDir(binPath, "pulumi", version);
     } catch (err) {
         tl.setResult(tl.TaskResult.Failed, tl.loc("PulumiInstallFailed", err.message), true);
     }
 }
 
-async function installPulumiLinux(version: string, os: string) {
+async function installPulumiOther(version: string, os: string) {
     try {
         const downloadUrl =
             `https://get.pulumi.com/releases/sdk/pulumi-v${version}-${os}-x64.tar.gz`;
@@ -59,6 +65,7 @@ async function installPulumiLinux(version: string, os: string) {
         lib.prependPath(path.join(extractTemp, "pulumi"));
         tl.debug(tl.loc("Debug_Installed"));
         tl.debug(tl.loc("Debug_AddedToPATH"));
+        await lib.cacheDir(extractTemp, "pulumi", version);
     } catch (err) {
         tl.setResult(tl.TaskResult.Failed, tl.loc("PulumiInstallFailed", err.message), true);
     }
