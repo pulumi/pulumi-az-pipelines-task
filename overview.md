@@ -180,3 +180,14 @@ Try to uninstall the extension, and then re-install it. Most of the times this r
 Pulumi supports several [cloud providers](https://www.pulumi.com/docs/intro/cloud-providers/), including [Kubernetes](https://www.pulumi.com/docs/intro/cloud-providers/kubernetes/). You can deploy to any cloud provider that Pulumi supports using this task extension, by simply setting the required environment variables as part of each cloud provider's setup, as your Pipeline's build variable.
 
 For example, in order to deploy to [AWS](https://www.pulumi.com/docs/intro/cloud-providers/aws/setup/#environment-variables), simply set the `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` env vars either as pipeline variables or in a variable group that is linked to your pipeline.
+
+## Troubleshooting
+
+### User's Home directory could not be determined
+If the Azure Pipelines Agent does not have access to the service accounts home directory, Pulumi projects using the dotnet runtime may be faced with the below error message when executing Pulumi commands:
+
+```
+error: The user's home directory could not be determined. Set the 'DOTNET_CLI_HOME' environment variable to specify the directory to use.
+```
+
+To remediate this either allow the agent access to the home directory, or set the `DOTNET_CLI_HOME` variable. This can be done either as a pipeline variable or directly in the task using the `env` parameter.
