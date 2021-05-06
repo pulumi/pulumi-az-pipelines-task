@@ -62,10 +62,13 @@ async function installPulumiOther(version: string, os: string) {
             `https://get.pulumi.com/releases/sdk/pulumi-v${version}-${os}-x64.tar.gz`;
         const temp = await lib.downloadTool(downloadUrl);
         const extractTemp = await lib.extractTar(temp);
-        lib.prependPath(path.join(extractTemp, "pulumi"));
+        // Pulumi binary exists in "pulumi" sub-folder,
+        // so use this folder to prepend to path and cache
+        const binPath = path.join(extractTemp, "pulumi");
+        lib.prependPath(binPath);
         tl.debug(tl.loc("Debug_Installed"));
         tl.debug(tl.loc("Debug_AddedToPATH"));
-        await lib.cacheDir(extractTemp, "pulumi", version);
+        await lib.cacheDir(binPath, "pulumi", version);
     } catch (err) {
         tl.setResult(tl.TaskResult.Failed, tl.loc("PulumiInstallFailed", err.message), true);
     }
