@@ -190,4 +190,19 @@ If the Azure Pipelines Agent does not have access to the service accounts home d
 error: The user's home directory could not be determined. Set the 'DOTNET_CLI_HOME' environment variable to specify the directory to use.
 ```
 
-To remediate this either allow the agent access to the home directory, or set the `DOTNET_CLI_HOME` variable. This can be done either as a pipeline variable or directly in the task using the `env` parameter.
+To remediate this either allow the agent access to the home directory, or set the `DOTNET_CLI_HOME` variable. This can be done either as a [pipeline variable](https://docs.microsoft.com/en-us/azure/devops/pipelines/process/variables?view=azure-devops&tabs=yaml%2Cbatch#set-variables-in-pipeline) or directly in the task using the `env` parameter. An example of setting this can be found below:
+
+```yaml
+# Setting the variable for use in the job/stage
+variables:
+- name: DOTNET_CLI_HOME
+  value: $(Agent.TempDirectory)
+
+# Or Setting the variable to the agents temporary directory for this task only
+- task: Pulumi@1
+  env:
+    DOTNET_CLI_HOME: $(Agent.TempDirectory)
+  inputs:
+    command: preview
+    stack: $(StackName)
+```
