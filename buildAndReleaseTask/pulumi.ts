@@ -244,15 +244,6 @@ export async function runPulumi() {
             ...processEnv,
         };
 
-        // For DotNet projects, the dotnet CLI requires a home directory (sort of a temp directory).
-        // On Azure Pipelines, the user home env var is undefined, and the workaround is to
-        // set the DOTNET_CLI_HOME env var. This is not a Pulumi-specfic env var.
-        const dotnetCliHome =
-            tl.getVariable("dotnet.cli.home") ||
-            tl.getVariable("DOTNET_CLI_HOME") ||
-            tl.getVariable("Agent.TempDirectory") ||
-            "";
-        envVars["DOTNET_CLI_HOME"] = dotnetCliHome;
         // Get the working directory where the Pulumi commands must be run.
         const pulCwd = tl.getInput("cwd") || ".";
         const pulExecOptions = getExecOptions(envVars, pulCwd);
