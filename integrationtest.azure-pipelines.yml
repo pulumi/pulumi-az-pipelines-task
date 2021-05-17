@@ -70,11 +70,11 @@ jobs:
           pulumi config set azure:environment public
           pulumi config set azure:location WestUS
         displayName: "Set azure config for examples/azure-dotnet"
-        workingDirectory: "./examples/azure-dotnet"
+        workingDirectory: "./examples/azure-native-dotnet"
 
       - task: Test Pulumi@1
         inputs:
           azureSubscription: "$(Example.Azure.ServiceConnectName)"
           command: "preview"
-          cwd: "./examples/azure-dotnet"
-          stack: "$(Example.AzureDotNet.StackName)"
+          cwd: "./examples/azure-native-dotnet"
+          stack: "$(Example.AzureNativeDotNet.StackName)"
