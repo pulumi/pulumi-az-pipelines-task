@@ -1,59 +1,80 @@
+# This pipeline configuration runs tests using a special test version
+# of the Pulumi task extension that is published to the marketplace
+# with private visibility and shared only with the pulumi DevOps org.
+# See the package stage in azure-pipelines.yml for more info.
+
 # YAML-based pipelines don't suport Build Completion Triggers,
 # so we set this to none here. Instead, a Build Completion Trigger
 # is setup using the Azure Pipelines UI for this pipeline config.
 trigger: none
 
 jobs:
-- job: aws
-  pool:
-    vmImage: 'ubuntu-latest'
-  steps:
-  - task: Npm@1
-    inputs:
-      command: 'install'
-      workingDir: './examples/aws'
+  - job: aws
+    pool:
+      vmImage: "ubuntu-latest"
+    steps:
+      - task: Npm@1
+        inputs:
+          command: "install"
+          workingDir: "./examples/aws"
 
-  - task: Test Pulumi@1
-    displayName: 'Set stack config aws:region'
-    inputs:
-      command: 'config'
-      args: 'set aws:region us-west-2'
-      cwd: './examples/aws'
-      stack: '$(Example.AWS.StackName)'
+      - task: Test Pulumi@1
+        displayName: "Set stack config aws:region"
+        inputs:
+          command: "config"
+          args: "set aws:region us-west-2"
+          cwd: "./examples/aws"
+          stack: "$(Example.AWS.StackName)"
 
-  - task: Test Pulumi@1
-    inputs:
-      command: 'preview'
-      cwd: './examples/aws'
-      stack: '$(Example.AWS.StackName)'
+      - task: Test Pulumi@1
+        inputs:
+          command: "preview"
+          cwd: "./examples/aws"
+          stack: "$(Example.AWS.StackName)"
 
-- job: azure
-  pool:
-    vmImage: 'ubuntu-latest'
-  steps:
-  - task: Npm@1
-    inputs:
-      command: 'install'
-      workingDir: './examples/azure'
+  - job: azure
+    pool:
+      vmImage: "ubuntu-latest"
+    steps:
+      - task: Npm@1
+        inputs:
+          command: "install"
+          workingDir: "./examples/azure"
 
-  - task: Test Pulumi@1
-    displayName: 'Set stack config azure:location'
-    inputs:
-      command: 'config'
-      args: 'set azure:environment public'
-      cwd: './examples/azure'
-      stack: '$(Example.Azure.StackName)'
+      - task: Test Pulumi@1
+        displayName: "Install Pulumi"
 
-  - task: Test Pulumi@1
-    displayName: 'Set stack config azure:environment'
-    inputs:
-      command: 'config'
-      cwd: './examples/azure'
-      stack: '$(Example.Azure.StackName)'
+      - script: |
+          pulumi config set azure:environment public
+          pulumi config set azure:location WestUS
+        displayName: "Set azure config for examples/azure"
+        workingDirectory: "./examples/azure"
 
-  - task: Test Pulumi@1
-    inputs:
-      azureSubscription: '$(Example.Azure.ServiceConnectName)'
-      command: 'preview'
-      cwd: './examples/azure'
-      stack: '$(Example.Azure.StackName)'
+      - task: Test Pulumi@1
+        inputs:
+          azureSubscription: "$(Example.Azure.ServiceConnectName)"
+          command: "preview"
+          cwd: "./examples/azure"
+          stack: "$(Example.Azure.StackName)"
+
+  - job: azure-native-dotnet
+    pool:
+      vmImage: "ubuntu-latest"
+    steps:
+      - task: NuGetToolInstaller@1
+
+      - task: Test Pulumi@1
+        displayName: "Install Pulumi"
+
+      - script: |
+          pulumi config set azure:environment public
+          pulumi config set azure:location WestUS
+        displayName: "Set azure config for examples/azure-dotnet"
+        workingDirectory: "./examples/azure-native-dotnet"
+
+      - task: Test Pulumi@1
+        inputs:
+          azureSubscription: "$(Example.Azure.ServiceConnectName)"
+          command: "preview"
+          cwd: "./examples/azure-native-dotnet"
+          stack: "$(Example.AzureNativeDotNet.StackName)"
