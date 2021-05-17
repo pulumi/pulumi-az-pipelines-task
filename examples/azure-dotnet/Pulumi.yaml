@@ -1,0 +1,3 @@
+name: pulumi-az-pipelines-task-azure-dotnet
+runtime: dotnet
+description: A minimal Azure Native C# Pulumi program

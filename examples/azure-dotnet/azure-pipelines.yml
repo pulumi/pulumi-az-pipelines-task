@@ -1,0 +1,35 @@
+# A minimal Azure Pipelines build configuration file for running
+# Pulumi apps that use the dotnet runtime and the Azure Native
+# Nuget package.
+
+trigger:
+  batch: true
+  branches:
+    include:
+      - master
+  paths:
+    include:
+      - "**/*"
+
+pool:
+  vmImage: "ubuntu-latest"
+
+variables:
+  solution: "**/*.sln"
+  buildPlatform: "Any CPU"
+  buildConfiguration: "Release"
+
+jobs:
+  - job: infrastructure
+    steps:
+      - task: NuGetToolInstaller@1
+
+      - task: Pulumi@1
+        inputs:
+          # To use an Azure Service Connection, un-comment the following line.
+          azureSubscription: "$(ServiceConnectName)"
+          # Pulumi will automatically build/restore the dotnet project.
+          # Unless you are using a pre-built binary.
+          command: "preview"
+          stack: "$(StackName)"
+          cwd: "./"
