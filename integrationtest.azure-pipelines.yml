@@ -10,6 +10,7 @@ trigger: none
 
 jobs:
   - job: aws
+    displayName: AWS
     pool:
       vmImage: "ubuntu-latest"
     steps:
@@ -33,6 +34,7 @@ jobs:
           stack: "$(Example.AWS.StackName)"
 
   - job: azure
+    displayName: Azure
     pool:
       vmImage: "ubuntu-latest"
     steps:
@@ -57,7 +59,8 @@ jobs:
           cwd: "./examples/azure"
           stack: "$(Example.Azure.StackName)"
 
-  - job: azure-native-dotnet
+  - job: azure_native_dotnet
+    displayName: "Azure Native DotNet"
     pool:
       vmImage: "ubuntu-latest"
     steps:
