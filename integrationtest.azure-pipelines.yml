@@ -47,10 +47,13 @@ jobs:
         displayName: "Install Pulumi"
 
       - script: |
+          pulumi stack select ${EXAMPLE_AZURE_STACKNAME}
           pulumi config set azure:environment public
           pulumi config set azure:location WestUS
         displayName: "Set azure config for examples/azure"
         workingDirectory: "./examples/azure"
+        env:
+          PULUMI_ACCESS_TOKEN: $(PULUMI_ACCESS_TOKEN)
 
       - task: Test Pulumi@1
         inputs:
@@ -70,10 +73,13 @@ jobs:
         displayName: "Install Pulumi"
 
       - script: |
-          pulumi config set azure:environment public
-          pulumi config set azure:location WestUS
+          pulumi stack select ${EXAMPLE_AZURENATIVEDOTNET_STACKNAME}
+          pulumi config set azure-native:environment public
+          pulumi config set azure-native:location WestUS
         displayName: "Set azure config for examples/azure-dotnet"
         workingDirectory: "./examples/azure-native-dotnet"
+        env:
+          PULUMI_ACCESS_TOKEN: $(PULUMI_ACCESS_TOKEN)
 
       - task: Test Pulumi@1
         inputs:
