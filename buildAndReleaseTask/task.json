@@ -49,7 +49,8 @@
                 "config": "config",
                 "up": "up",
                 "preview": "preview",
-                "destroy": "destroy"
+                "destroy": "destroy",
+                "refresh": "refresh"
             }
         },
         {
