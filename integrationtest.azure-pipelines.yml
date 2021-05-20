@@ -47,6 +47,7 @@ jobs:
         displayName: "Install Pulumi"
 
       - script: |
+          pulumi stack select ${EXAMPLE_AZURE_STACKNAME}
           pulumi config set azure:environment public
           pulumi config set azure:location WestUS
         displayName: "Set azure config for examples/azure"
@@ -72,6 +73,7 @@ jobs:
         displayName: "Install Pulumi"
 
       - script: |
+          pulumi stack select ${EXAMPLE_AZURENATIVEDOTNET_STACKNAME}
           pulumi config set azure:environment public
           pulumi config set azure:location WestUS
         displayName: "Set azure config for examples/azure-dotnet"
