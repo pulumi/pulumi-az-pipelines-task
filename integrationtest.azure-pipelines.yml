@@ -74,8 +74,8 @@ jobs:
 
       - script: |
           pulumi stack select ${EXAMPLE_AZURENATIVEDOTNET_STACKNAME}
-          pulumi config set azure:environment public
-          pulumi config set azure:location WestUS
+          pulumi config set azure-native:environment public
+          pulumi config set azure-native:location WestUS
         displayName: "Set azure config for examples/azure-dotnet"
         workingDirectory: "./examples/azure-native-dotnet"
         env:
