@@ -12,7 +12,7 @@
   "author": "Pulumi",
   "license": "MIT",
   "dependencies": {
-    "axios": "^0.21.1",
+    "axios": "^0.21.2",
     "azure-pipelines-task-lib": "^3.1.0",
     "azure-pipelines-tool-lib": "^1.0.1",
     "semver": "^7.3.4",
