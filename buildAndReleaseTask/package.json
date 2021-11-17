@@ -12,8 +12,8 @@
   "author": "Pulumi",
   "license": "MIT",
   "dependencies": {
-    "axios": "^0.21.1",
-    "azure-pipelines-task-lib": "^3.1.0",
+    "axios": "^0.21.4",
+    "azure-pipelines-task-lib": "^3.1.10",
     "azure-pipelines-tool-lib": "^1.0.1",
     "semver": "^7.3.4",
     "typed-rest-client": "^1.8.4"
