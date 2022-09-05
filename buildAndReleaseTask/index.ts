@@ -27,7 +27,13 @@ async function run() {
         versionSpec = installedPulumiVersion;
         // If a version spec was specified, let the user know we are ignoring the value.
         if (versionSpec && versionSpec !== installedPulumiVersion) {
-            tl.warning(tl.loc("DetectedVersion", INSTALLED_PULUMI_VERSION, installedPulumiVersion));
+            tl.warning(
+                tl.loc(
+                    "DetectedVersion",
+                    INSTALLED_PULUMI_VERSION,
+                    installedPulumiVersion
+                )
+            );
         }
     } else {
         latestPulumiVersion = await getLatestPulumiVersion();
@@ -38,11 +44,14 @@ async function run() {
     if (!toolPath) {
         tl.debug(tl.loc("Debug_NotFoundInCache"));
         try {
-            const installedVersion = await installPulumi(latestPulumiVersion, versionSpec);
+            const installedVersion = await installPulumi(
+                latestPulumiVersion,
+                versionSpec
+            );
             if (installedVersion) {
                 tl.setVariable(INSTALLED_PULUMI_VERSION, installedVersion);
             }
-        } catch (err) {
+        } catch (err: any) {
             tl.setResult(tl.TaskResult.Failed, err);
             return;
         }
