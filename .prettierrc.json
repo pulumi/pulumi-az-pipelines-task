@@ -1,0 +1,15 @@
+{
+    "tabWidth": 4,
+    "overrides": [
+        {
+            "files": [
+                "azure-pipelines.yml",
+                "integrationtest.azure-pipelines.yml",
+                "package.azure-pipelines.yml"
+            ],
+            "options": {
+                "tabWidth": 2
+            }
+        }
+    ]
+}

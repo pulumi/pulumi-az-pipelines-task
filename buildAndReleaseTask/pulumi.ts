@@ -256,7 +256,7 @@ export async function runPulumi() {
 
         // Get the command, and the args the user wants to pass to the Pulumi CLI.
         await runPulumiCmd(toolPath, pulExecOptions);
-    } catch (err) {
+    } catch (err: any) {
         tl.setResult(tl.TaskResult.Failed, err);
     }
 }
