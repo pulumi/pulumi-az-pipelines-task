@@ -2,7 +2,7 @@
     "manifestVersion": 1,
     "id": "build-and-release-task",
     "name": "Pulumi Azure Pipelines Task",
-    "version": "1.0.7",
+    "version": "1.0.16",
     "publisher": "pulumi",
     "targets": [
         {
@@ -10,9 +10,7 @@
         }
     ],
     "description": "Build/release task for running Pulumi apps in Azure Pipelines.",
-    "categories": [
-        "Azure Pipelines"
-    ],
+    "categories": ["Azure Pipelines"],
     "icons": {
         "default": "images/pulumi_mark_flat_on_light_128x128.png"
     },
@@ -51,9 +49,7 @@
         {
             "id": "custom-build-release-task",
             "type": "ms.vss-distributed-task.task",
-            "targets": [
-                "ms.vss-distributed-task.tasks"
-            ],
+            "targets": ["ms.vss-distributed-task.tasks"],
             "properties": {
                 "name": "buildAndReleaseTask"
             }
@@ -63,12 +59,11 @@
         "type": "git",
         "uri": "https://github.com/pulumi/pulumi-az-pipelines-task"
     },
+    "scopes": ["vso.code_write"],
     "content": {
         "details": {
             "path": "overview.md"
         }
     },
-    "galleryFlags": [
-        "Public"
-    ]
+    "galleryFlags": ["Public"]
 }

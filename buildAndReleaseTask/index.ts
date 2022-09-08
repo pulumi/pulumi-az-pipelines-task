@@ -52,7 +52,7 @@ async function run() {
                 tl.setVariable(INSTALLED_PULUMI_VERSION, installedVersion);
             }
         } catch (err: any) {
-            tl.setResult(tl.TaskResult.Failed, err);
+            tl.setResult(tl.TaskResult.Failed, err.toString());
             return;
         }
     } else {

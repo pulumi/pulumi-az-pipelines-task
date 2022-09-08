@@ -1,1 +1,10 @@
 package*.json
+
+*.md
+
+**/task.json
+vss-extension.json
+
+# Temporarily ignore .ts files to reduce the number of changes.
+# Will remove in a follow-up PR.
+*.ts

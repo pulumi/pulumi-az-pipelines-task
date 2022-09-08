@@ -13,9 +13,8 @@
     "version": {
         "Major": 1,
         "Minor": 0,
-        "Patch": 7
+        "Patch": 16
     },
-    "releaseNotes": "Added the Advanced Options category.",
     "groups": [
         {
             "name": "advanced",
@@ -23,7 +22,7 @@
             "isExpanded": true
         }
     ],
-    "instanceNameFormat": "Run pulumi $(pulCommand) $(pulArgs)",
+    "instanceNameFormat": "Run pulumi $(command)",
     "inputs": [
         {
             "name": "azureSubscription",
@@ -101,6 +100,24 @@
             "groupName": "advanced",
             "helpMarkDown": "Check this option if you would like this task to create the Pulumi stack, only if it does not exist already.",
             "required": "false"
+        },
+        {
+            "name": "createPrComment",
+            "type": "boolean",
+            "label": "Add the Pulumi log output as a PR comment",
+            "defaultValue": "true",
+            "helpMarkDown": "Check this option if you would like this task to add a comment to your PR (when applicable.) **Note**: Your project's build service user must have the `Contribute to pull requests` permission for this to work. Additionally, you must map the `System.AccessToken` variable to this task as an env-var for this task: `SYSTEM_ACCESSTOKEN: $(System.AccessToken)`.",
+            "required": "false"
+        },
+        {
+            "name": "useThreadedPrComments",
+            "type": "boolean",
+            "label": "Add PR comments to an existing thread (if any) created by this task",
+            "defaultValue": "false",
+            "groupName": "advanced",
+            "helpMarkDown": "Check this option if you would like this task to always add a comment to the previously-created comments thread.",
+            "required": "false",
+            "visibleRule": "createPrComment = true"
         }
     ],
     "execution": {
@@ -134,6 +151,12 @@
         "Debug_CachingPulumiToHome": "Caching pulumi CLI to path '%s'.",
         "Debug_ExpectedPulumiVersion": "Requested Pulumi version is '%s'.",
         "Debug_CreateStack": "Stack '%s' was not found. Creating it...",
-        "Debug_InstallOnly": "No Pulumi command to run. Exiting early."
+        "Debug_InstallOnly": "No Pulumi command to run. Exiting early.",
+        "Debug_WritePulumiLog": "Writing stdout to a log file",
+        "Debug_PostExectionComplete": "Finished post-job execution",
+        "Debug_ExistingThreadNotFound": "An existing comment thread created by this task was not found. A new thread will be started.",
+        "Debug_ThreadFound": "Found an existing comment thread created by this task. A new comment will be added to it.",
+        "Warning_ExistingCommentThreadNotFound": "Did not find an existing comment thread for Pulumi output. Will start a new one.",
+        "Warning_UnSupportedRepositoryType": "Repository type %s is not yet supported for PR comments."
     }
 }

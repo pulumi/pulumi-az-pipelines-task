@@ -1,18 +1,14 @@
 {
     "defaultSeverity": "error",
-    "extends": [
-        "tslint:recommended"
-    ],
+    "extends": ["tslint:recommended"],
     "jsRules": {},
     "rules": {
         "ordered-imports": true,
         "no-string-literal": false,
-        "no-floating-promises": [ true, "Q.Promise" ]
+        "no-floating-promises": [true, "Q.Promise"]
     },
     "rulesDirectory": [],
     "linterOptions": {
-        "exclude": [
-            "tests/**/*.ts"
-        ]
+        "exclude": ["tests/**/*.ts"]
     }
 }

@@ -10,5 +10,8 @@
     "tfx-create": "tfx extension create --manifest-globs vss-extension.json --rev-version"
   },
   "author": "Pulumi",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "tfx-cli": "^0.12.0"
+  }
 }

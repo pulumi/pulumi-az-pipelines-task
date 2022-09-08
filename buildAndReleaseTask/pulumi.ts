@@ -1,5 +1,8 @@
 // Copyright 2016-2019, Pulumi Corporation.  All rights reserved.
 
+import { createWriteStream, unlinkSync, WriteStream } from "fs";
+import { join as pathJoin } from "path";
+
 import * as tl from "azure-pipelines-task-lib/task";
 import * as tr from "azure-pipelines-task-lib/toolrunner";
 
@@ -7,6 +10,7 @@ import { getServiceEndpoint } from "./serviceEndpoint";
 import { INSTALLED_PULUMI_VERSION, PULUMI_ACCESS_TOKEN } from "./vars";
 
 import { gt as semverGt } from "semver";
+import { createPrComment, PULUMI_LOG_FILENAME } from "./prComment";
 
 interface IEnvMap { [key: string]: string; }
 
@@ -108,7 +112,27 @@ async function runPulumiCmd(toolPath: string, pulExecOptions: tr.IExecOptions) {
     const pulArgs = tl.getDelimitedInput("args", " ");
     let pulCommandRunner = tl.tool(toolPath).arg(pulCommand);
     pulCommandRunner = appendArgsToToolCmd(pulCommandRunner, pulArgs);
+
+    const shouldCreatePrComment = tl.getBoolInput("createPrComment");
+    const logFilePath = pathJoin(".", PULUMI_LOG_FILENAME);
+    let logFile: WriteStream | undefined;
+    if (shouldCreatePrComment) {
+        tl.debug(tl.loc("Debug_WritePulumiLog"));
+
+        logFile = createWriteStream(logFilePath);
+        pulCommandRunner.on("stdout", (data: Buffer) => {
+           logFile?.write(data);
+        });
+    }
+
     const exitCode = await pulCommandRunner.exec(pulExecOptions);
+
+    if (shouldCreatePrComment) {
+        logFile?.close();
+        await createPrComment();
+        unlinkSync(logFilePath);
+    }
+
     if (exitCode !== 0) {
         tl.setResult(tl.TaskResult.Failed,
             tl.loc("PulumiCommandFailed", exitCode, `${pulCommand} ${pulArgs.join(" ")}`));
@@ -257,6 +281,6 @@ export async function runPulumi() {
         // Get the command, and the args the user wants to pass to the Pulumi CLI.
         await runPulumiCmd(toolPath, pulExecOptions);
     } catch (err: any) {
-        tl.setResult(tl.TaskResult.Failed, err);
+        tl.setResult(tl.TaskResult.Failed, err.toString());
     }
 }
