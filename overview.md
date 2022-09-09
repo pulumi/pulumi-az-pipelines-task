@@ -45,9 +45,8 @@ A Pulumi access token is required so that the Pulumi task can log you into your 
 
 ### Pulumi summary log as PR comments
 
-The Pulumi task supports adding PR comments with the log output from the Pulumi command that was executed in your build pipeline.
-In order to add comments to PRs created in Azure Repositories, you'll need to grant the project build service account permissions
-to do so. Follow these steps to do that:
+The Pulumi task supports adding PR comments containing the log output from the Pulumi command that was executed in your build pipeline.
+Your project's build service user will need additional permissions to perform that action. Follow these steps to grant the build service user the `Contribute to pull requests` permission:
 
 * Navigate to the **Project Settings** page and click on **Repositories** under the **Repos** heading.
 * Select the repository where you will be using this feature and then click on the **Security** tab.
