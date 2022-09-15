@@ -43,7 +43,7 @@ A Pulumi access token is required so that the Pulumi task can log you into your 
 
 > The Pulumi Access Token is a sensitive value. Click on the padlock icon to mark it as a secret when you save it in your Pipeline variables or variable group.
 
-### Pulumi summary log as PR comments
+### Logs Output as PR Comments
 
 The Pulumi task supports adding PR comments containing the log output from the Pulumi command that was executed in your build pipeline.
 Your project's build service user will need additional permissions to perform that action. Follow these steps to grant the build service user the `Contribute to pull requests` permission:

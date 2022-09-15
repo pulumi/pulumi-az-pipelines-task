@@ -29,7 +29,7 @@
             "type": "connectedService:AzureRM",
             "label": "Azure Subscription",
             "defaultValue": "",
-            "required": false,
+            "required": "false",
             "helpMarkDown": "Select the Azure Resource Manager subscription for the deployment. If you do not provide a service connection, ensure that you have configured your cloud provider by following the setup instructions for your respective [cloud provider](https://www.pulumi.com/docs/intro/cloud-providers/)."
         },
         {
