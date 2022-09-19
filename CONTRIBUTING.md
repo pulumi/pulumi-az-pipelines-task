@@ -10,4 +10,4 @@ Finally, please limit your pull requests to contain only one feature at a time. 
 
 # Code of Conduct
 
-The Pulumi Open Source Code of Conduct can be found [here](https://github.com/pulumi/pulumi/blob/ae098e40591997e75673c241fa7978e911fc0eb0/CODE-OF-CONDUCT.md).
+The Pulumi Open Source Code of Conduct can be found [here](https://github.com/pulumi/pulumi/blob/master/CODE-OF-CONDUCT.md).
