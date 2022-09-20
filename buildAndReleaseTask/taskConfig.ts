@@ -6,8 +6,8 @@ import * as tl from "azure-pipelines-task-lib/task";
  */
 export interface TaskConfig {
     // Inputs that are not strictly required
-    // a input to the task should be marked
-    // as optional here. But if a certain
+    // task should be marked as optional here. 
+    // But if a certain
     // input is required because a dependent
     // input was provided, you should still mark
     // the input as optional here and assert the
