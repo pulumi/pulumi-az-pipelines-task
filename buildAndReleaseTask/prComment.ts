@@ -1,5 +1,7 @@
-import { readFileSync } from "fs";
-import { join as pathJoin } from "path";
+// Copyright 2016-2022, Pulumi Corporation.  All rights reserved.
+
+import {readFileSync} from "fs";
+import {join as pathJoin} from "path";
 
 import * as azdev from "azure-devops-node-api";
 
