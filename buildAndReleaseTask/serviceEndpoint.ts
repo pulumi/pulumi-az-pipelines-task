@@ -9,17 +9,38 @@ export interface IServiceEndpoint {
     clientId: string;
 }
 
-export function getServiceEndpoint(connectedServiceName: string): IServiceEndpoint | undefined {
-    const endpointAuthorization = tl.getEndpointAuthorization(connectedServiceName, true);
+export function getServiceEndpoint(
+    connectedServiceName: string
+): IServiceEndpoint | undefined {
+    const endpointAuthorization = tl.getEndpointAuthorization(
+        connectedServiceName,
+        true
+    );
     if (!endpointAuthorization) {
         return undefined;
     }
 
     const endpoint = {
-        clientId: tl.getEndpointAuthorizationParameter(connectedServiceName, "serviceprincipalid", false),
-        servicePrincipalKey: tl.getEndpointAuthorizationParameter(connectedServiceName, "serviceprincipalkey", false),
-        subscriptionId: tl.getEndpointDataParameter(connectedServiceName, "subscriptionid", false),
-        tenantId: tl.getEndpointAuthorizationParameter(connectedServiceName, "tenantid", false),
+        clientId: tl.getEndpointAuthorizationParameter(
+            connectedServiceName,
+            "serviceprincipalid",
+            false
+        ),
+        servicePrincipalKey: tl.getEndpointAuthorizationParameter(
+            connectedServiceName,
+            "serviceprincipalkey",
+            false
+        ),
+        subscriptionId: tl.getEndpointDataParameter(
+            connectedServiceName,
+            "subscriptionid",
+            false
+        ),
+        tenantId: tl.getEndpointAuthorizationParameter(
+            connectedServiceName,
+            "tenantid",
+            false
+        ),
     } as IServiceEndpoint;
 
     return endpoint;

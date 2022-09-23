@@ -4,10 +4,3 @@ package*.json
 
 **/task.json
 vss-extension.json
-
-# Temporarily ignore the following files to reduce the number of changes.
-# Will remove in a follow-up PR.
-*.ts
-azure-pipelines.yml
-integrationtest.azure-pipelines.yml
-package.azure-pipelines.yml

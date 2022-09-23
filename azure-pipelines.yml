@@ -4,120 +4,119 @@
 # under the pulumi publisher ID.
 
 trigger:
-- master
+  - master
 
 stages:
-- stage: build
-  displayName: 'Build and test'
-  jobs:
-  - job: build
-    pool:
-      vmImage: 'ubuntu-latest'
-    steps:
-    - task: NodeTool@0
-      inputs:
-        versionSpec: '12.x'
-      displayName: 'Install Node.js'
+  - stage: build
+    displayName: "Build and test"
+    jobs:
+      - job: build
+        pool:
+          vmImage: "ubuntu-latest"
+        steps:
+          - task: NodeTool@0
+            inputs:
+              versionSpec: "12.x"
+            displayName: "Install Node.js"
 
-    - task: Npm@1
-      displayName: 'Restore node_modules for buildAndReleaseTask/'
-      inputs:
-        workingDir: buildAndReleaseTask/
-        verbose: true
+          - task: Npm@1
+            displayName: "Restore node_modules for buildAndReleaseTask/"
+            inputs:
+              workingDir: buildAndReleaseTask/
+              verbose: true
 
-    - task: Npm@1
-      displayName: 'Restore node_modules for buildAndReleaseTask/tests/'
-      inputs:
-        workingDir: buildAndReleaseTask/tests
-        verbose: true
+          - task: Npm@1
+            displayName: "Restore node_modules for buildAndReleaseTask/tests/"
+            inputs:
+              workingDir: buildAndReleaseTask/tests
+              verbose: true
 
-    - task: Npm@1
-      displayName: 'Run unit tests'
-      inputs:
-        command: 'custom'
-        customCommand: run test
-      env:
-        INPUT_AZURESUBSCRIPTION: 'fake-subscription-id'
+          - task: Npm@1
+            displayName: "Run unit tests"
+            inputs:
+              command: "custom"
+              customCommand: run test
+            env:
+              INPUT_AZURESUBSCRIPTION: "fake-subscription-id"
 
-- stage: package
-  condition:
-    or(
+  - stage: package
+    condition: or(
       eq(variables['Build.Reason'], 'IndividualCI'),
       eq(variables['Build.Reason'], 'BatchedCI'),
       eq(variables['ManualOverride'], 'true')
-    )
-  displayName: 'Publish test extension'
-  jobs:
-  - job: testTfxCreate
-    displayName: 'Create and publish test extension'
-    pool:
-      vmImage: 'ubuntu-latest'
-    steps:
-    - task: Npm@1
-      displayName: 'Restore node_modules for buildAndReleaseTask/'
-      inputs:
-        workingDir: buildAndReleaseTask/
-        verbose: true
+      )
+    displayName: "Publish test extension"
+    jobs:
+      - job: testTfxCreate
+        displayName: "Create and publish test extension"
+        pool:
+          vmImage: "ubuntu-latest"
+        steps:
+          - task: Npm@1
+            displayName: "Restore node_modules for buildAndReleaseTask/"
+            inputs:
+              workingDir: buildAndReleaseTask/
+              verbose: true
 
-    - task: Npm@1
-      displayName: 'Compile TS to JS'
-      inputs:
-        workingDir: buildAndReleaseTask/
-        command: 'custom'
-        customCommand: run tsc
+          - task: Npm@1
+            displayName: "Compile TS to JS"
+            inputs:
+              workingDir: buildAndReleaseTask/
+              command: "custom"
+              customCommand: run tsc
 
-    - task: TfxInstaller@2
-      inputs:
-        version: 'v0.8.x'
+          - task: TfxInstaller@2
+            inputs:
+              version: "v0.8.x"
 
-    - task: CmdLine@2
-      displayName: 'Update task name'
-      inputs:
-        script: 'sed -i ''s/"Pulumi"/"Test Pulumi"/g'' task.json'
-        workingDirectory: './buildAndReleaseTask/'
-        failOnStderr: true
+          - task: CmdLine@2
+            displayName: "Update task name"
+            inputs:
+              script: 'sed -i ''s/"Pulumi"/"Test Pulumi"/g'' task.json'
+              workingDirectory: "./buildAndReleaseTask/"
+              failOnStderr: true
 
-    - task: CmdLine@2
-      displayName: 'Update task id'
-      inputs:
-        script: 'sed -i ''s/"66148448-e174-4167-91a4-0ac63f4a10ca"/"f7c2cffd-7ad2-4db6-b699-205f9e99837c"/g'' task.json'
-        workingDirectory: './buildAndReleaseTask/'
-        failOnStderr: true
+          - task: CmdLine@2
+            displayName: "Update task id"
+            inputs:
+              script: 'sed -i ''s/"66148448-e174-4167-91a4-0ac63f4a10ca"/"f7c2cffd-7ad2-4db6-b699-205f9e99837c"/g'' task.json'
+              workingDirectory: "./buildAndReleaseTask/"
+              failOnStderr: true
 
-    - task: QueryAzureDevOpsExtensionVersion@2
-      inputs:
-        connectTo: 'VsTeam'
-        connectedServiceName: 'Pulumi Marketplace'
-        publisherId: 'pulumi'
-        extensionId: 'build-and-release-task'
-        versionAction: 'Patch'
-        outputVariable: 'TestExtension.Version'
-        extensionVersionOverride: 'TestExtension.VersionOverride'
+          - task: QueryAzureDevOpsExtensionVersion@2
+            inputs:
+              connectTo: "VsTeam"
+              connectedServiceName: "Pulumi Marketplace"
+              publisherId: "pulumi"
+              extensionId: "build-and-release-task"
+              versionAction: "Patch"
+              outputVariable: "TestExtension.Version"
+              extensionVersionOverride: "TestExtension.VersionOverride"
 
-    - task: PackageAzureDevOpsExtension@3
-      inputs:
-        outputVariable: 'TestExtension.OutputPath'
-        publisherId: 'pulumi'
-        extensionId: 'test-build-and-release-task'
-        extensionName: '(Test) Pulumi Azure Pipelines Task'
-        extensionVersion: '$(TestExtension.Version).$(Build.BuildId)'
-        updateTasksVersion: true
-        extensionVisibility: 'private'
-        extensionPricing: 'free'
+          - task: PackageAzureDevOpsExtension@3
+            inputs:
+              outputVariable: "TestExtension.OutputPath"
+              publisherId: "pulumi"
+              extensionId: "test-build-and-release-task"
+              extensionName: "(Test) Pulumi Azure Pipelines Task"
+              extensionVersion: "$(TestExtension.Version).$(Build.BuildId)"
+              updateTasksVersion: true
+              extensionVisibility: "private"
+              extensionPricing: "free"
 
-    - task: PublishAzureDevOpsExtension@3
-      displayName: 'Publish Extension'
-      inputs:
-        connectTo: 'VsTeam'
-        connectedServiceName: 'Pulumi Marketplace'
-        fileType: 'vsix'
-        vsixFile: '$(TestExtension.OutputPath)'
-        publisherId: 'pulumi'
-        updateTasksVersion: false
+          - task: PublishAzureDevOpsExtension@3
+            displayName: "Publish Extension"
+            inputs:
+              connectTo: "VsTeam"
+              connectedServiceName: "Pulumi Marketplace"
+              fileType: "vsix"
+              vsixFile: "$(TestExtension.OutputPath)"
+              publisherId: "pulumi"
+              updateTasksVersion: false
 
-    - task: PublishPipelineArtifact@1
-      displayName: 'Create pipeline artifact'
-      inputs:
-        targetPath: '$(TestExtension.OutputPath)'
-        artifact: 'testvsix'
-        publishLocation: 'pipeline'
+          - task: PublishPipelineArtifact@1
+            displayName: "Create pipeline artifact"
+            inputs:
+              targetPath: "$(TestExtension.OutputPath)"
+              artifact: "testvsix"
+              publishLocation: "pipeline"

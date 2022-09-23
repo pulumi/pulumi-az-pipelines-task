@@ -11,7 +11,6 @@ function mustNotHaveErrorsOrWarnings(tr: ttm.MockTestRunner) {
 }
 
 describe("Pulumi task tests", () => {
-
     it("should install the CLI and run command", (done: Mocha.Done) => {
         const tp = path.join(__dirname, "success.js");
         const tr = new ttm.MockTestRunner(tp);
@@ -24,10 +23,26 @@ describe("Pulumi task tests", () => {
         // for some odd reason, doing so is causing the mock-test library to print debugging
         // output always, even when not setting the `TASK_TEST_TRACE` env var before running the test.
         const expectedVersion = "0.16.5";
-        assert.strictEqual(stdout.indexOf(expectedVersion) >= 0, true, "should execute `pulumi version` command");
-        assert.strictEqual(stdout.indexOf("stack selected") >= 0, true, "should select stack");
-        assert.strictEqual(stdout.indexOf("fake logged in") >= 0, true, "should login");
-        assert.strictEqual(stdout.indexOf("fake pulumi preview") >= 0, true, "should execute `pulumi preview` command");
+        assert.strictEqual(
+            stdout.indexOf(expectedVersion) >= 0,
+            true,
+            "should execute `pulumi version` command"
+        );
+        assert.strictEqual(
+            stdout.indexOf("stack selected") >= 0,
+            true,
+            "should select stack"
+        );
+        assert.strictEqual(
+            stdout.indexOf("fake logged in") >= 0,
+            true,
+            "should login"
+        );
+        assert.strictEqual(
+            stdout.indexOf("fake pulumi preview") >= 0,
+            true,
+            "should execute `pulumi preview` command"
+        );
 
         done();
     });
@@ -51,7 +66,8 @@ describe("Pulumi task tests", () => {
         assert.strictEqual(
             tr.stdout.indexOf("fake logged in using azure storage") >= 0,
             true,
-            "should login using azure environment variables");
+            "should login using azure environment variables"
+        );
 
         done();
     });
@@ -62,7 +78,11 @@ describe("Pulumi task tests", () => {
 
         tr.run();
         mustNotHaveErrorsOrWarnings(tr);
-        assert.strictEqual(tr.stdout.indexOf("Created stack") >= 0, true, "should create stack");
+        assert.strictEqual(
+            tr.stdout.indexOf("Created stack") >= 0,
+            true,
+            "should create stack"
+        );
 
         done();
     });

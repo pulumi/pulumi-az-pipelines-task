@@ -6,7 +6,7 @@ import * as tl from "azure-pipelines-task-lib/task";
  */
 export interface TaskConfig {
     // Inputs that are not strictly required
-    // task should be marked as optional here. 
+    // task should be marked as optional here.
     // But if a certain
     // input is required because a dependent
     // input was provided, you should still mark
@@ -38,6 +38,6 @@ export function getTaskConfig(): TaskConfig {
         versionSpec: tl.getInput("versionSpec"),
         createStack: tl.getBoolInput("createStack"),
         createPrComment: tl.getBoolInput("createPrComment"),
-        useThreadedPrComments: tl.getBoolInput("useThreadedPrComments")
-    }
+        useThreadedPrComments: tl.getBoolInput("useThreadedPrComments"),
+    };
 }
