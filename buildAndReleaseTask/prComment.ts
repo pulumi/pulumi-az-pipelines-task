@@ -9,7 +9,7 @@ import * as tl from "azure-pipelines-task-lib/task";
 
 import { IGitApi } from "azure-devops-node-api/GitApi";
 import { Comment, CommentThread, CommentThreadStatus, CommentType } from "azure-devops-node-api/interfaces/GitInterfaces";
-import { TaskConfig } from "taskConfig";
+import { TaskConfig } from "./taskConfig";
 
 export const PULUMI_LOG_FILENAME = "pulumi-out.log";
 

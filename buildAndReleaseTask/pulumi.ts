@@ -10,7 +10,7 @@ import { getServiceEndpoint } from "./serviceEndpoint";
 import { INSTALLED_PULUMI_VERSION, PULUMI_ACCESS_TOKEN } from "./vars";
 
 import { gt as semverGt } from "semver";
-import { TaskConfig } from "taskConfig";
+import { TaskConfig } from "./taskConfig";
 
 import { createPrComment, PULUMI_LOG_FILENAME } from "./prComment";
 
