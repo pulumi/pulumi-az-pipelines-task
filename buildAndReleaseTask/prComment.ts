@@ -14,7 +14,8 @@ import {
     CommentThreadStatus,
     CommentType,
 } from "azure-devops-node-api/interfaces/GitInterfaces";
-import { TaskConfig } from "./taskConfig";
+
+import type { TaskConfig } from "models";
 
 export const PULUMI_LOG_FILENAME = "pulumi-out.log";
 
