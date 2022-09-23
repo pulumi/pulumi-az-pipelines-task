@@ -8,7 +8,7 @@ import { installPulumi } from "./installers/pulumi";
 import { runPulumi } from "./pulumi";
 import { getLatestPulumiVersion } from "./version";
 
-import { getTaskConfig } from "taskConfig";
+import { getTaskConfig } from "./taskConfig";
 import { INSTALLED_PULUMI_VERSION } from "./vars";
 
 let latestPulumiVersion: string;
