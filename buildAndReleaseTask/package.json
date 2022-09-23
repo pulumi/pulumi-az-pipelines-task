@@ -4,9 +4,9 @@
   "description": "Azure Pipelines task extension for running Pulumi apps.",
   "main": "index.js",
   "scripts": {
-    "test": "tsc && yarn --cwd tests/ run test",
+    "test": "tsc && npm --prefix tests/ run test",
     "lint": "tslint -c tslint.json -p .",
-    "tsc": "yarn run lint && tsc",
+    "tsc": "npm run lint && tsc",
     "bump-version": "vsts-bump --indent 4 task.json"
   },
   "author": "Pulumi",

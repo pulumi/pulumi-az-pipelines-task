@@ -53,7 +53,7 @@ async function installPulumiWindows(version: string) {
         tl.debug(tl.loc("Debug_Installed"));
         tl.debug(tl.loc("Debug_AddedToPATH"));
         await lib.cacheDir(binPath, "pulumi", version);
-    } catch (err) {
+    } catch (err: any) {
         tl.setResult(
             tl.TaskResult.Failed,
             tl.loc("PulumiInstallFailed", err.message),
@@ -74,7 +74,7 @@ async function installPulumiOther(version: string, os: string) {
         tl.debug(tl.loc("Debug_Installed"));
         tl.debug(tl.loc("Debug_AddedToPATH"));
         await lib.cacheDir(binPath, "pulumi", version);
-    } catch (err) {
+    } catch (err: any) {
         tl.setResult(
             tl.TaskResult.Failed,
             tl.loc("PulumiInstallFailed", err.message),
