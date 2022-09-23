@@ -8,6 +8,7 @@ import { installPulumi } from "./installers/pulumi";
 import { runPulumi } from "./pulumi";
 import { getLatestPulumiVersion } from "./version";
 
+import { getTaskConfig } from "./taskConfig";
 import { INSTALLED_PULUMI_VERSION } from "./vars";
 
 let latestPulumiVersion: string;
@@ -17,7 +18,9 @@ async function run() {
 
     tl.debug(tl.loc("Debug_Starting"));
 
-    let versionSpec = tl.getInput("versionSpec", false);
+    const taskConfig = getTaskConfig();
+
+    let versionSpec = taskConfig.versionSpec;
     tl.debug(tl.loc("Debug_ExpectedPulumiVersion", versionSpec));
 
     // Check if another version is already installed and use that instead of the requested version.
@@ -27,7 +30,13 @@ async function run() {
         versionSpec = installedPulumiVersion;
         // If a version spec was specified, let the user know we are ignoring the value.
         if (versionSpec && versionSpec !== installedPulumiVersion) {
-            tl.warning(tl.loc("DetectedVersion", INSTALLED_PULUMI_VERSION, installedPulumiVersion));
+            tl.warning(
+                tl.loc(
+                    "DetectedVersion",
+                    INSTALLED_PULUMI_VERSION,
+                    installedPulumiVersion
+                )
+            );
         }
     } else {
         latestPulumiVersion = await getLatestPulumiVersion();
@@ -38,12 +47,15 @@ async function run() {
     if (!toolPath) {
         tl.debug(tl.loc("Debug_NotFoundInCache"));
         try {
-            const installedVersion = await installPulumi(latestPulumiVersion, versionSpec);
+            const installedVersion = await installPulumi(
+                latestPulumiVersion,
+                versionSpec
+            );
             if (installedVersion) {
                 tl.setVariable(INSTALLED_PULUMI_VERSION, installedVersion);
             }
-        } catch (err) {
-            tl.setResult(tl.TaskResult.Failed, err);
+        } catch (err: any) {
+            tl.setResult(tl.TaskResult.Failed, err.toString());
             return;
         }
     } else {
@@ -69,13 +81,12 @@ async function run() {
     // The main Pulumi command to run is optional.
     // If the user did not provide one, then we'll
     // assume they just wanted to install the CLI.
-    const pulCommand = tl.getInput("command");
-    if (!pulCommand) {
+    if (!taskConfig.command) {
         tl.debug(tl.loc("Debug_InstallOnly"));
         return;
     }
 
-    await runPulumi();
+    await runPulumi(taskConfig);
 }
 
 // tslint:disable-next-line no-floating-promises

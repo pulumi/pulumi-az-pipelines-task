@@ -43,6 +43,20 @@ A Pulumi access token is required so that the Pulumi task can log you into your 
 
 > The Pulumi Access Token is a sensitive value. Click on the padlock icon to mark it as a secret when you save it in your Pipeline variables or variable group.
 
+### Logs Output as PR Comments
+
+The Pulumi task supports adding PR comments containing the log output from the Pulumi command that was executed in your build pipeline.
+Your project's build service user will need additional permissions to perform that action. Follow these steps to grant the build service user the `Contribute to pull requests` permission:
+
+* Navigate to the **Project Settings** page and click on **Repositories** under the **Repos** heading.
+* Select the repository where you will be using this feature and then click on the **Security** tab.
+* Now under the **Users** section find the build service user. If you are using the default build service user,
+the naming convention is `<Project name> Build Service` where `<Project name>` is your project's name.
+* Change the value of `Contribute to pull requests` to `Allow`.
+
+**Note**: This feature is only supported for builds triggered by pull requests created in git repositories hosted by Azure DevOps.
+Repositories hosted by external VCS such as Bitbucket, GitHub, GitLab are not supported at this time.
+
 ## Example Pulumi app
 
 Here's an example app that creates an App Service with a SQL DB and Application Insights. You can download this example from https://github.com/pulumi/examples/tree/master/azure-ts-appservice.
@@ -206,3 +220,8 @@ variables:
     command: preview
     stack: $(StackName)
 ```
+
+### `Error: TF401027: You need the Git 'PullRequestContribute' permission to perform this action.`
+
+This error indicates that the service account used by build pipelines in your DevOps project do not have the `Contribute Pull Request` permission.
+Follow the steps outlined in the **Quickstart** section above.

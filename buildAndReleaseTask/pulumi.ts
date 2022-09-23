@@ -1,5 +1,8 @@
 // Copyright 2016-2019, Pulumi Corporation.  All rights reserved.
 
+import { createWriteStream, unlinkSync, WriteStream } from "fs";
+import { join as pathJoin } from "path";
+
 import * as tl from "azure-pipelines-task-lib/task";
 import * as tr from "azure-pipelines-task-lib/toolrunner";
 
@@ -7,6 +10,9 @@ import { getServiceEndpoint } from "./serviceEndpoint";
 import { INSTALLED_PULUMI_VERSION, PULUMI_ACCESS_TOKEN } from "./vars";
 
 import { gt as semverGt } from "semver";
+import { TaskConfig } from "./taskConfig";
+
+import { createPrComment, PULUMI_LOG_FILENAME } from "./prComment";
 
 interface IEnvMap { [key: string]: string; }
 
@@ -50,16 +56,20 @@ async function runSelectStack(
  * fails, then creates the stack if the `createStack` task input is `true`,
  * IFF the stack selection failure was due to the stack not being found.
  */
-async function selectOrCreateStack(toolPath: string, pulExecOptions: tr.IExecOptions): Promise<number> {
-    const createStack = tl.getBoolInput("createStack");
-    const pulStackFqdn = tl.getInput("stack", true);
+async function selectOrCreateStack(taskConfig: TaskConfig, toolPath: string, pulExecOptions: tr.IExecOptions): Promise<number> {
+    const createStack = taskConfig.createStack;
+    const pulStackFqdn = taskConfig.stack;
+    if (!pulStackFqdn) {
+        throw new Error("Stack name is required");
+    }
+
     let selectStackExecResult: IExecResult;
     if (createStack && cliVersionGreaterThan("1.10.0")) {
         // The `-c` flag was added in 1.10.0. Hopefully, no one is using that old of a CLI anymore.
         // But we still should make sure we don't try to use that flag on older versions.
-        selectStackExecResult = await runSelectStack(pulStackFqdn!, toolPath, pulExecOptions, ["-c"]);
+        selectStackExecResult = await runSelectStack(pulStackFqdn, toolPath, pulExecOptions, ["-c"]);
     } else {
-        selectStackExecResult = await runSelectStack(pulStackFqdn!, toolPath, pulExecOptions);
+        selectStackExecResult = await runSelectStack(pulStackFqdn, toolPath, pulExecOptions);
     }
     if (selectStackExecResult.exitCode === 0) {
         return 0;
@@ -100,15 +110,36 @@ function appendArgsToToolCmd(cmdRunner: tr.ToolRunner, args: string[]): tr.ToolR
     return cmdRunner;
 }
 
-async function runPulumiCmd(toolPath: string, pulExecOptions: tr.IExecOptions) {
-    const pulCommand = tl.getInput("command", true);
+async function runPulumiCmd(taskConfig: TaskConfig, toolPath: string, pulExecOptions: tr.IExecOptions) {
+    const pulCommand = taskConfig.command;
     if (!pulCommand) {
-        return;
+        throw new Error("Pulumi command is required");
     }
+
     const pulArgs = tl.getDelimitedInput("args", " ");
     let pulCommandRunner = tl.tool(toolPath).arg(pulCommand);
     pulCommandRunner = appendArgsToToolCmd(pulCommandRunner, pulArgs);
+
+    const shouldCreatePrComment = taskConfig.createPrComment;
+    const logFilePath = pathJoin(".", PULUMI_LOG_FILENAME);
+    let logFile: WriteStream | undefined;
+    if (shouldCreatePrComment) {
+        tl.debug(tl.loc("Debug_WritePulumiLog"));
+
+        logFile = createWriteStream(logFilePath);
+        pulCommandRunner.on("stdout", (data: Buffer) => {
+           logFile?.write(data);
+        });
+    }
+
     const exitCode = await pulCommandRunner.exec(pulExecOptions);
+
+    if (shouldCreatePrComment) {
+        logFile?.close();
+        await createPrComment(taskConfig);
+        unlinkSync(logFilePath);
+    }
+
     if (exitCode !== 0) {
         tl.setResult(tl.TaskResult.Failed,
             tl.loc("PulumiCommandFailed", exitCode, `${pulCommand} ${pulArgs.join(" ")}`));
@@ -190,7 +221,7 @@ function tryGetEnvVars(): IEnvMap {
  * this function will try to select it, or create it based on
  * the `createStack` user input.
  */
-export async function runPulumi() {
+export async function runPulumi(taskConfig: TaskConfig) {
     // `process.env` only contains "public" variables, i.e. system and agent variables that
     // are not secret. Secret vars can only be retrieved using `tl.getVariable` or
     // `tl.getVariables`.
@@ -245,18 +276,18 @@ export async function runPulumi() {
         };
 
         // Get the working directory where the Pulumi commands must be run.
-        const pulCwd = tl.getInput("cwd") || ".";
+        const pulCwd = taskConfig.cwd || ".";
         const pulExecOptions = getExecOptions(envVars, pulCwd);
 
         // Select the stack.
-        const stackCmdExitCode = await selectOrCreateStack(toolPath, pulExecOptions);
+        const stackCmdExitCode = await selectOrCreateStack(taskConfig, toolPath, pulExecOptions);
         if (stackCmdExitCode !== 0) {
             return;
         }
 
         // Get the command, and the args the user wants to pass to the Pulumi CLI.
-        await runPulumiCmd(toolPath, pulExecOptions);
-    } catch (err) {
-        tl.setResult(tl.TaskResult.Failed, err);
+        await runPulumiCmd(taskConfig, toolPath, pulExecOptions);
+    } catch (err: any) {
+        tl.setResult(tl.TaskResult.Failed, err.toString());
     }
 }

@@ -4,7 +4,7 @@
   "description": "Azure Pipelines task extension for running Pulumi apps.",
   "main": "_suite.js",
   "scripts": {
-    "test": "tsc && mocha _suite.js",
+    "test": "tsc -p ../ && tsc && mocha _suite.js",
     "lint": "tslint -c tslint.json -p ."
   },
   "author": "Pulumi",

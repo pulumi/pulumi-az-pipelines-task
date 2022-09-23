@@ -57,11 +57,11 @@ Sometimes unit testing alone isn't sufficient and you may want to test your chan
   - Tip: Maybe give it a suffix or a prefix that clearly identifies it as your private build.
 - **IMPORTANT:** Change the value of the following properties:
   - Set `galleryFlags` to `Private` instead of `Public`.
-  - Set `publisher` to _your_ publisher account name instead of `pulumi`.
+  - Set `publisher` to _your_ publisher account ID instead of `pulumi`.
 - Now in the `buildAndReleaseTask/task.json`, change the value of the `id` property to a unique value. You can get a new, unique value from https://www.guidgen.com.
 - Change the value of the `name` property to something unique in this file as well.
   - This is the name you will see in the Azure Pipelines build when you add it as a task.
-- **IMPORTANT:** Change the value of the `author` property to be _your_ publisher account name.
+- **IMPORTANT:** Change the value of the `author` property to be _your_ publisher account ID.
 
 #### Generate a private package
 
@@ -76,7 +76,6 @@ Sometimes unit testing alone isn't sufficient and you may want to test your chan
 
 #### Installing the private build
 
-- Finally, you can now head over to your organization and install the extension that has been shared with it.
 - Go to the root of your organization, `https://dev.azure.com`, and click on the **Organization Settings** button in the bottom-left corner.
 - Then click on **Extensions** and then click on the **Shared** tab. You should see your private extension.
 - Click on the install button and follow the instructions to complete installing it.
