@@ -32,7 +32,7 @@ stages:
               verbose: true
 
           - task: Npm@1
-            displayName: "Run unit tests"
+            displayName: "Run lints"
             inputs:
               command: "custom"
               customCommand: run lint
