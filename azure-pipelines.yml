@@ -36,8 +36,6 @@ stages:
             inputs:
               command: "custom"
               customCommand: run lint
-            env:
-              INPUT_AZURESUBSCRIPTION: "fake-subscription-id"
 
           - task: Npm@1
             displayName: "Run unit tests"
