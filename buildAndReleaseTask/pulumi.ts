@@ -10,11 +10,14 @@ import { getServiceEndpoint } from "./serviceEndpoint";
 import { INSTALLED_PULUMI_VERSION, PULUMI_ACCESS_TOKEN } from "./vars";
 
 import { gt as semverGt } from "semver";
-import { TaskConfig } from "./taskConfig";
+
+import type { TaskConfig } from "models";
 
 import { createPrComment, PULUMI_LOG_FILENAME } from "./prComment";
 
-interface IEnvMap { [key: string]: string; }
+interface IEnvMap {
+    [key: string]: string;
+}
 
 interface IExecResult {
     exitCode: number;
@@ -36,12 +39,13 @@ async function runSelectStack(
     pulStack: string,
     toolPath: string,
     pulExecOptions: tr.IExecOptions,
-    additionalArgs?: string[],): Promise<IExecResult> {
+    additionalArgs?: string[]
+): Promise<IExecResult> {
     const stackSelectRunner = tl.tool(toolPath);
     let execErr = "";
     // The toolrunner emits an event when there is an error written to the stderr.
     // Listen for that event and update the execution error message accordingly.
-    stackSelectRunner.on("stderr", (errLine: string) => execErr = errLine);
+    stackSelectRunner.on("stderr", (errLine: string) => (execErr = errLine));
 
     let cmd = stackSelectRunner.arg(["stack", "select", pulStack!]);
     if (additionalArgs) {
@@ -56,7 +60,11 @@ async function runSelectStack(
  * fails, then creates the stack if the `createStack` task input is `true`,
  * IFF the stack selection failure was due to the stack not being found.
  */
-async function selectOrCreateStack(taskConfig: TaskConfig, toolPath: string, pulExecOptions: tr.IExecOptions): Promise<number> {
+async function selectOrCreateStack(
+    taskConfig: TaskConfig,
+    toolPath: string,
+    pulExecOptions: tr.IExecOptions
+): Promise<number> {
     const createStack = taskConfig.createStack;
     const pulStackFqdn = taskConfig.stack;
     if (!pulStackFqdn) {
@@ -67,9 +75,18 @@ async function selectOrCreateStack(taskConfig: TaskConfig, toolPath: string, pul
     if (createStack && cliVersionGreaterThan("1.10.0")) {
         // The `-c` flag was added in 1.10.0. Hopefully, no one is using that old of a CLI anymore.
         // But we still should make sure we don't try to use that flag on older versions.
-        selectStackExecResult = await runSelectStack(pulStackFqdn, toolPath, pulExecOptions, ["-c"]);
+        selectStackExecResult = await runSelectStack(
+            pulStackFqdn,
+            toolPath,
+            pulExecOptions,
+            ["-c"]
+        );
     } else {
-        selectStackExecResult = await runSelectStack(pulStackFqdn, toolPath, pulExecOptions);
+        selectStackExecResult = await runSelectStack(
+            pulStackFqdn,
+            toolPath,
+            pulExecOptions
+        );
     }
     if (selectStackExecResult.exitCode === 0) {
         return 0;
@@ -79,7 +96,10 @@ async function selectOrCreateStack(taskConfig: TaskConfig, toolPath: string, pul
     // check if the failure was due to the stack not being found, just
     // fail right away.
     if (!createStack) {
-        tl.setResult(tl.TaskResult.Failed, tl.loc("PulumiStackSelectFailed", pulStackFqdn));
+        tl.setResult(
+            tl.TaskResult.Failed,
+            tl.loc("PulumiStackSelectFailed", pulStackFqdn)
+        );
         return selectStackExecResult.exitCode;
     }
 
@@ -90,27 +110,42 @@ async function selectOrCreateStack(taskConfig: TaskConfig, toolPath: string, pul
     const parts = pulStackFqdn!.split("/");
     const errMsg = `no stack named '${parts[parts.length - 1]}' found`;
     if (!selectStackExecResult.execErr!.includes(errMsg)) {
-        tl.setResult(tl.TaskResult.Failed, tl.loc("PulumiStackSelectFailed", pulStackFqdn));
+        tl.setResult(
+            tl.TaskResult.Failed,
+            tl.loc("PulumiStackSelectFailed", pulStackFqdn)
+        );
         return selectStackExecResult.exitCode;
     }
 
     tl.debug(tl.loc("Debug_CreateStack", pulStackFqdn));
     const stackInitRunner = tl.tool(toolPath);
-    const exitCode = await stackInitRunner.arg(["stack", "init", pulStackFqdn!]).exec(pulExecOptions);
+    const exitCode = await stackInitRunner
+        .arg(["stack", "init", pulStackFqdn!])
+        .exec(pulExecOptions);
     if (exitCode !== 0) {
-        tl.setResult(tl.TaskResult.Failed, tl.loc("CreateStackFailed", pulStackFqdn));
+        tl.setResult(
+            tl.TaskResult.Failed,
+            tl.loc("CreateStackFailed", pulStackFqdn)
+        );
     }
     return exitCode;
 }
 
-function appendArgsToToolCmd(cmdRunner: tr.ToolRunner, args: string[]): tr.ToolRunner {
+function appendArgsToToolCmd(
+    cmdRunner: tr.ToolRunner,
+    args: string[]
+): tr.ToolRunner {
     args.forEach((arg: string) => {
         cmdRunner.arg(arg);
     });
     return cmdRunner;
 }
 
-async function runPulumiCmd(taskConfig: TaskConfig, toolPath: string, pulExecOptions: tr.IExecOptions) {
+async function runPulumiCmd(
+    taskConfig: TaskConfig,
+    toolPath: string,
+    pulExecOptions: tr.IExecOptions
+) {
     const pulCommand = taskConfig.command;
     if (!pulCommand) {
         throw new Error("Pulumi command is required");
@@ -128,7 +163,7 @@ async function runPulumiCmd(taskConfig: TaskConfig, toolPath: string, pulExecOpt
 
         logFile = createWriteStream(logFilePath);
         pulCommandRunner.on("stdout", (data: Buffer) => {
-           logFile?.write(data);
+            logFile?.write(data);
         });
     }
 
@@ -141,13 +176,22 @@ async function runPulumiCmd(taskConfig: TaskConfig, toolPath: string, pulExecOpt
     }
 
     if (exitCode !== 0) {
-        tl.setResult(tl.TaskResult.Failed,
-            tl.loc("PulumiCommandFailed", exitCode, `${pulCommand} ${pulArgs.join(" ")}`));
+        tl.setResult(
+            tl.TaskResult.Failed,
+            tl.loc(
+                "PulumiCommandFailed",
+                exitCode,
+                `${pulCommand} ${pulArgs.join(" ")}`
+            )
+        );
         return;
     }
 }
 
-function getExecOptions(envMap: IEnvMap, workingDirectory: string): tr.IExecOptions {
+function getExecOptions(
+    envMap: IEnvMap,
+    workingDirectory: string
+): tr.IExecOptions {
     return {
         cwd: workingDirectory,
         env: envMap,
@@ -176,7 +220,9 @@ function tryGetAzureEnvVarsFromServiceEndpoint(): IEnvMap {
 
     const serviceEndpoint = getServiceEndpoint(connectedServiceName);
     if (serviceEndpoint) {
-        tl.debug(`Service endpoint retrieved with client ID ${serviceEndpoint.clientId}`);
+        tl.debug(
+            `Service endpoint retrieved with client ID ${serviceEndpoint.clientId}`
+        );
     }
     if (!serviceEndpoint) {
         return {};
@@ -226,12 +272,17 @@ export async function runPulumi(taskConfig: TaskConfig) {
     // are not secret. Secret vars can only be retrieved using `tl.getVariable` or
     // `tl.getVariables`.
     const processEnv = process.env as IEnvMap;
-    tl.debug(`Executing Pulumi commands with process env ${JSON.stringify(processEnv)}`);
+    tl.debug(
+        `Executing Pulumi commands with process env ${JSON.stringify(
+            processEnv
+        )}`
+    );
 
     try {
         const toolPath = tl.which("pulumi");
         const agentEnvVars = tryGetEnvVars();
-        const azureServiceEndpointEnvVars = tryGetAzureEnvVarsFromServiceEndpoint();
+        const azureServiceEndpointEnvVars =
+            tryGetAzureEnvVarsFromServiceEndpoint();
         const loginEnvVars = {
             ...azureServiceEndpointEnvVars,
             ...agentEnvVars,
@@ -249,21 +300,30 @@ export async function runPulumi(taskConfig: TaskConfig) {
             // `getVariable` will automatically prepend the SECRET_ prefix if it finds
             // it in the build environment's secret vault.
             tl.getVariable(PULUMI_ACCESS_TOKEN);
-        if (!azureStorageContainer && !pulumiAccessToken && loginArgs.length === 0) {
-            tl.setResult(tl.TaskResult.Failed, tl.loc("PulumiLoginUndetermined"));
+        if (
+            !azureStorageContainer &&
+            !pulumiAccessToken &&
+            loginArgs.length === 0
+        ) {
+            tl.setResult(
+                tl.TaskResult.Failed,
+                tl.loc("PulumiLoginUndetermined")
+            );
             return;
         }
 
         let loginCommand = ["login"];
         if (azureStorageContainer) {
             loginCommand = ["login", "-c", `azblob://${azureStorageContainer}`];
-        }  else if (pulumiAccessToken) {
+        } else if (pulumiAccessToken) {
             loginEnvVars[PULUMI_ACCESS_TOKEN] = pulumiAccessToken;
         }
 
         let loginCmdRunner = tl.tool(toolPath).arg(loginCommand);
         loginCmdRunner = appendArgsToToolCmd(loginCmdRunner, loginArgs);
-        const exitCode = await loginCmdRunner.exec(getExecOptions(loginEnvVars, ""));
+        const exitCode = await loginCmdRunner.exec(
+            getExecOptions(loginEnvVars, "")
+        );
         if (exitCode !== 0) {
             tl.setResult(tl.TaskResult.Failed, tl.loc("PulumiLoginFailed"));
             return;
@@ -280,7 +340,11 @@ export async function runPulumi(taskConfig: TaskConfig) {
         const pulExecOptions = getExecOptions(envVars, pulCwd);
 
         // Select the stack.
-        const stackCmdExitCode = await selectOrCreateStack(taskConfig, toolPath, pulExecOptions);
+        const stackCmdExitCode = await selectOrCreateStack(
+            taskConfig,
+            toolPath,
+            pulExecOptions
+        );
         if (stackCmdExitCode !== 0) {
             return;
         }

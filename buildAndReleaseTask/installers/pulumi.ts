@@ -12,7 +12,10 @@ import * as path from "path";
  * @param latestPulumiVersion latest version based on what `getLatestPulumiVersion` returned.
  */
 
-export async function installPulumi(latestPulumiVersion: string, versionSpec?: string): Promise<string> {
+export async function installPulumi(
+    latestPulumiVersion: string,
+    versionSpec?: string
+): Promise<string> {
     const os = tl.getPlatform();
     tl.debug(tl.loc("OSDETECTED", os));
 
@@ -40,8 +43,7 @@ export async function installPulumi(latestPulumiVersion: string, versionSpec?: s
 
 async function installPulumiWindows(version: string) {
     try {
-        const downloadUrl =
-            `https://get.pulumi.com/releases/sdk/pulumi-v${version}-windows-x64.zip`;
+        const downloadUrl = `https://get.pulumi.com/releases/sdk/pulumi-v${version}-windows-x64.zip`;
         const temp = await lib.downloadTool(downloadUrl);
         const extractTemp = await lib.extractZip(temp);
         // Windows archives have a sub-folder called "bin", so add that
@@ -51,15 +53,18 @@ async function installPulumiWindows(version: string) {
         tl.debug(tl.loc("Debug_Installed"));
         tl.debug(tl.loc("Debug_AddedToPATH"));
         await lib.cacheDir(binPath, "pulumi", version);
-    } catch (err) {
-        tl.setResult(tl.TaskResult.Failed, tl.loc("PulumiInstallFailed", err.message), true);
+    } catch (err: any) {
+        tl.setResult(
+            tl.TaskResult.Failed,
+            tl.loc("PulumiInstallFailed", err.message),
+            true
+        );
     }
 }
 
 async function installPulumiOther(version: string, os: string) {
     try {
-        const downloadUrl =
-            `https://get.pulumi.com/releases/sdk/pulumi-v${version}-${os}-x64.tar.gz`;
+        const downloadUrl = `https://get.pulumi.com/releases/sdk/pulumi-v${version}-${os}-x64.tar.gz`;
         const temp = await lib.downloadTool(downloadUrl);
         const extractTemp = await lib.extractTar(temp);
         // Pulumi binary exists in "pulumi" sub-folder,
@@ -69,7 +74,11 @@ async function installPulumiOther(version: string, os: string) {
         tl.debug(tl.loc("Debug_Installed"));
         tl.debug(tl.loc("Debug_AddedToPATH"));
         await lib.cacheDir(binPath, "pulumi", version);
-    } catch (err) {
-        tl.setResult(tl.TaskResult.Failed, tl.loc("PulumiInstallFailed", err.message), true);
+    } catch (err: any) {
+        tl.setResult(
+            tl.TaskResult.Failed,
+            tl.loc("PulumiInstallFailed", err.message),
+            true
+        );
     }
 }

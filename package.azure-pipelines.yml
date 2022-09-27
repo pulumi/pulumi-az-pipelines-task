@@ -4,48 +4,48 @@
 trigger: none
 
 jobs:
-- job: tfxCreate
-  pool:
-    vmImage: 'ubuntu-latest'
-  displayName: 'Create and package VSIX'
-  steps:
-  - task: Npm@1
-    displayName: 'Restore node_modules for buildAndReleaseTask/'
-    inputs:
-      workingDir: buildAndReleaseTask/
-      verbose: true
+  - job: tfxCreate
+    pool:
+      vmImage: "ubuntu-latest"
+    displayName: "Create and package VSIX"
+    steps:
+      - task: Npm@1
+        displayName: "Restore node_modules for buildAndReleaseTask/"
+        inputs:
+          workingDir: buildAndReleaseTask/
+          verbose: true
 
-  - task: Npm@1
-    displayName: 'Compile TS to JS'
-    inputs:
-      workingDir: buildAndReleaseTask/
-      command: 'custom'
-      customCommand: run tsc
+      - task: Npm@1
+        displayName: "Compile TS to JS"
+        inputs:
+          workingDir: buildAndReleaseTask/
+          command: "custom"
+          customCommand: run tsc
 
-  - task: TfxInstaller@2
-    inputs:
-      version: 'v0.8.x'
+      - task: TfxInstaller@2
+        inputs:
+          version: "v0.8.x"
 
-  - task: QueryAzureDevOpsExtensionVersion@3
-    displayName: 'Query extension version'
-    inputs:
-      connectTo: 'VsTeam'
-      connectedServiceName: 'Pulumi Marketplace'
-      publisherId: 'pulumi'
-      extensionId: 'build-and-release-task'
-      versionAction: 'Patch'
-      outputVariable: 'PulumiExtension.Version'
-      extensionVersionOverride: 'PulumiExtension.VersionOverride'
+      - task: QueryAzureDevOpsExtensionVersion@3
+        displayName: "Query extension version"
+        inputs:
+          connectTo: "VsTeam"
+          connectedServiceName: "Pulumi Marketplace"
+          publisherId: "pulumi"
+          extensionId: "build-and-release-task"
+          versionAction: "Patch"
+          outputVariable: "PulumiExtension.Version"
+          extensionVersionOverride: "PulumiExtension.VersionOverride"
 
-  - task: PackageAzureDevOpsExtension@3
-    displayName: 'Package extension'
-    inputs:
-      extensionVersion: '$(PulumiExtension.Version)'
-      updateTasksVersion: true
-      outputVariable: 'PulumiExtension.OutputPath'
+      - task: PackageAzureDevOpsExtension@3
+        displayName: "Package extension"
+        inputs:
+          extensionVersion: "$(PulumiExtension.Version)"
+          updateTasksVersion: true
+          outputVariable: "PulumiExtension.OutputPath"
 
-  - task: PublishPipelineArtifact@0
-    displayName: 'Create pipeline artifact'
-    inputs:
-      artifactName: 'vsix'
-      targetPath: $(PulumiExtension.OutputPath)
+      - task: PublishPipelineArtifact@0
+        displayName: "Create pipeline artifact"
+        inputs:
+          artifactName: "vsix"
+          targetPath: $(PulumiExtension.OutputPath)

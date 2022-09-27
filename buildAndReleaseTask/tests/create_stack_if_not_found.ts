@@ -17,8 +17,7 @@ const stackNameFqdn = "myorg/myproject/nonExistentStack";
 // If the user requested version is not `latest`, then this is the version
 // that the task should install.
 export const userRequestedVersion = "1.9.0";
-const expectedDownloadUrl =
-    `https://get.pulumi.com/releases/sdk/pulumi-v${userRequestedVersion}-${fakeOS.toLowerCase()}-x64.tar.gz`;
+const expectedDownloadUrl = `https://get.pulumi.com/releases/sdk/pulumi-v${userRequestedVersion}-${fakeOS.toLowerCase()}-x64.tar.gz`;
 const fakeDownloadedPath = "/fake/path/to/downloaded/file";
 
 process.env["HOME"] = "/fake/home";
@@ -61,24 +60,28 @@ tmr.registerMock("azure-pipelines-tool-lib", {
     },
     extractTar: (downloadedPath: string) => {
         if (downloadedPath !== fakeDownloadedPath) {
-            throw new Error(`Unexpected downloaded file path ${downloadedPath}`);
+            throw new Error(
+                `Unexpected downloaded file path ${downloadedPath}`
+            );
         }
         return Promise.resolve("/fake/path/to/extracted/contents");
     },
     extractZip: (downloadedPath: string) => {
         if (downloadedPath !== fakeDownloadedPath) {
-            throw new Error(`Unexpected downloaded file path ${downloadedPath}`);
+            throw new Error(
+                `Unexpected downloaded file path ${downloadedPath}`
+            );
         }
         return Promise.resolve("/fake/path/to/extracted/contents");
     },
     prependPath: (pathToTool: string) => {
-        console.log(`prepending path ${ pathToTool }`);
+        console.log(`prepending path ${pathToTool}`);
     },
 });
 
 tmr.registerMock("azure-pipelines-tool-lib/tool", {
     findLocalTool: (toolName: string, version: string) => {
-        console.log(`Requested tool ${ toolName } of version ${ version }`);
+        console.log(`Requested tool ${toolName} of version ${version}`);
         return undefined;
     },
 });
@@ -110,7 +113,7 @@ const mockAnswers: ma.TaskLibAnswers = {
     },
     which: {
         "/fake/path/to/pulumi": "/fake/path/to/pulumi",
-        "pulumi": "/fake/path/to/pulumi",
+        pulumi: "/fake/path/to/pulumi",
     },
 } as ma.TaskLibAnswers;
 
