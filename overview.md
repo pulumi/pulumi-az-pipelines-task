@@ -223,4 +223,4 @@ variables:
 ### `Error: TF401027: You need the Git 'PullRequestContribute' permission to perform this action.`
 
 This error indicates that the service account used by build pipelines in your DevOps project do not have the `Contribute Pull Request` permission.
-Follow the steps outlined in the **Quickstart** section above.
+Follow the steps outlined in the **Quickstart** section above..
