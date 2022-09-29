@@ -13,11 +13,10 @@ Read on to learn how you can get started quickly.
 
 ## Prerequisites
 
-- You must have an active Azure subscription. Create a new subscription at https://azure.com.
-- You must also have an active Azure DevOps account and an organization. Create a new account at https://dev.azure.com.
+- You must have an active Azure DevOps account and an organization. Create a new account at https://dev.azure.com.
 - Install this extension to your organization. To do this, you must be an admin of the organization.
   - Once installed, you may have to have your admin make the extension available to you or your project.
-- Create a [service connection](https://docs.microsoft.com/en-us/azure/devops/pipelines/library/connect-to-azure?view=azure-devops) to your Azure Subscription in your DevOps project.
+- You'll need an Azure subscription if you plan on creating resources in Azure. Create a [service connection](https://docs.microsoft.com/en-us/azure/devops/pipelines/library/connect-to-azure?view=azure-devops) for the Azure Subscription in your DevOps project.
   - **Note**: At this time, only a `Service Principal Authentication` based service connection can be used with this extension.
   - The name of this service connection is what you will use in the Pulumi task for the input `azureSubscription` if you are using the YAML configuration.
 
