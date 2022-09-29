@@ -105,7 +105,7 @@
             "name": "createPrComment",
             "type": "boolean",
             "label": "Add the Pulumi log output as a PR comment",
-            "defaultValue": "true",
+            "defaultValue": "false",
             "helpMarkDown": "Check this option if you would like this task to add a comment to your PR (when applicable.) **Note**: Your project's build service user must have the `Contribute to pull requests` permission for this to work. Additionally, you must map the `System.AccessToken` variable as an env var for this task: `SYSTEM_ACCESSTOKEN: $(System.AccessToken)`.",
             "required": "false"
         },
@@ -113,7 +113,7 @@
             "name": "useThreadedPrComments",
             "type": "boolean",
             "label": "Add PR comments to an existing thread (if any) created by this task",
-            "defaultValue": "false",
+            "defaultValue": "true",
             "groupName": "advanced",
             "helpMarkDown": "Check this option if you would like this task to always add a comment to the previously-created comments thread.",
             "required": "false",
@@ -157,6 +157,7 @@
         "Debug_ExistingThreadNotFound": "An existing comment thread created by this task was not found. A new thread will be started.",
         "Debug_ThreadFound": "Found an existing comment thread created by this task. A new comment will be added to it.",
         "Warning_ExistingCommentThreadNotFound": "Did not find an existing comment thread for Pulumi output. Will start a new one.",
-        "Warning_UnSupportedRepositoryType": "Repository type %s is not yet supported for PR comments."
+        "Warning_UnSupportedRepositoryType": "Repository type %s is not yet supported for PR comments.",
+        "Warning_NotABuildPipeline": "Ignoring request to create a PR comment. PR comments are only applicable for build pipelines. The pipeline is a %s."
     }
 }

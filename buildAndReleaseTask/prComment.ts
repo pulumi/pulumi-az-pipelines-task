@@ -89,6 +89,12 @@ export async function createPrComment(taskConfig: TaskConfig) {
         return;
     }
 
+    const hostType = tl.getVariable("System.HostType");
+    if (hostType?.toLowerCase() !== "build") {
+        tl.warning(tl.loc("Warning_NotABuildPipeline", hostType));
+        return;
+    }
+
     const repoProvider = tl.getVariable("Build.Repository.Provider");
     if (repoProvider !== "TfsGit") {
         tl.warning(tl.loc("Warning_UnSupportedRepositoryType", repoProvider));

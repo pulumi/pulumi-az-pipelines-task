@@ -45,7 +45,9 @@ describe("Pulumi task tests", () => {
         );
 
         done();
-    });
+    }).timeout(3000);
+    // Set a higher timeout for the above test since it seems to take
+    // some additional time to run sometimes.
 
     it("should run Pulumi with the expected env vars", (done: Mocha.Done) => {
         const tp = path.join(__dirname, "envvars.js");
