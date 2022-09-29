@@ -105,7 +105,7 @@
             "name": "createPrComment",
             "type": "boolean",
             "label": "Add the Pulumi log output as a PR comment",
-            "defaultValue": "true",
+            "defaultValue": "false",
             "helpMarkDown": "Check this option if you would like this task to add a comment to your PR (when applicable.) **Note**: Your project's build service user must have the `Contribute to pull requests` permission for this to work. Additionally, you must map the `System.AccessToken` variable as an env var for this task: `SYSTEM_ACCESSTOKEN: $(System.AccessToken)`.",
             "required": "false"
         },
@@ -113,7 +113,7 @@
             "name": "useThreadedPrComments",
             "type": "boolean",
             "label": "Add PR comments to an existing thread (if any) created by this task",
-            "defaultValue": "false",
+            "defaultValue": "true",
             "groupName": "advanced",
             "helpMarkDown": "Check this option if you would like this task to always add a comment to the previously-created comments thread.",
             "required": "false",
