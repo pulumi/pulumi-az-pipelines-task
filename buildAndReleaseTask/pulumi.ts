@@ -281,8 +281,7 @@ export async function runPulumi(taskConfig: TaskConfig) {
     try {
         const toolPath = tl.which("pulumi");
         const agentEnvVars = tryGetEnvVars();
-        const azureServiceEndpointEnvVars =
-            tryGetAzureEnvVarsFromServiceEndpoint();
+        const azureServiceEndpointEnvVars = tryGetAzureEnvVarsFromServiceEndpoint();
         const loginEnvVars = {
             ...azureServiceEndpointEnvVars,
             ...agentEnvVars,
