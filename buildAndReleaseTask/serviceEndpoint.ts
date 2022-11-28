@@ -31,10 +31,12 @@ export function getServiceEndpoint(
             "serviceprincipalkey",
             false
         ),
+        // It is entirely possible subscriptionId is not present, so setting subscription as optional stops an unintended failure.
+        // eg- a ManagementGroup scoped SP has access to multiple subscriptions; the subscription that is the target of a pulumi up will be enforced in the pulumi program config/env.
         subscriptionId: tl.getEndpointDataParameter(
             connectedServiceName,
             "subscriptionid",
-            false
+            true
         ),
         tenantId: tl.getEndpointAuthorizationParameter(
             connectedServiceName,
@@ -45,3 +47,4 @@ export function getServiceEndpoint(
 
     return endpoint;
 }
+// 500-1000 per tenant
