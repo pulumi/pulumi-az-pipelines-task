@@ -106,6 +106,7 @@
             "type": "boolean",
             "label": "Add the Pulumi log output as a PR comment",
             "defaultValue": "false",
+            "groupName": "advanced",
             "helpMarkDown": "Check this option if you would like this task to add a comment to your PR (when applicable.) **Note**: Your project's build service user must have the `Contribute to pull requests` permission for this to work. Additionally, you must map the `System.AccessToken` variable as an env var for this task: `SYSTEM_ACCESSTOKEN: $(System.AccessToken)`.",
             "required": "false"
         },
