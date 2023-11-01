@@ -6,6 +6,7 @@ import { join as pathJoin } from "path";
 import * as tl from "azure-pipelines-task-lib/task";
 import * as tr from "azure-pipelines-task-lib/toolrunner";
 
+import { getAWSServiceEndpoint } from "./awsServiceEndpoint";
 import { getServiceEndpoint } from "./serviceEndpoint";
 import { INSTALLED_PULUMI_VERSION, PULUMI_ACCESS_TOKEN } from "./vars";
 
@@ -243,6 +244,36 @@ function tryGetAzureEnvVarsFromServiceEndpoint(): IEnvMap {
         AZURE_TENANT_ID: serviceEndpoint.tenantId,
     };
 }
+/**
+ * If the `serviceEndpoint` param is not `undefined`, then
+ * this function returns an env var map with the `ARM_*`
+ * env vars.
+ */
+function tryGetAWSEnvVarsFromServiceEndpoint(): IEnvMap {
+    const connectedServiceName = tl.getInput("awsServiceConnection", false);
+    if (!connectedServiceName) {
+        return {};
+    }
+    tl.debug(tl.loc("Debug_AWSServiceEndpointName", connectedServiceName));
+
+    const awsServiceEndpoint = getAWSServiceEndpoint(connectedServiceName);
+    if (awsServiceEndpoint) {
+        tl.debug(
+            `Service endpoint retrieved with access key ID ${awsServiceEndpoint.accessKeyId}`
+        );
+    }
+    if (!awsServiceEndpoint) {
+        return {};
+    }
+
+    return {
+        AWS_ACCESS_KEY_ID: awsServiceEndpoint.accessKeyId,
+        AWS_SECRET_ACCESS_KEY: awsServiceEndpoint.secretAccessKey,
+        AWS_SESSION_TOKEN: awsServiceEndpoint.sessionToken,
+        AWS_ROLE_ARN: awsServiceEndpoint.roleArn,
+        AWS_REGION: awsServiceEndpoint.region,
+    };
+}
 
 /**
  * Returns all variables available to this task.
@@ -282,7 +313,9 @@ export async function runPulumi(taskConfig: TaskConfig) {
         const toolPath = tl.which("pulumi");
         const agentEnvVars = tryGetEnvVars();
         const azureServiceEndpointEnvVars = tryGetAzureEnvVarsFromServiceEndpoint();
+        const awsServiceEndpointEnvVars = tryGetAWSEnvVarsFromServiceEndpoint();
         const loginEnvVars = {
+            ...awsServiceEndpointEnvVars,
             ...azureServiceEndpointEnvVars,
             ...agentEnvVars,
             ...processEnv,
@@ -329,6 +362,7 @@ export async function runPulumi(taskConfig: TaskConfig) {
         }
 
         const envVars: IEnvMap = {
+            ...awsServiceEndpointEnvVars,
             ...azureServiceEndpointEnvVars,
             ...agentEnvVars,
             ...processEnv,

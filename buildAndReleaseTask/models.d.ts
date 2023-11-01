@@ -12,6 +12,7 @@ declare module "models" {
         // and assert the value at the place of
         // its use.
         azureSubscription?: string;
+        awsServiceConnection?: string;
         command?: string;
         loginArgs?: string;
         args?: string;

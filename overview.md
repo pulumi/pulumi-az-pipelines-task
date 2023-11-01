@@ -16,9 +16,9 @@ Read on to learn how you can get started quickly.
 - You must have an active Azure DevOps account and an organization. Create a new account at https://dev.azure.com.
 - Install this extension to your organization. To do this, you must be an admin of the organization.
   - Once installed, you may have to have your admin make the extension available to you or your project.
-- You'll need an Azure subscription if you plan on creating resources in Azure. Create a [service connection](https://docs.microsoft.com/en-us/azure/devops/pipelines/library/connect-to-azure?view=azure-devops) for the Azure Subscription in your DevOps project.
-  - **Note**: At this time, only a `Service Principal Authentication` based service connection can be used with this extension.
-  - The name of this service connection is what you will use in the Pulumi task for the input `azureSubscription` if you are using the YAML configuration.
+- You'll need an Azure subscription if you plan on creating resources in Azure. Create a [service connection](https://docs.microsoft.com/en-us/azure/devops/pipelines/library/connect-to-azure?view=azure-devops) for the Azure Subscription or AWS Authentication in your DevOps project.
+  - **Note**: For Azure Service Connections, only `Service Principal Authentication` work with this extension.
+  - The name of the relevant service connection is what you will use in the Pulumi task for the input `azureSubscription` or `awsServiceConnection` if you are using the YAML configuration.
 
 ## Quickstart
 
@@ -192,7 +192,7 @@ Try to uninstall the extension, and then re-install it. Most of the times this r
 
 Pulumi supports several [cloud providers](https://www.pulumi.com/docs/intro/cloud-providers/), including [Kubernetes](https://www.pulumi.com/docs/intro/cloud-providers/kubernetes/). You can deploy to any cloud provider that Pulumi supports using this task extension, by simply setting the required environment variables as part of each cloud provider's setup, as your Pipeline's build variable.
 
-For example, in order to deploy to [AWS](https://www.pulumi.com/docs/intro/cloud-providers/aws/setup/#environment-variables), simply set the `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` env vars either as pipeline variables or in a variable group that is linked to your pipeline.
+For example, in order to deploy to [AWS](https://www.pulumi.com/docs/intro/cloud-providers/aws/setup/#environment-variables), you may use the AWS Service Connection or by simply set the `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` env vars either as pipeline variables or in a variable group that is linked to your pipeline.
 
 ## Troubleshooting
 

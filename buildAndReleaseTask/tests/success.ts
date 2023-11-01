@@ -4,6 +4,7 @@ import * as ma from "azure-pipelines-task-lib/mock-answer";
 import * as tmrm from "azure-pipelines-task-lib/mock-run";
 import * as path from "path";
 
+import { IAWSServiceEndpoint } from "../awsServiceEndpoint";
 import { IServiceEndpoint } from "../serviceEndpoint";
 
 const taskPath = path.join(__dirname, "..", "index.js");
@@ -24,6 +25,7 @@ process.env["HOME"] = "/fake/home";
 tmr.setVariableName("PULUMI_ACCESS_TOKEN", "fake-access-token", true);
 // Set the mock inputs for the task.
 tmr.setInput("azureSubscription", "fake-subscription-id");
+tmr.setInput("awsServiceConnection", "fake-aws-service-endpoint");
 tmr.setInput("command", "preview");
 tmr.setInput("cwd", "dir/");
 tmr.setInput("stack", "myOrg/project/dev");
@@ -37,6 +39,18 @@ tmr.registerMock("./serviceEndpoint", {
             subscriptionId: "fake-subscription-id",
             tenantId: "fake-tenant-id",
         };
+    },
+});
+
+tmr.registerMock("./awsServiceEndpoint", {
+    getAWSServiceEndpoint: (_: string): IAWSServiceEndpoint => {
+        return {
+            accessKeyId: "fake-access-key-id",
+            secretAccessKey: "fake-secret-access-key",
+            sessionToken: "fake-session-token",
+            roleArn: "fake-role-arn",
+            region: "fake-region",
+        }
     },
 });
 
