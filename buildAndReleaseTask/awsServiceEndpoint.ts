@@ -1,3 +1,5 @@
+// Copyright 2016-2019, Pulumi Corporation.  All rights reserved.
+
 import * as tl from "azure-pipelines-task-lib/task";
 
 export interface IAWSServiceEndpoint {
