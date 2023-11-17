@@ -246,7 +246,7 @@ function tryGetAzureEnvVarsFromServiceEndpoint(): IEnvMap {
 }
 /**
  * If the `serviceEndpoint` param is not `undefined`, then
- * this function returns an env var map with the `ARM_*`
+ * this function returns an env var map with the `AWS_*`
  * env vars.
  */
 function tryGetAWSEnvVarsFromServiceEndpoint(): IEnvMap {
