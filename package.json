@@ -13,6 +13,6 @@
   "author": "Pulumi",
   "license": "MIT",
   "devDependencies": {
-    "tfx-cli": "^0.12.0"
+    "tfx-cli": "^0.16.0"
   }
 }
