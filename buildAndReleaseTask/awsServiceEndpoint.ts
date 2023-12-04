@@ -1,4 +1,4 @@
-// Copyright 2016-2019, Pulumi Corporation.  All rights reserved.
+// Copyright 2016-2023, Pulumi Corporation.  All rights reserved.
 
 import * as tl from "azure-pipelines-task-lib/task";
 
