@@ -12,16 +12,16 @@
   "author": "Pulumi",
   "license": "MIT",
   "dependencies": {
-    "axios": "^0.27.2",
-    "azure-devops-node-api": "^11.2.0",
-    "azure-pipelines-task-lib": "^3.3.1",
-    "azure-pipelines-tool-lib": "^1.3.2",
-    "semver": "^7.5.2",
-    "typed-rest-client": "^1.8.9"
+    "axios": "^1.6.2",
+    "azure-devops-node-api": "^12.1.0",
+    "azure-pipelines-task-lib": "^4.7.0",
+    "azure-pipelines-tool-lib": "^2.0.7",
+    "semver": "^7.5.4",
+    "typed-rest-client": "^1.8.11"
   },
   "devDependencies": {
     "@types/mocha": "^8.0.3",
-    "@types/node": "^11.13.4",
+    "@types/node": "^16.18.68",
     "@types/q": "^1.5.4",
     "@types/semver": "^7.3.4",
     "sync-request": "^6.1.0",
