@@ -33,6 +33,14 @@
             "helpMarkDown": "Select the Azure Resource Manager subscription for the deployment. If you do not provide a service connection, ensure that you have configured your cloud provider by following the setup instructions for your respective [cloud provider](https://www.pulumi.com/docs/intro/cloud-providers/)."
         },
         {
+            "name": "awsServiceConnection",
+            "type": "connectedService:AWS",
+            "label": "AWS Service Connection",
+            "defaultValue": "",
+            "required": "false",
+            "helpMarkDown": "Select the AWS Service Connection for the deployment. If you do not provide a service connection, ensure that you have configured your cloud provider by following the setup instructions for your respective [cloud provider](https://www.pulumi.com/docs/intro/cloud-providers/)."
+        },
+        {
             "name": "command",
             "type": "pickList",
             "label": "Pulumi Command",
@@ -150,6 +158,7 @@
         "Debug_Login": "Logging in to Pulumi CLI.",
         "Debug_PrintingVersion": "Printing version.",
         "Debug_ServiceEndpointName": "Using service endpoint '%s'.",
+        "Debug_AWSServiceEndpointName": "Using AWS service endpoint '%s'.",
         "Debug_TempDirectoryNotSet": "agent.tempdirectory not set. Using $HOME/temp.",
         "Debug_LatestPulumiVersion": "Latest pulumi version is '%s'.",
         "Debug_CachingPulumiToHome": "Caching pulumi CLI to path '%s'.",

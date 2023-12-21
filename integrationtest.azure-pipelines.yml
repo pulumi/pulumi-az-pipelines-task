@@ -29,6 +29,7 @@ jobs:
 
       - task: Test Pulumi@1
         inputs:
+          awsServiceConnection: "$(Example.AWS.ServiceConnectName)"
           command: "preview"
           cwd: "./examples/aws"
           stack: "$(Example.AWS.StackName)"

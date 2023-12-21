@@ -8,6 +8,7 @@ import { TaskConfig } from "models";
 export function getTaskConfig(): TaskConfig {
     return {
         azureSubscription: tl.getInput("azureSubscription"),
+        awsServiceConnection: tl.getInput("awsServiceConnection"),
         command: tl.getInput("command"),
         loginArgs: tl.getInput("loginArgs"),
         args: tl.getInput("args"),

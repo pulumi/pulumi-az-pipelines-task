@@ -38,6 +38,14 @@ tmr.registerMock("./serviceEndpoint", {
     },
 });
 
+tmr.registerMock("./awsServiceEndpoint", {
+    getAWSServiceEndpoint: (_: string) => {
+        // Returning undefined to test that our task extension isn't requiring
+        // an AWS Endpoint.
+        return undefined;
+    },
+});
+
 tmr.registerMock("./version", {
     getLatestPulumiVersion: (): Promise<string> => {
         return Promise.resolve(latestPulumiVersion);
