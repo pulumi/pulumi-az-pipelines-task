@@ -211,14 +211,14 @@ function getExecOptions(
  * this function returns an env var map with the `ARM_*`
  * env vars.
  */
-function tryGetAzureEnvVarsFromServiceEndpoint(): IEnvMap {
+async function tryGetAzureEnvVarsFromServiceEndpoint(): Promise<IEnvMap> {
     const connectedServiceName = tl.getInput("azureSubscription", false);
     if (!connectedServiceName) {
         return {};
     }
     tl.debug(tl.loc("Debug_ServiceEndpointName", connectedServiceName));
 
-    const serviceEndpoint = getServiceEndpoint(connectedServiceName);
+    const serviceEndpoint = await getServiceEndpoint(connectedServiceName);
     if (serviceEndpoint) {
         tl.debug(
             `Service endpoint retrieved with client ID ${serviceEndpoint.clientId}`
@@ -228,9 +228,8 @@ function tryGetAzureEnvVarsFromServiceEndpoint(): IEnvMap {
         return {};
     }
 
-    return {
+    const envMap: IEnvMap = {
         ARM_CLIENT_ID: serviceEndpoint.clientId,
-        ARM_CLIENT_SECRET: serviceEndpoint.servicePrincipalKey,
         ARM_SUBSCRIPTION_ID: serviceEndpoint.subscriptionId,
         ARM_TENANT_ID: serviceEndpoint.tenantId,
 
@@ -239,9 +238,17 @@ function tryGetAzureEnvVarsFromServiceEndpoint(): IEnvMap {
         // Azure Storage-based backend for state persistence.
         // https://docs.microsoft.com/en-us/azure/developer/go/azure-sdk-authorization#use-environment-based-authentication
         AZURE_CLIENT_ID: serviceEndpoint.clientId,
-        AZURE_CLIENT_SECRET: serviceEndpoint.servicePrincipalKey,
         AZURE_TENANT_ID: serviceEndpoint.tenantId,
     };
+    if (serviceEndpoint.servicePrincipalKey) {
+        envMap["ARM_CLIENT_SECRET"] = serviceEndpoint.servicePrincipalKey;
+        envMap["AZURE_CLIENT_SECRET"] = serviceEndpoint.servicePrincipalKey;
+    }
+    if (serviceEndpoint.oidcToken) {
+        envMap["ARM_OIDC_TOKEN"] = serviceEndpoint.oidcToken;
+        envMap["ARM_USE_OIDC"] = "true";
+    }
+    return envMap;
 }
 
 /**
@@ -281,7 +288,8 @@ export async function runPulumi(taskConfig: TaskConfig) {
     try {
         const toolPath = tl.which("pulumi");
         const agentEnvVars = tryGetEnvVars();
-        const azureServiceEndpointEnvVars = tryGetAzureEnvVarsFromServiceEndpoint();
+        const azureServiceEndpointEnvVars =
+            await tryGetAzureEnvVarsFromServiceEndpoint();
         const loginEnvVars = {
             ...azureServiceEndpointEnvVars,
             ...agentEnvVars,
