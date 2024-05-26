@@ -12,12 +12,12 @@
   "author": "Pulumi",
   "license": "MIT",
   "dependencies": {
-    "axios": "^1.6.2",
+    "axios": "^1.7.2",
     "azure-devops-node-api": "^12.1.0",
     "azure-pipelines-task-lib": "^4.7.0",
     "azure-pipelines-tasks-artifacts-common": "^2.230.0",
     "azure-pipelines-tool-lib": "^2.0.7",
-    "semver": "^7.5.4",
+    "semver": "^7.6.0",
     "typed-rest-client": "^1.8.11"
   },
   "devDependencies": {
