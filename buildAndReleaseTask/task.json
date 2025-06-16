@@ -134,6 +134,7 @@
         "JS_ExitCode": "Script exited with code '%s'.",
         "JS_Stderr": "Script wrote one or more lines to the standard error stream.",
         "OSDETECTED": "OS detected '%s'.",
+        "ARCHDETECTED": "CPU Architecture detected '%s'.",
         "PulumiInstallFailed": "Pulumi installation failed with error '%s'.",
         "PulumiLoginFailed": "Pulumi CLI login command failed.",
         "PulumiNotFound": "Pulumi CLI does not seem to be installed in your environment.",

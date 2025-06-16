@@ -2,7 +2,10 @@
 
 import * as tl from "azure-pipelines-task-lib/task";
 import * as lib from "azure-pipelines-tool-lib";
+import * as os from "os";
 import * as path from "path";
+
+export type CPUArch = "x64" | "arm64"
 
 /**
  * Function installs Pulumi across Operating Systems using the Build agent's native SDK libraries.
@@ -11,39 +14,44 @@ import * as path from "path";
  * @param versionSpec version number the user wants to install.
  * @param latestPulumiVersion latest version based on what `getLatestPulumiVersion` returned.
  */
-
 export async function installPulumi(
     latestPulumiVersion: string,
     versionSpec?: string
 ): Promise<string> {
-    const os = tl.getPlatform();
-    tl.debug(tl.loc("OSDETECTED", os));
+    const platform = tl.getPlatform();
+    tl.debug(tl.loc("OSDETECTED", platform));
+    const detectedArch = os.arch();
+    if (detectedArch !== "x64" && detectedArch !== "arm64") {
+        throw new Error(`Unsupported architecture "${detectedArch}"`);
+    }
+    const arch = detectedArch as CPUArch;
+    tl.debug(tl.loc("ARCHDETECTED", arch));
 
     if (!versionSpec || versionSpec.toLowerCase() === "latest") {
         versionSpec = latestPulumiVersion;
     }
     tl.debug(`Pulumi version to install is ${versionSpec}`);
 
-    switch (os) {
+    switch (platform) {
         case tl.Platform.Windows:
-            await installPulumiWindows(versionSpec);
+            await installPulumiWindows(versionSpec, arch);
             break;
         case tl.Platform.MacOS:
-            await installPulumiOther(versionSpec, "darwin");
+            await installPulumiOther(versionSpec, "darwin", arch);
             break;
         case tl.Platform.Linux:
-            await installPulumiOther(versionSpec, "linux");
+            await installPulumiOther(versionSpec, "linux", arch);
             break;
         default:
-            throw new Error(`Unexpected OS platform type "${os}"`);
+            throw new Error(`Unexpected OS platform type "${platform}"`);
     }
 
     return versionSpec;
 }
 
-async function installPulumiWindows(version: string) {
+async function installPulumiWindows(version: string, arch: CPUArch) {
     try {
-        const downloadUrl = `https://get.pulumi.com/releases/sdk/pulumi-v${version}-windows-x64.zip`;
+        const downloadUrl = `https://get.pulumi.com/releases/sdk/pulumi-v${version}-windows-${arch}.zip`;
         const temp = await lib.downloadTool(downloadUrl);
         const extractTemp = await lib.extractZip(temp);
         // Windows archives have a sub-folder called "bin", so add that
@@ -62,9 +70,9 @@ async function installPulumiWindows(version: string) {
     }
 }
 
-async function installPulumiOther(version: string, os: string) {
+async function installPulumiOther(version: string, platform: string, arch: CPUArch) {
     try {
-        const downloadUrl = `https://get.pulumi.com/releases/sdk/pulumi-v${version}-${os}-x64.tar.gz`;
+        const downloadUrl = `https://get.pulumi.com/releases/sdk/pulumi-v${version}-${platform}-${arch}.tar.gz`;
         const temp = await lib.downloadTool(downloadUrl);
         const extractTemp = await lib.extractTar(temp);
         // Pulumi binary exists in "pulumi" sub-folder,
