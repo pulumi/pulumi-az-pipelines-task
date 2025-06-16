@@ -122,10 +122,10 @@
         }
     ],
     "execution": {
-        "Node10": {
+        "Node16": {
             "target": "index.js"
         },
-        "Node16": {
+        "Node20_1": {
             "target": "index.js"
         }
     },
