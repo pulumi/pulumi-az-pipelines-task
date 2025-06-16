@@ -11,11 +11,11 @@ function mustNotHaveErrorsOrWarnings(tr: ttm.MockTestRunner) {
 }
 
 describe("Pulumi task tests", () => {
-    it("should install the CLI and run command", (done: Mocha.Done) => {
+    it("should install the CLI and run command", async () => {
         const tp = path.join(__dirname, "success.js");
         const tr = new ttm.MockTestRunner(tp);
 
-        tr.run();
+        await tr.runAsync();
         mustNotHaveErrorsOrWarnings(tr);
         const stdout = tr.stdout;
         // This version number should match the version number in the actual test `success.ts`.
@@ -43,49 +43,41 @@ describe("Pulumi task tests", () => {
             true,
             "should execute `pulumi preview` command"
         );
-
-        done();
     }).timeout(3000);
     // Set a higher timeout for the above test since it seems to take
     // some additional time to run sometimes.
 
-    it("should run Pulumi with the expected env vars", (done: Mocha.Done) => {
+    it("should run Pulumi with the expected env vars", async () => {
         const tp = path.join(__dirname, "envvars.js");
         const tr = new ttm.MockTestRunner(tp);
 
-        tr.run();
+        await tr.runAsync();
         mustNotHaveErrorsOrWarnings(tr);
-
-        done();
     });
 
-    it("should run Pulumi with Azure Storage with the expected env vars", (done: Mocha.Done) => {
+    it("should run Pulumi with Azure Storage with the expected env vars", async () => {
         const tp = path.join(__dirname, "envvars_storage.js");
         const tr = new ttm.MockTestRunner(tp);
 
-        tr.run();
+        await tr.runAsync();
         mustNotHaveErrorsOrWarnings(tr);
         assert.strictEqual(
             tr.stdout.indexOf("fake logged in using azure storage") >= 0,
             true,
             "should login using azure environment variables"
         );
-
-        done();
     });
 
-    it("should create the stack if it does not exist", (done: Mocha.Done) => {
+    it("should create the stack if it does not exist", async () => {
         const tp = path.join(__dirname, "create_stack_if_not_found.js");
         const tr = new ttm.MockTestRunner(tp);
 
-        tr.run();
+        await tr.runAsync();
         mustNotHaveErrorsOrWarnings(tr);
         assert.strictEqual(
             tr.stdout.indexOf("Created stack") >= 0,
             true,
             "should create stack"
         );
-
-        done();
     });
 });

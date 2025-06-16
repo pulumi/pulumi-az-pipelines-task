@@ -16,7 +16,7 @@ stages:
         steps:
           - task: NodeTool@0
             inputs:
-              versionSpec: "16.x"
+              versionSpec: "20.x"
             displayName: "Install Node.js"
 
           - task: Npm@1
@@ -71,9 +71,10 @@ stages:
               command: "custom"
               customCommand: run tsc
 
-          - task: TfxInstaller@2
+          - task: TfxInstaller@5
+            displayName: 'Use Node CLI (tfx-cli) for Azure DevOps'
             inputs:
-              version: "v0.16.x"
+              version: "v0.21.x"
 
           - task: CmdLine@2
             displayName: "Update task name"
