@@ -11,12 +11,20 @@ stages:
     displayName: "Build and test"
     jobs:
       - job: build
+        strategy:
+          matrix:
+            Node10:
+              NODE_VERSION: '10.x'
+            Node16:
+              NODE_VERSION: '16.x'
+            Node20:
+              NODE_VERSION: '20.x'
         pool:
           vmImage: "ubuntu-latest"
         steps:
           - task: NodeTool@0
             inputs:
-              versionSpec: "20.x"
+              versionSpec: "$(NODE_VERSION)"
             displayName: "Install Node.js"
 
           - task: Npm@1
