@@ -22,11 +22,11 @@
   },
   "devDependencies": {
     "@types/mocha": "^10.0.10",
-    "@types/node": "^10.17.60",
+    "@types/node": "^16.0.0",
     "@types/q": "^1.5.4",
     "@types/semver": "^7.3.4",
     "tslint": "^6.1.3",
-    "typescript": "^4.2.3",
+    "typescript": "^5.8.0",
     "vsts-bump": "^1.1.8"
   }
 }

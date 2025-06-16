@@ -13,8 +13,6 @@ stages:
       - job: build
         strategy:
           matrix:
-            Node10:
-              NODE_VERSION: '10.x'
             Node16:
               NODE_VERSION: '16.x'
             Node20:
