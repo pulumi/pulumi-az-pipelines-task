@@ -111,29 +111,32 @@ export async function createPrComment(taskConfig: TaskConfig) {
 
     const accessToken = tl.getVariable("System.AccessToken");
     if (!accessToken) {
-        throw new Error(
-            "Job access token is required to create/update PR comment"
-        );
+        tl.warning(tl.loc("Warning_PrComment_MissingAccessToken"));
+        return;
     }
 
     const collectionUri = tl.getVariable("System.CollectionUri");
     if (!collectionUri) {
-        throw new Error("Could not determine the DevOps org's base URI");
+        tl.warning(tl.loc("Warning_PrComment_MissingCollectionUri"));
+        return;
     }
 
     const projectId = tl.getVariable("System.TeamProjectId");
     if (!projectId) {
-        throw new Error("Could not determine the project ID");
+        tl.warning(tl.loc("Warning_PrComment_MissingProjectId"));
+        return;
     }
 
     const repositoryId = tl.getVariable("Build.Repository.ID");
     if (!repositoryId) {
-        throw new Error("Could not determine the repository ID");
+        tl.warning(tl.loc("Warning_PrComment_MissingRepositoryId"));
+        return;
     }
 
     const prId = tl.getVariable("System.PullRequest.PullRequestId");
     if (!prId) {
-        throw new Error("Could not determine the PR ID");
+        tl.warning(tl.loc("Warning_PrComment_MissingPrId"));
+        return;
     }
 
     const buildEnvInfo: BuildEnvInfo = {
@@ -146,9 +149,15 @@ export async function createPrComment(taskConfig: TaskConfig) {
         systemAccessToken: accessToken,
     };
 
-    const authHandler = azdev.getBearerHandler(accessToken);
-    const webApi = new azdev.WebApi(collectionUri, authHandler);
-    const gitApi = await webApi.getGitApi();
+    let gitApi: IGitApi;
+    try {
+        const authHandler = azdev.getBearerHandler(accessToken);
+        const webApi = new azdev.WebApi(collectionUri, authHandler);
+        gitApi = await webApi.getGitApi();
+    } catch (err: any) {
+        tl.warning(tl.loc("Warning_PrComment_GitApiInitFailed", err.message || err));
+        return;
+    }
 
     const pulumiLogs = readFileSync(pathJoin(".", PULUMI_LOG_FILENAME), {
         encoding: "utf-8",
@@ -162,18 +171,28 @@ export async function createPrComment(taskConfig: TaskConfig) {
 
     const useThreads = taskConfig.useThreadedPrComments;
     if (useThreads) {
-        const updated = await updateExistingThread(
-            buildEnvInfo,
-            azureRepoInfo,
-            gitApi,
-            commentBody
-        );
+        let updated: boolean;
+        try {
+            updated = await updateExistingThread(
+                buildEnvInfo,
+                azureRepoInfo,
+                gitApi,
+                commentBody
+            );
+        } catch (err: any) {
+            tl.warning(tl.loc("Warning_PrComment_UpdateThreadFailed", err.message || err));
+            return;
+        }
         if (updated) {
             return;
         }
     }
 
-    await createThread(buildEnvInfo, azureRepoInfo, gitApi, commentBody);
+    try {
+        await createThread(buildEnvInfo, azureRepoInfo, gitApi, commentBody);
+    } catch (err: any) {
+        tl.warning(tl.loc("Warning_PrComment_CreateThreadFailed", err.message || err));
+    }
 }
 
 /**
