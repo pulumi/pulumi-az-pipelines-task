@@ -163,7 +163,15 @@
         "Debug_ThreadFound": "Found an existing comment thread created by this task. A new comment will be added to it.",
         "Warning_ExistingCommentThreadNotFound": "Did not find an existing comment thread for Pulumi output. Will start a new one.",
         "Warning_UnSupportedRepositoryType": "Repository type %s is not yet supported for PR comments.",
-        "Warning_NotABuildPipeline": "Ignoring request to create a PR comment. PR comments are only applicable for build pipelines. The pipeline is a %s."
+        "Warning_NotABuildPipeline": "Ignoring request to create a PR comment. PR comments are only applicable for build pipelines. The pipeline is a %s.",
+        "Warning_PrComment_MissingAccessToken": "Skipping PR comment: System.AccessToken is not available. Ensure the job's access token is enabled and mapped as SYSTEM_ACCESSTOKEN.",
+        "Warning_PrComment_MissingCollectionUri": "Skipping PR comment: could not determine the Azure DevOps collection URI (System.CollectionUri).",
+        "Warning_PrComment_MissingProjectId": "Skipping PR comment: could not determine the project ID (System.TeamProjectId).",
+        "Warning_PrComment_MissingRepositoryId": "Skipping PR comment: could not determine the repository ID (Build.Repository.ID).",
+        "Warning_PrComment_MissingPrId": "Skipping PR comment: could not determine the pull request ID (System.PullRequest.PullRequestId). This is expected for non-PR builds.",
+        "Warning_PrComment_GitApiInitFailed": "Skipping PR comment: failed to initialize the Azure DevOps Git API. Error: %s",
+        "Warning_PrComment_UpdateThreadFailed": "Failed to update the existing PR comment thread. Error: %s",
+        "Warning_PrComment_CreateThreadFailed": "Failed to create the PR comment thread. Error: %s"
     },
     "showEnvironmentVariables": true
 }
