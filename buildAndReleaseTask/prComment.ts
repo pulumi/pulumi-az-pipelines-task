@@ -195,8 +195,9 @@ async function updateExistingThread(
     const pulumiCommentThreads = threads.filter(
         (t) =>
             t.status === CommentThreadStatus.Active &&
-            t.properties["source"] !== undefined &&
-            t.properties["source"]["$value"] === SOURCE_PULUMI
+            // Threads created by other users/tools may have no properties,
+            // or no `source` property, so access it defensively.
+            t.properties?.["source"]?.["$value"] === SOURCE_PULUMI
     );
     // If we found a previous thread, add a comment to it.
     if (pulumiCommentThreads?.length > 0) {
